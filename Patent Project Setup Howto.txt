@@ -1,0 +1,37 @@
+Setting Up Patent Project - Linux
+
+Mon 02 Jan 2012 10:59:39 AM PST 
+
+Working on 
+
+* Setup Eclipse
+
+	* Add eclipse launcher to menu bar
+  	Applications->Programming->Eclipse - right-click - add this launcher to pannel
+
+	* Create top level workspace directory (~/Workspace) and tell eclipse to use it
+
+    * Check for updates
+
+    * Install Perl editing add-on - directions - trial version
+        http://www.epic-ide.org/download.php
+
+   * Install Git Add-on
+        Not required on newer eclipse, allready included
+        Instructions http://www.vogella.de/articles/EGit/article.html
+        Install Egit, not mryln project support..... !!!
+
+    * Connect to github
+        go to https://github.com/account/ssh
+        Follow directions, add linux key to account on github
+            http://help.github.com/linux-set-up-git/
+
+    * Use Import clone from git to grab copy project
+
+    * Change file
+
+    * Push changes to test
+      Had problems, had to reconfigure remote store  to use SSH git-hub access - then worked
+
+
+
