@@ -1,0 +1,13 @@
+Patent Design
+
+* Scrape Patents
+
+  * From Patent Office
+  
+  * From Google Scholar
+  
+ * Build database / network patents
+ 
+ * Calculate values patents
+ 
+ 
