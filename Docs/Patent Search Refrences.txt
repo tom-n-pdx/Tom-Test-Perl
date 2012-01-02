@@ -1,0 +1,26 @@
+Patent Search Refrences
+
+Converting USPO search to xml script: http://answers.google.com/answers/threadview/id/378510.html
+
+Google output xml http://googlesystem.blogspot.com/2007/03/feeds-for-google-search.html
+
+Hack, need to calc checksum
+
+* Google Scholar Hacks
+
+Try google scholar code http://code.google.com/p/google-scholar-perl/
+
+http://codeandculture.wordpress.com/2010/05/13/cited-reference-search-time-series/
+
+http://www.perlmonks.org/?node_id=757427
+
+http://code.activestate.com/recipes/523047-search-google-scholar/
+
+http://thebiobucket.blogspot.com/2011/11/r-function-google-scholar-webscraper.html
+
+http://code.google.com/p/bioguid/source/browse/trunk/www/scholar_ris.php?spec=svn112&r=112
+
+http://thebiobucket.blogspot.com/2011/11/r-function-google-scholar-webscraper.html
+
+http://icodesnip.com/search/google/4
+
