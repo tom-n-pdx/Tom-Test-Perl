@@ -1,6 +1,6 @@
 ISI Format Info
 
-http://isi-rb.rubyforge.org/
+
 
 http://images.webofknowledge.com/WOKRS54B7/help/WOS/hs_wos_fieldtags.html
 
@@ -8,7 +8,17 @@ http://images.webofknowledge.com/WOK46/help/WOS/h_fieldtags.html
 
 http://community.thomsonreuters.com/t5/EndNote-Styles-Filters-and/ISI-tagged-format-output/td-p/651
 
+* Need short journal names
+http://images.webofknowledge.com/WOK46/help/WOS/A_abrvjt.html
+
+
 * Code
 http://search.cpan.org/~timbrody/SOAP-ISIWoK-1.05/
+http://mirror.math.ku.edu/tex-archive/biblio/bibtex/utils/isi2bibtex/
+
+http://isi-rb.rubyforge.org/
+* Also has good refrences for fields
+* abreveations?
+
 
 

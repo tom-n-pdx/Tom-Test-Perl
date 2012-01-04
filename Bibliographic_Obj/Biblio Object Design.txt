@@ -1,0 +1,26 @@
+Bibliographic Object Design
+
+Object Fields
+
+Minimum Citation ISI
+* short 1st author
+* year
+* short journal
+* volume?
+* page?
+* DOI?
+
+Longer
+* author - list (last name separate from first?)
+* title
+* long journal name
+* media type
+* references - links
+* citations  - links
+* found online? - true / false
+* list URL's - google scholar, web of science, etc
+
+
+Not Include
+* abstract
+

@@ -3,10 +3,17 @@ Bibliographic Notes
 Comparison Standard Formats
 http://en.wikipedia.org/wiki/Comparison_of_reference_management_software#Import_file_formats
 
+DOI
+Look up PSU availability in serialssolutions.com - fake CGI?
+Cross refrence through PSU?
+From DOI - works outside PSU http://wq5rp2ll8a.search.serialssolutions.com/?sid=sersol%3ARefinerQuery&citationsubmit=Look+Up&url_ver=Z39.88-2004&l=WQ5RP2LL8A&rfr_id=info%3Asid%2Fsersol%3ARefinerQuery&SS_LibHash=WQ5RP2LL8A&SS_ReferentFormat=JournalFormat&rft_id=info%3Adoi%2F10.1080%2F09544820500275693&rft.genre=article&SS_doi=10.1080%2F09544820500275693&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal
+
+
 
 
 Priority:
 Bibtex, Endnote, ISI, RIS
+* test try - short journal name
 
 
 Google Scholar Output: 	Bibtex, Endnote, 	RIS, 					Refworks (No)
@@ -74,6 +81,9 @@ Test "Developing a process of detecting time-lag coefficients of technology lice
 http://search.cpan.org/search?query=biblio&mode=all
 http://codeandculture.wordpress.com/tag/perl/
 http://search.cpan.org/~timbrody/SOAP-ISIWoK-1.05/
+
+ISI
+* will need short journal to long journal name
 
 
 
