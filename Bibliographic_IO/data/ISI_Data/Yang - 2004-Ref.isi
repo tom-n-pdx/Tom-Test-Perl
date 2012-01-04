@@ -1,0 +1,3788 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Buffington, J
+AF Buffington, Jack
+TI Comparison of mass customization and generative customization in mass
+   markets
+SO INDUSTRIAL MANAGEMENT & DATA SYSTEMS
+LA English
+DT Article
+DE Mass customization; Supply chain management; Mass production
+ID PRODUCT DEVELOPMENT; SYSTEMS; DESIGN; FRAMEWORK; CHOICE; EXPLORATION;
+   PERSPECTIVE; PERFORMANCE; COMPLEXITY; MODULARITY
+AB Purpose - Mass customization has yet to fulfill its original purpose as
+   established by marketing researchers to become an alternative to mass
+   production, largely due to its inability to achieve mass market levels
+   of efficiency. The purpose of this study is to survey consumer's
+   perceptions, willingness and capabilities of participating in a mass
+   customization system, and understand the implications of :its findings
+   related to an alternative production system, generative customization.
+   Design/methodology/approach - After an extensive literature review of
+   mass customization, consumer behavior, complex adaptive systems and
+   generative design, a survey was conducted across US and Swedish
+   consumers relative to their willingness and perceptions regarding mass
+   customization, with hypotheses based upon extant research standards.
+   Findings - The survey results found that consumers are ambivalent
+   toward mass customization in mass markets, and a conceptual alternative
+   (generative customization) appears to achieve, at least conceptually,
+   the necessary objectives relative to product design conceptualization
+   and fulfillment that mass customization cannot achieve.
+   Research limitations/implications - A lack of significant findings from
+   extant research regarding consumer perceptions and tolerances regarding
+   mass customization in mass markets is a limitation to this study. The
+   discussion of a new concept (generative customization) as a viable
+   alternative to mass customization as a result of the survey findings
+   needs to be validated empirically in future research.
+   Originality/value - The paper empirically validates a definition of
+   mass customization as a complementary rather than an alternative to
+   mass production. It also introduces and develops the concept of
+   generative customization as viable alternative to mass production,
+   albeit one that must be empirically validated in future research.
+C1 Lulea Univ Technol, Dept Ind Mkt E Commerce & Logist, S-95187 Lulea, Sweden.
+RP Buffington, J, Lulea Univ Technol, Dept Ind Mkt E Commerce & Logist,
+   S-95187 Lulea, Sweden.
+EM john.buffington@ltu.se
+CR *AM DEM, 2001, SWAP MEET CUST PROD
+   *INT COMM UN SURV, 2002, ITU WORLDW TEL DEV R
+   *WIK, 2010, GEN DES
+   AGRAWAL M, 2001, MCKINSEY Q, V3, P62
+   ALEXANDER C, 1996, KEYN ADDR ACM C OBJ
+   AVITAL M, 2009, INFORM SYST J, V19, P345, DOI
+   10.1111/j.1365-2575.2007.00291.x
+   BARDAKCI A, 2003, J CONSUM MARK, V20, P463, DOI
+   10.1108/07363760310489689
+   BERMAN B, 2002, BUS HORIZONS, V45, P51
+   BERRY WL, 1999, J OPER MANAG, V17, P163
+   BETTMAN JR, 1998, J CONSUM RES, V25, P187
+   BHARADWAJ N, 2009, INT J RES MARK, V26, P216, DOI
+   10.1016/j.ijresmar.2009.04.001
+   BLECKER T, 2007, IEEE T ENG MANAGE, V54, P4, DOI 10.1109/TEM.2006.889063
+   BOATWRIGHT P, 2001, J MARKETING, V65, P50
+   BOER CR, 2007, MASS CUSTOMIZATION F
+   BROEKHUIZEN TLJ, 2002, J MARKET FOCUSED MAN, V5, P309
+   BUFFINGTON J, 2010, CONCEPTUAL FRAMEWORK
+   CAMPBELL RI, 2007, J ENG DESIGN, V18, P617, DOI
+   10.1080/09544820601178507
+   DABHOLKAR PA, 2003, INT J SERV IND MANAG, V14, P59, DOI
+   10.1108/09564230310465994
+   DAVIS SM, 1987, FUTURE PERFECT
+   DELLAERT BGC, 2005, J MARKETING RES, V42, P219
+   DULSRUD A, 2009, J CONSUMER POLICY, V32, P203
+   EASTWOOD MA, 1996, COMPUT IND, V30, P171
+   FANG E, 2008, J MARKETING, V72, P90
+   FISCHHOFF B, 1991, AM PSYCHOL, V46, P835
+   FORMAN H, 2005, INT J LOGIST MANAG, V16, P4
+   FRANKE N, 2009, J MARKETING, V73, P103
+   FRANKE N, 2009, J PRODUCT I IN PRESS
+   GARUD R, 2008, ORGAN STUD, V29, P351, DOI 10.1177/0170840607088018
+   GERSHENSON JK, 2003, J ENG DESIGN, V14, P295, DOI
+   10.1080/0954482031000091068
+   GHOSH A, 2007, COMPETITOR COLLABORA
+   HANNA S, 2006, C IB GRAF DIG U CHIL
+   HEISKANEN E, 2007, EUROPEAN J INNOVATIO, V10, P489
+   HOLBROOK MB, 2002, EUR J MARKETING, V36, P706
+   HOLLAND JH, 1992, ADAPTATION NATURAL A
+   HUANG CJ, 2006, IND MANAGE DATA SYST, V106, P680, DOI
+   10.1108/0236570610666449
+   HUFFINAN C, 1998, VARIETY SALE MASS CU
+   JIANG P, 2002, J TARGETING MEASUREM, V11, P168
+   JIANG PJ, 2000, INTERNET RES, V10, P215
+   KINCADE DH, 2007, INT J OPER PROD MAN, V27, P627, DOI
+   10.1108/01443570710750295
+   KOH SCL, 2006, INT J PHYS DISTRIB, V36, P455
+   KOTHA S, 1996, EUROPEAN MANAGEMENT, V14, P442
+   KOTLER P, 1989, PLANNING REV, V17, P10
+   KRAMER S, 2007, MARKET SCI, V26, P246
+   KRISH S, 2010, WILL GENERATIVE DESI
+   KUMAR A, 2007, INT J FLEX MANUF SYS, V19, P637, DOI
+   10.1007/s10696-008-9051-y
+   LAM CY, 2008, IND MANAGE DATA SYST, V108, P1101, DOI
+   10.1108/02635570810904631
+   LAROCCA G, 2002, 9 AIAA ISSMO S MULT
+   LEE JH, 2010, INT J IND ERGONOM, V40, P295, DOI
+   10.1016/j.ergon.2009.11.001
+   LEE SE, 2002, CLOTH TEXT RES J, V20, P138
+   MARKS J, 2009, HOME TEXTILES TODAY, V30
+   MASON RB, 2009, IND MANAGE DATA SYST, V109, P173, DOI
+   10.1108/02635570910930082
+   MCCORMACK J, 2004, P FUT DES RES SOC ME
+   MOREHOUSE JE, 1995, SUPPLY CHAIN MANAGEM
+   NUNNALLY JC, 1978, PSYCHOMETRIC THEORY
+   PATHAK SD, 2007, DECISION SCI, V38, P547
+   PEPPERS D, 1997, ENTERPRISE ONE ONE T
+   PINE BJ, 1993, PLANNING REV, V21, P23
+   PINE BJ, 1994, MANAGERS J WALL STRE, V18, A14
+   PITIMANEEYAKUL U, 2004, CLOTH TEXT RES J, V22, P113
+   RADDER L, 1999, TQM MAGAZINE, V11, P35
+   RIGBY DK, 2006, HARVARD BUS REV, V84, P82
+   RO YK, 2007, IEEE T ENG MANAGE, V54, P172, DOI 10.1109/TEM.2006.889075
+   SALVADOR F, 2009, MIT SLOAN MANAGE REV, V50, P71
+   SHAMSUZZOHA A, 2009, IND MANAGE DATA SYST, V109, P718, DOI
+   10.1108/02635570910957678
+   SIMON HA, 1996, SCI ARTIFICIAL
+   SIMONSON I, 2003, DETERMINANTS CUSTOME
+   SPIRA JS, 1993, PLANNING REV, V21, P23
+   STOCKING AW, 2009, CADALYST        1015
+   SUROWIECKI J, 2004, WHY MANY ARE SMARTER
+   TERWIESCH C, 2004, MANAGE SCI, V50, P145, DOI 10.1287/mnsc.1030.0178
+   WALDROP MM, 1992, COMPLEXITY EMERGING
+   WEICK KE, 2007, ACAD MANAGE J, V50, P14
+   XIA N, 2009, MARKET SCI, V28, P887, DOI 10.1287/mksc.1080.0456
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YOON SO, 2008, J CONSUM RES, V35, P324, DOI 10.1086/587630
+   ZIPKIN P, 2001, MIT SLOAN MANAGE REV, V42, P81
+NR 76
+TC 0
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0263-5577
+J9 INDUSTRIAL MANAGE DATA SYST
+JI Ind. Manage. Data Syst.
+PY 2011
+VL 111
+IS 1-2
+BP 41
+EP 62
+DI 10.1108/02635571111099721
+PG 22
+SC Computer Science, Interdisciplinary Applications; Engineering,
+   Industrial
+GA 750ZT
+UT ISI:000289587800003
+ER
+
+PT J
+AU Naim, MM
+   Gosling, J
+AF Naim, Mohamed M.
+   Gosling, Jonathan
+TI On leanness, agility and leagile supply chains
+SO INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS
+LA English
+DT Proceedings Paper
+DE Literature review; Classification; Research methods
+ID ORDER DECOUPLING POINT; MANAGEMENT-PRACTICES; MASS CUSTOMIZATION;
+   QUALITY MANAGEMENT; INTEGRATION; FLEXIBILITY; PERFORMANCE; INDUSTRY;
+   POSTPONEMENT; INFORMATION
+AB In 1999 a paper by Naylor, Naim and Berry on 'leagility' was published
+   in international journal of production economics. The paper has
+   attracted over 100 independent citations from over 60 journals of
+   international standing. This paper explores the testing, exploitation
+   and extension of the original work. Via a systematic literature review
+   the notable findings are that the 1999 paper has been exploited in
+   terms of its classification of supply chains into lean, agile and
+   'leagile'; those terms have been tested via survey and case based
+   empirical research; has been extended beyond the original stock
+   decoupling point exploitation of lean and agile to encompass other
+   forms of 'leagility'. This paper concludes that further robust testing
+   of leagility' and the definitions of leanness and agility are still
+   required to encompass different market sectors and ensure triangulation
+   of research methods. (C) 2010 Elsevier B.V. All rights reserved.
+C1 [Naim, Mohamed M.; Gosling, Jonathan] Cardiff Univ, Cardiff Business Sch, Logist Syst Dynam Grp, Cardiff CF10 3EU, S Glam, Wales.
+RP Naim, MM, Cardiff Univ, Cardiff Business Sch, Logist Syst Dynam Grp,
+   Colum Dr, Cardiff CF10 3EU, S Glam, Wales.
+EM NaimMM@cf.ac.uk
+CR 2008, INT J PRODUCTION JUL
+   AGARWAL A, 2006, EUR J OPER RES, V173, P221
+   AITKEN J, 2003, INT J PROD ECON, V85, P127, DOI
+   10.1016/S0925-5273(03)00105-1
+   BARAMICHAI M, 2007, SUPPLY CHAIN MANAG, V12, P334, DOI
+   10.1108/13598540710776917
+   BARLOW J, 2000, RES POLICY, V29, P973
+   BARLOW J, 2003, BUILD RES INF, V31, P134, DOI
+   10.1080/0961321031000083931
+   BERRY D, 1996, INT J PROD ECON, V46, P181
+   BRUCE M, 2004, INT J OPER PROD MAN, V24, P151, DOI
+   10.1108/01443570410514867
+   BURGESS T, 2002, EUROPEAN MANAGEMENT, V20, P199
+   CAROONARA N, 2002, INT J PROD ECON, V76, P159
+   CHEN IJ, 2004, J OPER MANAG, V22, P119, DOI 10.1016/j.jom.2003.12.007
+   CHILDERHOUSE P, 2002, J OPER MANAG, V20, P675
+   CHILDERHOUSE P, 2006, INT J LOGISTICS SYST, V2, P357
+   CHRISTOPHER M, 2000, IND MARKET MANAG, V29, P37
+   CHRISTOPHER M, 2006, INT J LOGIST MANAG, V17, P277
+   CLIFTON N, 2001, BENCHMARKING INT J, V8, P172
+   COX A, 2004, SUPPLY CHAIN MANAG, V9, P346, DOI 10.1108/13598540410560739
+   COX A, 2005, EUROPEAN MANAGEMENT, V23, P648
+   CROCITTO M, 2003, IND MANAGE DATA SYST, V103, P388, DOI
+   10.1108/02635570310479963
+   CROXTON KL, 2001, INT J LOGISTICS MANA, V12, P13
+   DASILVEIRA JCG, 1936, INT J OPER PROD MAN, V26, P232
+   DEJONCKHEERE J, 2003, PROD PLAN CONTROL, V14, P497, DOI
+   10.1080/09537280310001621958
+   DEKKERS R, 2006, INT J PROD RES, V44, P4011, DOI
+   10.1080/00207540600696328
+   DETREVILLE S, 2004, J OPER MANAG, V21, P613, DOI
+   10.1016/j.jom.2003.10.001
+   DISNEY SM, 2003, OMEGA-INT J MANAGE S, V31, P157, DOI
+   10.1016/S0305-0483(03)00028-8
+   DROGE C, 2004, J OPER MANAG, V22, P557, DOI 10.1016/j.jom.2004.08.001
+   DUCLOS LK, 2003, IND MANAGE DATA SYST, V103, P446, DOI
+   10.1108/02635570310480015
+   FAISAL MN, 2006, BUSINESS PROCESS MAN, V12, P535
+   FAISAL MN, 2006, IND MANAGE DATA SYST, V106, P878, DOI
+   10.1108/02635570610671533
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   FRANKEL RF, 2006, BUS HORIZONS, V49, P275
+   FULCONIS F, 2005, COMPETITIVENESS REV, V15, P92
+   GIL N, 2005, J CONSTR ENG M ASCE, V131, P439, DOI
+   10.1061/(ASCE)0733-9364(2005)131:4(439)
+   GOLDSBY TJ, 2006, J BUSINESS LOGISTICS, V27, P57
+   GUNASEKARAN A, 2004, EUR J OPER RES, V159, P269, DOI
+   10.1016/j.ejor.2003.08.016
+   GUNASEKARAN A, 2005, J OPER MANAG, V23, P423, DOI
+   10.1016/j.jom.2004.10.005
+   HANDFIELD RB, 1998, J OPER MANAG, V16, P321
+   HARVEY C, 2007, ACAD J QUALITY GUIDE
+   HERER YT, 2002, INT J PROD ECON, V80, P201
+   HINES P, 2004, INT J OPER PROD MAN, V24, P994, DOI
+   10.1108/01443570410558049
+   HOLWEG M, 2005, INT J OPER PROD MAN, V25, P603, DOI
+   10.1108/01443570510605063
+   HUANG SH, 2002, SUPPLY CHAIN MANAG, V7, P189
+   JAYARAM J, 2000, INT J PHYS DISTRIB, V30, P314
+   JOHANSSON HJ, 1993, BUSINESS PROCESS REE
+   KRISHNAMURTHY R, 2007, INT J OPER PROD MAN, V27, P588, DOI
+   10.1108/01443570710750277
+   LEWIS MA, 2000, INT J OPER PROD MAN, V20, P959
+   LI G, 2006, SUPPLY CHAIN MANAG, V11, P425, DOI 10.1108/13598540610682444
+   LI S, 2005, OMEGA-INT J MANAGE S, V34, P107
+   LI SH, 2005, J OPER MANAG, V23, P618, DOI 10.1016/j.jom.2005.01.002
+   LOOMAN A, 2002, J SUPPLY CHAIN MANAG, V30, P22
+   MASONJONES R, 1999, INT J PROD ECON, V62, P61
+   MASONJONES R, 2000, INT J PROD RES, V38, P4061
+   NAIM M, 2003, CONSTRUCTION MANAGEM, V21, P593
+   NAIR A, 2005, INT J PROD RES, V43, P447, DOI
+   10.1080/00207540512331311886
+   NARASIMHAN R, 2006, J OPER MANAG, V24, P440, DOI
+   10.1016/j.jom.2005.11.011
+   NAYLOR JB, 1999, INT J PROD ECON, V62, P107
+   PAPADOPOULOU TC, 2005, J MANUFACTURING TECH, V16, P784
+   PETTERSEN J, 2009, TQM J, V21, P127
+   POTTER A, 2004, PROD PLAN CONTROL, V15, P472, DOI
+   10.1080/095372804200238746
+   POWER D, 2005, SUPPLY CHAIN MANAG, V10, P252, DOI
+   10.1108/13598540510612721
+   POWER DJ, 2001, INT J PHYS DISTRIB, V31, P247
+   PRINCE J, 2003, INT J PROD ECON, V85, P305, DOI
+   10.1016/S0925-5273(03)0118-X
+   ROMANO P, 2001, INT J OPER PROD MAN, V21, P446
+   RUBESCH E, 2005, ASIA PACIFIC J MARKE, V17, P61
+   RUDBERG M, 2004, PROD PLAN CONTROL, V15, P445, DOI
+   10.1080/095372804200238764
+   SANCHEZ LM, 2001, INT J PROD RES, V39, P3561
+   SCHMITZ J, 2004, INT J PROD ECON, V89, P231, DOI
+   10.1016/S0925-5273(02)00469-3
+   SHAH R, 2007, J OPER MANAG, V25, P785, DOI 10.1016/j.jom.2007.01.019
+   SHAW NE, 2005, INT J PROD RES, V43, P3497, DOI 10.1080/00207540500117805
+   SLACK N, 1987, INT J OPER PROD MAN, V7, P35
+   STEVENSON M, 2007, INT J OPER PROD MAN, V27, P685, DOI
+   10.1108/01443570710756956
+   STOREY J, 2005, INT J OPER PROD MAN, V25, P242, DOI
+   10.1108/01443570510581853
+   SWAFFORD PM, 2006, INT J OPER PROD MAN, V26, P118, DOI
+   10.1108/01443570610641639
+   TOWILL D, 2002, INT J LOGISTICS RES, V5, P299
+   TOWILL D, 2005, EUROPEAN MANAGEMENT, V23, P426
+   TURNER K, 2005, J MANUFACTURING TECH, V16, P447
+   VANDERVAART T, 2004, INT J PROD ECON, V92, P21, DOI
+   10.1016/j.ijpe.2003.10.002
+   VANDERVORST JGA, 2001, INT J LOGIST MANAG, V12, P73
+   VANDONK DP, 2005, INT J PROD ECON, V96, P97, DOI
+   10.1016/j.ijpe.2004.03.002
+   VANHOEK RI, 2000, INT J AGILE MANAGEME, V2, P196
+   VANHOEK RI, 2001, INT J OPER PROD MAN, V21, P126
+   VONDEREMBSE MA, 2006, INT J PROD ECON, V100, P223, DOI
+   10.1016/j.ijpe.2004.11.014
+   WHITE A, 2005, INT J INFORM MANAGE, V25, P396, DOI
+   10.1016/j.ijinfomgt.2005.06.009
+   WIKNER J, 2005, INT J OPER PROD MAN, V25, P623, DOI
+   10.1108/01443570510605072
+   WOMACK JP, 1996, LEAN THINKING BANISH
+   WONG CY, 2005, SUPPLY CHAIN MANAG, V10, P367
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YOO YJ, 2002, COMPUT IND ENG, V43, P159
+   YOUSSEF MA, 2002, TOTAL QUAL MANAGE, V13, P877, DOI
+   10.1080/0954412022000010217
+   YUSUF YY, 1999, INT J PROD ECON, V62, P33
+   ZHANG QY, 2006, INT J OPER PROD MAN, V26, P580, DOI
+   10.1108/01443570610666957
+NR 92
+TC 1
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0925-5273
+J9 INT J PROD ECON
+JI Int. J. Prod. Econ.
+PD MAY
+PY 2011
+VL 131
+IS 1
+SI Sp. Iss. SI
+BP 342
+EP 354
+DI 10.1016/j.ijpe.2010.04.045
+PG 13
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 748LZ
+UT ISI:000289393400038
+ER
+
+PT J
+AU Wong, H
+   Potter, A
+   Naim, M
+AF Wong, Hartanto
+   Potter, Andrew
+   Naim, Mohamed
+TI Evaluation of postponement in the soluble coffee supply chain: A case
+   study
+SO INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS
+LA English
+DT Proceedings Paper
+DE Supply chain; Postponement; Inventory; Production
+ID PRODUCT DIFFERENTIATION; HEWLETT-PACKARD; CENTRALIZATION; STRATEGIES;
+   INVENTORY; FRAMEWORK; BENEFITS; DESIGN; COSTS
+AB This paper, through a case study, evaluates postponement as an option
+   to improve supply chain performances in a soluble coffee manufacturer.
+   The main focus of the paper is on the development of a numerical
+   data-driven methodology for quantifying the benefits of postponement
+   obtained from the total inventory reduction. Our study shows that
+   significant cost swings are achievable by delaying the labelling and
+   packaging processes until actual orders from retailers are known. These
+   savings include the reduction of the cycle stock, safety stock, and
+   obsolete stock unsold from promotional events. We also discuss the cost
+   implications of the proposed configuration that may offset the
+   estimated potential benefits. The methodology presented in this paper
+   can also be used in many other supply chains, particularly in the food
+   industry with similar environments. This paper contributes to the
+   literature in extending the very short list of published work
+   presenting a systematic methodology of characterising the postponement
+   benefits in real world settings and driven by numerical data. (C) 2010
+   Elsevier B.V. All rights reserved.
+C1 [Wong, Hartanto] Univ Aarhus, Aarhus Sch Business, Dept Business Studies, CORAL, DK-8210 Aarhus V, Denmark.
+   [Potter, Andrew; Naim, Mohamed] Cardiff Univ, Cardiff Business Sch, Logist Syst Dynam Grp, Cardiff CF10 3EU, S Glam, Wales.
+RP Wong, H, Univ Aarhus, Aarhus Sch Business, Dept Business Studies,
+   CORAL, Fuglesangs Alle 4, DK-8210 Aarhus V, Denmark.
+EM hwong@asb.dk
+CR AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   BOWERSOX DJ, 1996, LOGISTICAL MANAGEMEN
+   BROWN AO, 2000, INTERFACES, V30, P65
+   DAPIRAN P, 1992, INT J PHYS DISTRIB, V22, P7
+   EPPEN GD, 1979, MANAGE SCI, V25, P498
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   GARG A, 1997, IIE TRANS, V29, P641
+   GIESBERTS PMJ, 1992, PRODUCTION PLANNING, V3, P300
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LI J, 2007, INT J PROD ECON, V107, P31, DOI 10.1016/j.ijpe.2006.01.007
+   LI SH, 2006, OMEGA-INT J MANAGE S, V34, P107, DOI
+   10.1016/j.omega.2004.08.002
+   MAISTER DH, 1976, INT J PHYS DISTRIB, V6, P124
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   RABINOVICH E, 2003, INT J LOGIST MANAG, V14, P33
+   SIGNORELLI S, HARVARD BUSINESS SCH
+   SILVER EA, 1998, INVENTORY MANAGEMENT
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   SWAMINATHAN JM, 2003, HDB OPERATIONS RES M, P199
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 1999, SUPPLY CHAIN MANAG, V4, P18
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WONG H, 2009, INT J PROD RES, V47, P1201, DOI 10.1080/00207540701549608
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZINN W, 1990, J BUSINESS LOGISTICS, V10, P1
+NR 29
+TC 1
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0925-5273
+J9 INT J PROD ECON
+JI Int. J. Prod. Econ.
+PD MAY
+PY 2011
+VL 131
+IS 1
+SI Sp. Iss. SI
+BP 355
+EP 364
+DI 10.1016/j.ijpe.2010.08.015
+PG 10
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 748LZ
+UT ISI:000289393400039
+ER
+
+PT J
+AU Parmigiani, A
+   Klassen, RD
+   Russo, MV
+AF Parmigiani, Anne
+   Klassen, Robert D.
+   Russo, Michael V.
+TI Efficiency meets accountability: Performance implications of supply
+   chain configuration, control, and capabilities
+SO JOURNAL OF OPERATIONS MANAGEMENT
+LA English
+DT Article
+DE Supply management; Social responsibility; Environmental issues;
+   International/global issues
+ID RESOURCE-BASED VIEW; COMPETITIVE ADVANTAGE; ENVIRONMENTAL PERFORMANCE;
+   FINANCIAL PERFORMANCE; DYNAMIC CAPABILITIES; RADICALLY REINVENT;
+   STAKEHOLDER THEORY; MANAGEMENT; PERSPECTIVE; IMPACT
+AB The public increasingly holds firms accountable for social and
+   environmental outcomes, such as product toxicity problems and human
+   rights violations, throughout their global supply chains. How can
+   companies improve the social and environmental performance within their
+   supply chains, particularly as other competitive pressures, such as
+   cost and quality, continue to escalate? Starting from an efficient
+   versus responsive supply chain framework, we develop an integrative
+   model that blends together elements of supply chain configuration,
+   stakeholder management, and capability development. Specifically, we
+   spotlight the dimensions of control and accountability that
+   collectively determine stakeholder exposure, and show how this new
+   construct affects the linkages between supply chain capabilities,
+   configuration, and performance. In particular, this analysis reveals
+   that the nature of stakeholder exposure determines how
+   social/environmental technical and relational capabilities impact
+   social and environmental outcomes. We conclude with implications for
+   research and practice, discussing how current supply chain theories
+   must be extended to incorporate external stakeholders, to clarify
+   strategies and identify potential pitfalls, and to better predict
+   performance outcomes. Published by Elsevier B.V.
+C1 [Parmigiani, Anne; Russo, Michael V.] Univ Oregon, Lundquist Coll Business, Eugene, OR 97403 USA.
+   [Klassen, Robert D.] Univ Western Ontario, Richard Ivey Sch Business, London, ON N6A 3K7, Canada.
+RP Parmigiani, A, Univ Oregon, Lundquist Coll Business, Eugene, OR 97403
+   USA.
+EM annepa@uoregon.edu
+   rklassen@ivey.uwo.ca
+   mrusso@uoregon.edu
+FU Sciences and Humanities Research Council of Canada (SSHRC) 
+FX For helpful comments and encouragement, the authors thank Corentin
+   Curchod, Tom Dean, Dror Etzion, Edward Freeman, Susan Golicic, Jeff
+   Harrison, Andy King, Mike Lenox, Alan Meyer, Bill Starbuck, Dave
+   Whetten, and seminar participants at the University of Oregon and at
+   the 2010 ARCS conference. The second author would like to thank the
+   Social Sciences and Humanities Research Council of Canada (SSHRC) for
+   financial support of this research.
+CR *GLOB REP IN, 2006, SUST REP GUID
+   *GOV HIGHW SAF ASS, 2010, DISTR DRIV
+   *HEWL PACK, 2010, E REC E WAST HP US F
+   *HP AL, 2010, HP WAY
+   *INT DAT CORP, 2010, WORLDW Q PC TRACK
+   *USDA, 2007, IND PALM OIL PROD PR
+   ALLENBY BR, 1991, SSA J, V5, P5
+   ARAGONCORREA JA, 2003, ACAD MANAGE REV, V28, P71
+   ASTON A, 2005, BUSINESS WEEK ON AUG
+   AUSTIN J, 2004, STARBUCKS CONSERVATI
+   AWAYSHEH A, 2010, INT J OPER PROD MAN, V30, P1246, DOI
+   10.1108/01443571011094253
+   BALFOUR F, 2010, BLOOMBERG BUSINE SEP
+   BERCHICCI L, 2007, ACAD MANAG ANN, V1, P513, DOI 10.1080/078559816
+   BOYD DE, 2007, LONG RANGE PLANN, V40, P341, DOI
+   10.1016/j.lrp.2006.12.007
+   BOZARTH CC, 2009, J OPER MANAG, V27, P78, DOI 10.1016/j.jom.2008.07.003
+   BROWN C, 2008, AM J AGR ECON, V90, P1296, DOI
+   10.1111/j.1467-8276.2008.01220.x
+   BRUSONI S, 2001, ADMIN SCI QUART, V46, P597
+   BUTTERFIELD KD, 2004, BUSINESS SOC, V43, P162
+   CARTER CR, 2004, J BUSINESS LOGISTICS, V25, P145
+   CARTER CR, 2008, INT J PHYS DISTR LOG, V38, P360, DOI
+   10.1108/09600030810882816
+   CHATTERJI A, 2006, CALIF MANAGE REV, V48, P29
+   CHRISTMANN P, 2000, ACAD MANAGE J, V43, P663
+   CHRISTOPHER M, 2000, SUPPLY CHAIN MANAG, V5, P206, DOI
+   10.1108/13598540010347334
+   CHRISTOPHER M, 2006, INT J LOGIST MANAG, V17, P277
+   CORBETT CJ, 2006, M&SOM-MANUF SERV OP, V8, P5, DOI
+   10.1287/msom.1060.0095
+   DARNALL N, 2008, BUSINESS STRATEGY EN, V17, P30
+   DELEEUW S, 2009, INT J OPER PROD MAN, V29, P720, DOI
+   10.1108/01443570910971397
+   DENHOND F, 1998, TECHNOL ANAL STRATEG, V10, P529
+   DIERICKX I, 1989, MANAGE SCI, V35, P1504
+   DONALDSON T, 1995, ACAD MANAGE REV, V20, P65, DOI 10.2307/258887
+   DYER JH, 1998, ACAD MANAGE REV, V23, P660
+   DYER JH, 2000, COLLABORATIVE ADVANT
+   DYER JH, 2000, STRATEGIC MANAGE J, V21, P345
+   ELKINGTON J, 1997, CANNIBALS FORKS TRIP
+   ETZION D, 2007, J MANAGE, V33, P637, DOI 10.1177/0149206307302553
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   FREEMAN RE, 1984, STRATEGIC MANAGEMENT
+   FROOMAN J, 2005, BUSINESS SOC, V44, P3
+   GECKER R, 2008, CORPORATE MEETINGS I, V27, P18
+   GEFFEN CA, 2000, INT J OPER PROD MAN, V20, P166
+   GERAINT J, 2008, HP OFF ADV CSR SMALL
+   GERMAIN R, 2008, J OPER MANAG, V26, P557, DOI 10.1016/j.jom.2007.10.002
+   GRAEDEL TH, 2009, IND ECOLOGY SUSTAINA
+   HARRIGAN KR, 1986, STRATEGIC MANAGE J, V7, P535
+   HARRIS RG, 1980, CANADIAN J EC, V13, P125
+   HART SL, 1995, ACAD MANAGE REV, V20, P986
+   HEIDE JB, 1992, ACAD MANAGE J, V35, P285
+   HELFAT CE, 2000, STRATEGIC MANAGE J, V21, P961
+   HENDRY JR, 2006, BUSINESS SOC, V45, P47
+   HILL CWL, 2008, STRATEGIC MANAGEMENT
+   HOLCOMB TR, 2007, J OPER MANAG, V25, P464, DOI 10.1016/j.jom.2006.05.003
+   HUEGENS P, 2002, BUS SOC, V41, P36
+   IRELAND RD, 2007, J OPER MANAG, V25, P482, DOI 10.1016/j.jom.2006.05.004
+   IYER KNS, 2009, INFORM MANAGE-AMSTER, V46, P313, DOI
+   10.1016/j.im.2009.06.002
+   JONES TM, 1999, ACAD MANAGE REV, V24, P206
+   KANG MP, 2009, STRATEG MANAGE J, V30, P117, DOI 10.1002/smj.730
+   KETCHEN DJ, 2007, J OPER MANAG, V25, P573, DOI 10.1016/j.jom.2006.05.010
+   KING A, 2007, ACAD MANAGE REV, V32, P889
+   KING AA, 2005, ACAD MANAGE J, V48, P1091
+   KLASSEN RD, 2004, UNDERSTANDING SUPPLY, P229
+   KLASSEN RD, 2009, IMPROVING SOCIAL PER
+   KLEINDORFER PR, 2005, PROD OPER MANAG, V14, P482
+   KOWITT B, 2010, FORTUNE         0823, P50
+   KRAUSE DR, 1998, J OPER MANAG, V17, P39
+   KRAUSE DR, 2007, J OPER MANAG, V25, P528, DOI 10.1016/j.jom.2006.05.007
+   KRISHNAMURTHY R, 2007, INT J OPER PROD MAN, V27, P588, DOI
+   10.1108/01443570710750277
+   KRUT R, 1998, ISO14001
+   LAWSON B, 2008, J OPER MANAG, V26, P446, DOI 10.1016/j.jom.2007.10.001
+   LEE HL, 2010, HARVARD BUS REV, V88, P62
+   LI G, 2010, INT J PROD ECON, V124, P310, DOI 10.1016/j.ijpe.2009.11.027
+   LINTON JD, 2007, J OPER MANAG, V25, P1075, DOI 10.1016/j.jom.2007.01.012
+   MACAULAY S, 1963, AM SOCIOL REV, V28, P55
+   MACNEIL IR, 1978, NORTHWEST U LAW REV, V72, P854
+   MALONI M, 2000, J BUSINESS LOGISTICS, V21, P49
+   MARGOLIS JD, 2003, ADMIN SCI QUART, V48, P268
+   MASONJONES R, 2000, INT J PROD RES, V38, P4061
+   MAYER NJ, 2008, J ECON BEHAV ORGAN, V66, P106
+   MCDONOUGH W, 2002, CRADLE TO CRADLE RET
+   MCGINN D, 2009, NEWSWEEK, V154, P34
+   MITCHELL RK, 1997, ACAD MANAGE REV, V22, P853
+   MOLLENKOPF D, 2010, J PHYS DISTRIBUTION, V40, P14
+   MUELLER M, 2009, J BUS ETHICS, V89, P509, DOI 10.1007/s10551-008-0013-9
+   NEW S, 2004, UNDERSTANDING SUPPLY, P253
+   NEW S, 2010, HARVARD BUS REV, V88, P76
+   ORLITZKY M, 2003, ORGAN STUD, V24, P403
+   OROURKE D, 2006, WORLD DEV, V34, P899, DOI
+   10.1016/j.worlddev.2005.04.020
+   PAGELL M, 2009, J SUPPLY CHAIN MANAG, V45, P39
+   PAGELL M, 2010, J SUPPLY CHAIN MANAG, V46, P57
+   PARMIGIANI A, 2009, STRATEG MANAGE J, V30, P1065, DOI 10.1002/smj.769
+   PARMIGIANI A, 2010, EUROPEAN MANAGEMENT, V7, P46
+   PEREIRA J, 2008, WALL STREET J E EDIT, V251, P113
+   PEREIRA J, 2008, WALL STREET J E EDIT, V251, B1
+   PETERSEN KJ, 2005, J OPER MANAG, V23, P371, DOI
+   10.1016/j.jom.2004.07.009
+   PFEFFER J, 1978, EXTERNAL CONTROL ORG
+   PHILLIPS R, 2005, BUSINESS SOC REV, V110, P345, DOI
+   10.1111/J.0045-3609.2005.00020.X
+   PIL FK, 2003, PROD OPER MANAG, V12, P404
+   PORTER ME, 1980, COMPETITIVE STRATEGY
+   PULLMAN ME, 2009, J SUPPLY CHAIN MANAG, V45, P38
+   REISKIN ED, 2000, J IND ECOL, V3, P19
+   REUTER C, 2010, J SUPPLY CHAIN MANAG, V46, P45
+   ROTH AV, 2008, J SUPPLY CHAIN MANAG, V44, P22
+   ROWLEY TJ, 2003, ACAD MANAGE REV, V28, P204
+   RUSINKO CA, 2007, IEEE T ENG MANAGE, V54, P445, DOI
+   10.1109/TEM.2007.900806
+   RUSSO MV, 1997, ACAD MANAGE J, V40, P534
+   SCHWARTZ A, 2010, GEN MILLS DITCHES DI
+   SEURING S, 2004, J CLEAN PROD, V12, P1059, DOI
+   10.1016/j.jclepro.2004.02.006
+   SHARFMAN MP, 2009, BUS STRATEG ENVIRON, V18, P1, DOI 10.1002/bse.580
+   SHARMA S, 2007, CAN J ADM SCI, V24, P268, DOI 10.1002/CJAS.35
+   SRIVASTAVA SK, 2007, INT J MANAG REV, V9, P53, DOI
+   10.1111/j.1468-2370.2007.00202.x
+   SUCHMAN MC, 1995, ACAD MANAGE REV, V20, P571
+   TAPSCOTT D, 2003, NAKED CORPORATION AG
+   TEECE DJ, 1994, J ECON BEHAV ORGAN, V23, P1
+   VACHON S, 2007, INT J PROD RES, V45, P4357, DOI
+   10.1080/00207540701440303
+   VACHON S, 2008, INT J PROD ECON, V11, P299
+   VALOR C, 2005, BUSINESS SOC REV, V110, P191
+   VOGEL D, 2005, MARKET VIRTUE POTENT
+   VONHIPPEL E, 1988, SOURCES INNOVATION
+   WADDOCK S, 2004, BUSINESS SOC REV, V109, P5
+   WELCOMER SA, 2003, BUS SOC, V42, P43
+   WILLIAMSON OE, 1975, MARKETS HIERARCHIES
+   WILLIAMSON OE, 2008, J SUPPLY CHAIN MANAG, V44, P5
+   WINTER SG, 2003, STRATEGIC MANAGE J, V24, P991, DOI 10.1002/smj.318
+   WONG S, 2010, BLOOMBERG BUSIN 0603
+   WRIGHT C, 2007, ACAD MANAGEMENT PERS, P64
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZAHEER A, 1998, ORGAN SCI, V9, P141
+   ZHU QH, 2004, J OPER MANAG, V22, P265, DOI 10.1016/j.jom.2004.01.005
+   ZSIDISIN GA, 2001, EUROPEAN J PURCHASIN, V7, P61
+NR 128
+TC 0
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0272-6963
+J9 J OPER MANAG
+JI J. Oper. Manag.
+PD MAR
+PY 2011
+VL 29
+IS 3
+BP 212
+EP 223
+DI 10.1016/j.jom.2011.01.001
+PG 12
+SC Management; Operations Research & Management Science
+GA 738MO
+UT ISI:000288644100004
+ER
+
+PT J
+AU Tang, D
+AF Tang, Dong
+TI Managing finished-goods inventory under capacitated delayed
+   differentiation
+SO OMEGA-INTERNATIONAL JOURNAL OF MANAGEMENT SCIENCE
+LA English
+DT Article
+DE Capacity; Delayed differentiation; Forecasted advance-demand information
+ID ADVANCE DEMAND INFORMATION; SUPPLY CHAIN; PRODUCT DIFFERENTIATION;
+   ORDER INFORMATION; MULTIPLE PRODUCTS; POSTPONEMENT; MANAGEMENT;
+   DECISIONS; POLICIES; COSTS
+AB Delayed differentiation or postponement is widely advocated to mitigate
+   conflicts between product diversity and inventory cost savings.
+   Manufacturers practicing postponement often suffer from severely
+   constrained finishing capacities and noticeable finishing lead times.
+   Therefore, inventories are still needed for finished products. Using
+   the concept of inventory shortfall, this paper studies base-stock
+   inventory models with and without demand forecasting and provides a
+   computationally efficient method to set optimal inventory targets for
+   finished products under capacitated postponement. Computations show
+   inventory-saving benefit quickly vanishes after the capacity reaches a
+   certain level. The value of forecasted advance-demand information (ADI)
+   to postponement is justified, but can easily be overstated. Finishing
+   capacities usually force manufacturers to build ahead according to
+   demand forecast. When capacity limitation becomes severe, intuitions
+   often guide producers to build to forecast even more than finishing
+   lead times ahead. Results of this research indicate that these
+   intuitions may be invalid and build to forecast more than finishing
+   lead times ahead may not be a good practice. Further studies reveal
+   that under capacitated postponement the forecasted advance-demand
+   information is useful only when the variance of demand forecast errors
+   is less than that of demands, and show that the optimal forecast lead
+   time can be obtained in the same way as if the capacity is unlimited.
+   (C) 2010 Elsevier Ltd. All rights reserved.
+C1 [Tang, Dong] Intel Corp, Customer Fulfillment Planning & Logist Grp, Chandler, AZ 85226 USA.
+RP Tang, D, 2130 E Saltsage Dr, Phoenix, AZ 85048 USA.
+EM dong.tang@intel.com
+CR ASMUSSEN S, 2003, APPL PROBABILITY QUE
+   AVIV Y, 1999, QUANTITATIVE MODELS, P553
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BRUCE L, 1987, INT MANAGEMENT   NOV, P24
+   CHEN F, 2001, MANUFACTURING SERVIC, V3, P53
+   CHEN L, 2009, MANAGE SCI, V55, P781, DOI 10.1287/mnsc.1080.0983
+   CHEN LH, 2010, OMEGA-INT J MANAGE S, V38, P431, DOI
+   10.1016/j.omega.2009.10.007
+   DECROIX GA, 1998, MANAGE SCI, V44, P950
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FEDERGRUEN A, 1986, MATH OPER RES, V11, P193
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FELLER W, 1968, INTRO PROBABILITY TH, V2
+   FRIEDMAN JH, 2001, ANN STAT, V29, P1189
+   FU K, 2006, OPER RES, V54, P1137, DOI 10.1287/opre.1060.0335
+   GALLEGO G, 2001, MANAGE SCI, V47, P1344
+   GARG A, 1997, IIE TRANS, V29, P641
+   GLASSERMAN P, 1996, OPER RES, V44, P724
+   GRAMAN GA, 1998, P 1998 MSOM C SCH BU, P67
+   GRASSMANN WK, 1989, OPER RES, V37, P141
+   HALLGREN M, 2009, OMEGA-INT J MANAGE S, V37, P746, DOI
+   10.1016/j.omega.2008.07.004
+   HARIHARAN R, 1995, MANAGE SCI, V41, P1599
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 2000, MANAGE SCI, V46, P626
+   LINDLEY DV, 1952, P CAMB PHILOS SOC, V48, P277
+   MAGEE JF, 1985, MODERN LOGISTICS MAN
+   MARKLUND J, 2006, OPER RES, V54, P988, DOI 10.1287/opre.1060.0319
+   OZER O, 2004, OPER RES, V52, P988, DOI 10.1287/opre.1040.0126
+   SCHAPIRE RE, 2003, LECT NOTES STAT, V171, P149
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   TAN T, 2007, EUR J OPER RES, V177, P897
+   TAN T, 2009, OR SPECTRUM, V31, P337, DOI 10.1007/s00291-008-0122-y
+   TANG D, 2009, INVENTORY PLANNING F
+   WIJNGAARD J, 2007, OR SPECTRUM, V29, P643, DOI 10.1007/s00291-006-0076-x
+   WU YN, 2008, INT J PROD ECON, V115, P1, DOI 10.1016/j.ijpe.2008.02.016
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 39
+TC 0
+PU PERGAMON-ELSEVIER SCIENCE LTD
+PI OXFORD
+PA THE BOULEVARD, LANGFORD LANE, KIDLINGTON, OXFORD OX5 1GB, ENGLAND
+SN 0305-0483
+J9 OMEGA-INT J MANAGE SCI
+JI Omega-Int. J. Manage. Sci.
+PD OCT
+PY 2011
+VL 39
+IS 5
+BP 481
+EP 492
+DI 10.1016/j.omega.2010.10.006
+PG 12
+SC Management; Operations Research & Management Science
+GA 728XB
+UT ISI:000287906700003
+ER
+
+PT J
+AU Trentin, A
+   Salvador, F
+   Forza, C
+   Rungtusanatham, MJ
+AF Trentin, Alessio
+   Salvador, Fabrizio
+   Forza, Cipriano
+   Rungtusanatham, M. Johnny
+TI Operationalising form postponement from a decision-making perspective
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE form postponement; delayed product differentiation; production planning
+   and control; forecasting; mass customisation
+ID DELAYED PRODUCT DIFFERENTIATION; MASTER PRODUCTION SCHEDULE; MULTIPLE
+   FREEZE FENCES; SUPPLY CHAIN; MRP SYSTEMS; TO-ORDER; DESIGN; INVENTORY;
+   STRATEGIES; FRAMEWORK
+AB Form postponement means delaying the commitment of inventory to the
+   final configuration of a product as long as possible. Many firms today
+   are striving to redesign their products and/or their manufacturing and
+   supply chain processes to implement form postponement. Opportunities
+   for form postponement, however, are sometimes lost in the companies'
+   production-planning processes. By focusing on the deferring of product
+   mix decisions in the master production scheduling process, this paper
+   shows that form postponement opportunities can be divided into two
+   components: one whose pursuit necessarily requires product and/or
+   transformation process redesign, the other that can be pursued by
+   changing the sales forecasting and master production scheduling process
+   alone. We develop an operational procedure to identify and quantify,
+   for a given product family, all opportunities for form postponement and
+   their two respective components. Then, we discuss and empirically
+   illustrate how the proposed measurement procedure may support companies
+   in changing their decision-making routines to implement form
+   postponement. Finally, we set future research directions on form
+   postponement suggested by our results.
+C1 [Trentin, Alessio; Forza, Cipriano] Univ Padua, Dipartimento Tecn & Gest Sistemi Ind, I-36100 Vicenza, Italy.
+   [Trentin, Alessio] Zaragoza Logist Ctr, Zaragoza 50197, Spain.
+   [Salvador, Fabrizio] Inst Empresa Business Sch, Dept Operat & Technol Management, E-28006 Madrid, Spain.
+   [Rungtusanatham, M. Johnny] Univ Minnesota, Curtis L Carlson Sch Management, Operat & Management Sci Dept, Minneapolis, MN 55455 USA.
+RP Trentin, A, Univ Padua, Dipartimento Tecn & Gest Sistemi Ind, Stradella
+   S Nicola 3, I-36100 Vicenza, Italy.
+EM alessio.trentin@unipd.it
+FU Spanish Ministry of Science and Innovation [SEJ2007-30895-E-ECON];
+   University of Padova [CPDRO63848/06, 6OA10-1811/06, 6OA10-5127/08]
+FX We would like to thank three anonymous reviewers for their comments on
+   this paper and acknowledge the financial support from the Spanish
+   Ministry of Science and Innovation, project SEJ2007-30895-E-ECON, and
+   from the University of Padova, projects CPDRO63848/06, 6OA10-1811/06,
+   and 6OA10-5127/08.
+CR ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   DAPIRAN P, 1992, INT J PHYS DISTRIB, V22, P7
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   FORZA C, 2005, J OPER MANAG, V23, P319, DOI 10.1016/j.jom.2004.10.001
+   FORZA C, 2008, INT J OPER PROD MAN, V28, P1067, DOI
+   10.1108/01443570810910197
+   FRANSOO JC, 2006, J OPER MANAG, V24, P813, DOI 10.1016/j.jom.2005.09.008
+   GARG A, 1997, IIE TRANS, V29, P641
+   GIESBERTS PMJ, 1992, PRODUCTION PLANNING, V3, P300
+   GUPTA S, 1998, IIE TRANS, V30, P933
+   HARRISON A, 1997, INT J LOGISTICS MANA, V8, P75
+   HARRISON A, 2008, INT J PROD RES, V46, P173, DOI
+   10.1080/00207540600844076
+   HESKETT JL, 1977, HARVARD BUS REV, V55, P119
+   HINES P, 1997, INT J OPER PROD MAN, V17, P46
+   HOEKSTRA S, 1992, INTEGRATED LOGISTICS
+   HOWARD M, 2001, INT J VEHICLE DES, V26, P455
+   HSU HM, 2004, EUR J OPER RES, V156, P183, DOI
+   10.1016/S0377-2217(03)00018-3
+   KADIPASAOGLU SN, 1995, J OPERATIONS MANAGEM, V13, P193
+   KUMAR S, 2009, INT J PROD RES, V47, P143, DOI 10.1080/00207540701477792
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1998, MANAGE SCI, V44, P162
+   LIN NP, 1992, DECISION SCI, V23, P839
+   MA SH, 2002, EUR J OPER RES, V142, P523
+   MASONJONES R, 1999, INT J LOGIST MANAG, V10, P13
+   MATHER HF, 1986, PRODUCTION INVENTORY, V27, P90
+   MATTHEWS P, 2004, SUPPLY CHAIN MANAG, V8, P28
+   MEREDITH J, 2007, J OPER MANAG, V25, P623, DOI 10.1016/j.jom.2006.04.006
+   NEW C, 1974, MANAGE DECIS, V12, P167
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   ORLICKY JA, 1975, MAT REQUIREMENTS PLA
+   PENTLAND BT, 2003, MANAGE SCI, V49, P857
+   ROBINSON EP, 2007, INT J PROD RES, V46, P1933
+   SAHIN F, 2008, INT J PROD ECON, V115, P528, DOI
+   10.1016/j.ijpe.2008.05.019
+   SHAO XF, 2008, INT J PROD RES, V46, P153, DOI 10.1080/00207540600844027
+   SHARMAN G, 1984, HARVARD BUS REV, V62, P71
+   SKIPWORTH H, 2004, INT J PROD RES, V42, P2063, DOI
+   10.1080/00207540410001661373
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   SRIDHARAN SV, 1987, MANAGE SCI, V33, P1137
+   SRIDHARAN V, 1990, INT J PROD RES, V28, P541
+   SWAMINATHAN JM, 2003, HDBK OPER R, V11, P199
+   VANDERVLIST P, 1997, INT J PROD ECON, V53, P35
+   VOLLMANN TE, 2005, MANUFACTURING PLANNI
+   WHANG S, 1998, PRODUCT VARIETY MANA, P65
+   WIKNER J, 2005, INT J LOGIST-RES APP, V8, P211
+   WONG H, 2009, INT J PROD RES, V47, P1201, DOI 10.1080/00207540701549608
+   XIE JX, 2003, INT J PROD ECON, V83, P65
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2005, INT J PROD RES, V43, P991, DOI
+   10.1080/00207540412331316134
+   YEUNG JHY, 1998, INT J PROD RES, V36, P313
+   YEUNG JHY, 1999, INT J PROD RES, V37, P2977
+   YEUNG JHY, 2003, INT J PROD RES, V41, P2201, DOI
+   10.1080/0020754031000121491
+   ZHAO X, 1993, J OPERATIONS MANAGEM, V11, P185
+   ZHAO XD, 2001, PROD OPER MANAG, V10, P45
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 61
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2011
+VL 49
+IS 7
+BP 1977
+EP 1999
+DI 10.1080/00207541003657388
+PG 23
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 716NC
+UT ISI:000286977100007
+ER
+
+PT J
+AU Su, CJ
+   Chuang, HC
+AF Su, Chuan-Jun
+   Chuang, Hsin-Chi
+TI TOWARD MASS CUSTOMIZED PRODUCT DEPLOYMENT IN E-COMMERCE: THE
+   MODULARIZATION FUNCTION AND POSTPONEMENT STRATEGY
+SO JOURNAL OF ORGANIZATIONAL COMPUTING AND ELECTRONIC COMMERCE
+LA English
+DT Article
+DE Customer Order Decoupling Point (CODP); e-commerce; mass customization;
+   product deployment; postponement strategy
+ID ORDER DECOUPLING POINT; SUPPLY CHAIN; HEWLETT-PACKARD; DESIGN;
+   BENEFITS; ADOPTION; MODEL
+AB Strategically deploying customized products in an e-commerce
+   environment not only helps businesses respond with greater agility to
+   customer needs and strengthen their market position, but also helps
+   businesses gain competitive edge and increase profitability. Underlying
+   successful mass customization within the digital marketplace, a firm
+   needs a methodology for striking a balance between the degree of
+   customization and product pricing and delivery time-a critical supply
+   chain issue. Providing either too much or too little customization can
+   negatively impact both the business and the customer.
+   This study introduces a decision-making method for product
+   customization. This method takes into account the level of
+   customization, production costs, and the product delivery time and
+   applies the concept of postponement strategy to the product supply
+   chain to boost overall supply chain effectiveness and customer
+   satisfaction. Bicycle customization is used as an example to
+   demonstrate the feasibility of the new approach to determine the
+   optimal level of customization in product deployment.
+C1 [Su, Chuan-Jun; Chuang, Hsin-Chi] Yuan Ze Univ, Dept Ind Engn & Management, Jhongli 320, Taoyuan County, Taiwan.
+RP Su, CJ, Yuan Ze Univ, Dept Ind Engn & Management, 135 Yuandong Rd,
+   Jhongli 320, Taoyuan County, Taiwan.
+EM iecjsu@saturn.yzu.edu.tw
+CR *GLOB LOG RES TEAM, 1995, WORLD CLASS LOG CHAL
+   ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   ANDERSON B, 2006, STRATEGY LEADERSHIP, V34, P19
+   AVIV Y, 2001, OPER RES, V49, P578
+   BALLOU RH, 1999, BUSINESS LOGISTICS M
+   BRUN A, 2009, INT J PROD ECON, V120, P205, DOI
+   10.1016/j.ijpe.2008.07.020
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CHANG HL, 2009, J ORG COMP ELECT COM, V19, P237, DOI
+   10.1080/10919390903262602
+   CHASE RB, 2006, OPERATIONS MANAGEMEN
+   DEWAN R, 2000, J MANAGE INFORM SYST, V17, P9
+   DROGE C, 1995, P AM MARK ASS ED C W, P263
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FAN ZQ, 2005, STORAGE TRANSPORTATI, V27, P19
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   GOLDSBY TJ, 2003, INT J LOGIST MANAG, V14, P33
+   GRAMAN G, 2005, J CORP ACCOUNT FINAN, V17, P61
+   GRAMAN GA, 2010, EUR J OPER RES, V201, P34, DOI
+   10.1016/j.ejor.2009.03.001
+   HAU LL, 1994, MANAGEMENT DESIGN EN, P105
+   HOEK V, 2001, INT J OPERATIONS MAN, V11, P161
+   HUANG YY, 2008, J MANUF SYST, V27, P111, DOI 10.1016/j.jmsy.2008.10.002
+   KAPLAN AM, 2006, J PROD INNOVAT MANAG, V23, P168
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1997, MANAGE SCI, V43, P546
+   LEUNG SCH, 2007, COMPUT IND ENG, V53, P531, DOI
+   10.1016/j.cie.2007.05.010
+   LI J, 2008, OMEGA, V36, P777
+   MA SH, 2002, EUR J OPER RES, V142, P523
+   MIKKOLA JH, 2003, IEEE T ENG MANAGE, V50, P204, DOI
+   10.1109/TEM.2003.810826
+   MIKKOLA JH, 2007, IEEE T ENG MANAGE, V54, P27
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   PEKKARINEN S, 2008, INT J LOGIST MANAG, V19, P84
+   PETERS L, 2000, INT J INFORM MANAGE, V20, P103
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   RUDBERG M, 2004, PROD PLAN CONTROL, V15, P445, DOI
+   10.1080/095372804200238764
+   STAN D, 1996, FUTURE PERFECT
+   SU JCP, 2005, J OPER MANAG, V23, P305, DOI 10.1016/j.jom.2004.10.016
+   SWAMINATHAN JM, 2003, HDBK OPER R, V11, P199
+   VOLLMANN J, 1997, J ACOUST SOC AM 1, V102, P909
+   WIKNER J, 2005, INT J OPER PROD MAN, V25, P623, DOI
+   10.1108/01443570510605072
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2007, INT J PROD RES, V45, P971, DOI 10.1080/00207540600698886
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 44
+TC 0
+PU TAYLOR & FRANCIS INC
+PI PHILADELPHIA
+PA 325 CHESTNUT ST, SUITE 800, PHILADELPHIA, PA 19106 USA
+SN 1091-9392
+J9 J ORGAN COMPUT ELECTRON COMME
+JI J. Organ. Comp. Electron. Commer.
+PY 2011
+VL 21
+IS 1
+BP 24
+EP 49
+DI 10.1080/10919392.2011.541000
+PG 26
+SC Computer Science, Information Systems; Computer Science,
+   Interdisciplinary Applications
+GA 715NX
+UT ISI:000286892300003
+ER
+
+PT J
+AU Trentin, A
+AF Trentin, Alessio
+TI Third-party logistics providers offering form postponement services:
+   value propositions and organisational approaches
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE mass customisation; postponement; supply chain management
+ID ORDER SUPPLY CHAINS; PRODUCT DIFFERENTIATION; MASS CUSTOMIZATION;
+   HEWLETT-PACKARD; TO-ORDER; INVENTORY; DESIGN; MANAGEMENT; FRAMEWORK;
+   BENEFITS
+AB In today's global supply chains, third-party logistics providers (3PLs)
+   can play an important role in implementing the principle of form
+   postponement (FP). This proposes that activities creating product
+   variety and the associated production mix decisions are deferred along
+   a product family manufacturing and distribution process as long as
+   possible. While both FP and third-party logistics have increasingly
+   drawn the attention of the academic community over the last few years,
+   less research has been carried out on FP supported by 3PLs. The present
+   paper empirically investigates how 3PLs can deliver value to companies
+   offering product variety by providing FP services, defined as the
+   carrying out of variety-creating activities on behalf of these
+   companies close to the target markets. Our findings indicate that,
+   through an FP service, a 3PL can give its customers two different kinds
+   of benefits: either improved performance in serving the customer's
+   existing markets or entry into new geographical markets. Further, our
+   results show that through the choice of the organisational solution for
+   FP service provision, the 3PL can increase FP value by mitigating a
+   number of disadvantages that the customer might incur in the case of
+   in-house implementation of FP. Challenges that the 3PL needs to
+   overcome to actually provide these potential benefits are also
+   identified. The paper concludes by discussing the implications of our
+   findings for both practice and research on FP.
+C1 [Trentin, Alessio] Univ Padua, Dipartimento Tecn & Gest Sistemi Ind, I-36100 Vicenza, Italy.
+   [Trentin, Alessio] Zaragoza Logist Ctr, Zaragoza 50009, Spain.
+RP Trentin, A, Univ Padua, Dipartimento Tecn & Gest Sistemi Ind, Stradella
+   S Nicola 3, I-36100 Vicenza, Italy.
+EM alessio.trentin@unipd.it
+CR ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   ALDERSON W, 1957, MARKETING BEHAV EXEC
+   ANAND KS, 2007, MANAGE SCI, V53, P697, DOI 10.1287/mnsc.1060.0655
+   AVIV Y, 2001, OPER RES, V49, P578
+   BAYUS BL, 1999, MARKET SCI, V18, P137
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   COOPER JC, 1993, INT J PHYS DISTRIB, V23, P12
+   DAVILA T, 2007, INT J PROD RES, V45, P2245, DOI
+   10.1080/00207540600725002
+   EISENHARDT KM, 1989, ACAD MANAGE REV, V14, P532
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FORZA C, 2008, INT J OPER PROD MAN, V28, P1067, DOI
+   10.1108/01443570810910197
+   FUNKE M, 2001, IMF STAFF PAPERS, V48, P225
+   GARCIADASTUGUE SJ, 2007, J BUSINESS LOGISTICS, V28, P57
+   GARG A, 1997, IIE TRANS, V29, P641
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   GUPTA S, 1998, IIE TRANS, V30, P933
+   HARRISON A, 2008, INT J PROD RES, V46, P173, DOI
+   10.1080/00207540600844076
+   HESKETT JL, 1977, HARVARD BUS REV, V55, P119
+   HONG JJ, 2004, TRANSPORT J, V43, P17
+   JOHNSON EM, 2000, INT J LOGISTICS MANA, V11, P19
+   KRAJEWSKI L, 2005, J OPER MANAG, V23, P452, DOI
+   10.1016/j.jom.2004.10.006
+   KUMAR S, 2009, INT J PROD RES, V47, P143, DOI 10.1080/00207540701477792
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LIEB R, 2004, INT J PHYS DISTRIB, V35, P595
+   MARASCO A, 2008, INT J PROD ECON, V113, P127, DOI
+   10.1016/j.ijpe.2007.05.017
+   MATTHEWS P, 2004, SUPPLY CHAIN MANAG, V8, P28
+   MITROFF II, 1974, INTERFACES, V4, P46
+   MURPHY PR, 1998, TRANSPORT J, V37, P26
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PATTON MQ, 1990, QUALITATIVE EVALUATI
+   PINE JB, 1993, MASS CUSTOMIZATION N
+   PRASAD S, 2005, J OPER MANAG, V23, P551, DOI 10.1016/j.jom.2004.10.011
+   SELVIARIDIS K, 2007, INT J LOGIST MANAG, V18, P125
+   SHAO XF, 2008, INT J PROD RES, V46, P153, DOI 10.1080/00207540600844027
+   STRAUSS AL, 1987, QUALITATIVE ANAL SOC
+   SWAMINATHAN JM, 2003, HDBK OPER R, V11, P199
+   THOMPSON JD, 1967, ORG ACTION
+   TWEDE D, 2000, PACKAG TECHNOL SCI, V13, P105
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 1998, INT J LOGISTICS MANA, V9, P95
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 2000, INT J SERV IND MANAG, V11, P374
+   VANHOEK RI, 2000, J SUPPLY CHAIN MANAG, V36, P14
+   VANHOEK RI, 2000, TRANSPORT RES E-LOG, V36, P205
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   VOSS C, 2002, INT J OPER PROD MAN, V22, P195
+   WONG H, 2009, INT J PROD RES, V47, P1201, DOI 10.1080/00207540701549608
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2005, INT J LOGIST MANAG, V16, P192
+   YANG B, 2005, INT J PROD RES, V43, P991, DOI
+   10.1080/00207540412331316134
+   YANG B, 2007, INT J PROD RES, V45, P971, DOI 10.1080/00207540600698886
+   YEUNG JHY, 2007, INT J PHYS DISTRIB, V37, P331
+   YIN RK, 1984, CASE STUDY RES DESIG
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZINN W, 1990, INT J LOGISTICS MANA, V1, P11
+NR 62
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2011
+VL 49
+IS 6
+BP 1685
+EP 1712
+DI 10.1080/00207541003623414
+PG 28
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 696AD
+UT ISI:000285413400009
+ER
+
+PT J
+AU Hult, GTM
+   Craighead, CW
+   Ketchen, DJ
+AF Hult, G. Tomas M.
+   Craighead, Christopher W.
+   Ketchen, David J., Jr.
+TI Risk Uncertainty and Supply Chain Decisions: A Real Options Perspective
+SO DECISION SCIENCES
+LA English
+DT Article
+DE Postponement; Projects; Real Options Theory; Supply Chain Risk; Supply
+   Chain Uncertainty; Survey Research
+ID RESEARCH-AND-DEVELOPMENT; STRUCTURAL EQUATION MODELS;
+   PROJECT-MANAGEMENT; KNOWLEDGE DEVELOPMENT; PERFORMANCE; POSTPONEMENT;
+   VALUATION; DISRUPTIONS; INVESTMENT; COMPETITIVENESS
+AB Supply chain risk uncertainty can create severe repercussions, thus it
+   is not surprising that research interest in supply chain risk has been
+   growing. While extant inquiry is informative, there is a lack of
+   investigations that center on supply chain investment decisions when
+   facing high levels of risk uncertainty. Given the potential dollar
+   value involved in these decisions, an understanding of how these supply
+   chain decisions are made is of significant theoretical and practical
+   importance. Real options theory, with its focus on decision making
+   under conditions of uncertainty, is an appealing theoretical lens for
+   this endeavor. In essence, real options theory asserts that managerial
+   decisions center on creating and then exercising or not exercising
+   certain opportunities. To date, theorizing about and investigations of
+   real options have used firms as their focus. Not yet examined are real
+   options within supply chains that cross firm boundaries and drive much
+   of the competitive activity in the modern economy. Accordingly, we
+   extend real options theory to the supply chain context by examining how
+   different types of options are approached relative to supply chain
+   project investments. Specifically, we theorize how the options will be
+   related to perceived value under conditions of high supply chain risk
+   uncertainty. Overall, our investigation builds knowledge by extending
+   real options theory to the supply chain context and by providing
+   evidence suggesting some options operate differently in supply chains
+   than they do in firms.
+C1 [Hult, G. Tomas M.] Michigan State Univ, Eli Broad Grad Sch Management, E Lansing, MI 48824 USA.
+   [Craighead, Christopher W.] Penn State Univ, Smeal Coll Business, University Pk, PA 16802 USA.
+   [Ketchen, David J., Jr.] Auburn Univ, Coll Business, Auburn, AL 36849 USA.
+RP Hult, GTM, Michigan State Univ, Eli Broad Grad Sch Management, E
+   Lansing, MI 48824 USA.
+EM hult@msu.edu
+   cwc13@psu.edu
+   ketchda@auburn.edu
+CR AMBURGEY TL, 1996, ACAD MANAGE J, V39, P1265
+   ANDERSON JC, 1982, J MARKETING RES, V19, P453
+   ARMSTRONG JS, 1977, J MARKETING RES, V14, P396
+   AUTRY CW, 2008, J BUS LOGIST, V29, P53
+   BAGOZZI RP, 1982, ADM SCI Q, V27, P459
+   BENDOLY E, 2007, J OPER MANAG, V25, P604, DOI 10.1016/j.jom.2006.02.009
+   BLACKHURST J, 2005, INT J PROD RES, V43, P4067, DOI
+   10.1080/00207540500151549
+   BOONE CA, 2007, INT J PHYS DISTRIB, V37, P594
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   COHEN J, 1988, STAT POWER ANAL BEHA
+   CRAIGHEAD CW, 2007, DECISION SCI, V38, P131
+   CRAIGHEAD CW, 2009, J OPER MANAG, V27, P405, DOI
+   10.1016/j.jom.2009.01.002
+   DAPIRAN P, 1992, INT J PHYS DISTRIB, V22, P1
+   DILLMAN DA, 2000, MAIL INTERNET SURVEY
+   DIXIT A, 1994, INVESTMENT UNCERTAIN
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FICHMAN RG, 2005, CALIF MANAGE REV, V47, P74
+   FLYNN BB, 2009, J OPERATIONS MANAGEM, V28, P58
+   FOLTA TB, 2004, STRATEGIC MANAGE J, V25, P121
+   FORNELL C, 1981, J MARKETING RES, V18, P39, DOI 10.2307/3151312
+   FUGATE BS, 2009, J OPER MANAG, V27, P247, DOI 10.1016/j.jom.2008.09.003
+   GEARY S, 2002, SUPPLY CHAIN MANAG, V6, P52
+   GERBING DW, 1992, SOCIOL METHOD RES, V21, P132
+   GREEN M, 2004, BESTS REV, V105, P105
+   HANDFIELD RB, 1999, INTRO SUPPLY CHAIN M
+   HENDRICKS KB, 2003, J OPER MANAG, V21, P501, DOI
+   10.1016/j.jom.2003.02.003
+   HENDRICKS KB, 2005, PROD OPER MANAG, V14, P35
+   HENDRICKS KB, 2009, J OPER MANAG, V27, P233, DOI
+   10.1016/j.jom.2008.09.001
+   HU LT, 1999, STRUCTURAL EQUATION, V1, P55
+   HUBBARD RG, 1994, J ECON LIT, V32, P1816
+   HUBER GP, 1985, STRATEGIC MANAGE J, V6, P171
+   HUCHZERMEIER A, 2001, MANAGE SCI, V47, P85
+   HULT GTM, 2002, ACAD MANAGE J, V45, P577
+   HULT GTM, 2004, ACAD MANAGE J, V47, P241
+   HULT GTM, 2007, STRATEG MANAGE J, V28, P1035, DOI 10.1002/smj.627
+   JAWORSKI BJ, 1993, J MARKETING, V57, P53
+   JOHNSON A, 2007, WALL STREET J   1019
+   JORESKOG KG, 2000, LISREL 8 NEW STAT FE
+   KAHNEMAN D, 1984, AM PSYCHOL, V39, P341
+   KOGUT B, 2001, ORGAN SCI, V12, P744
+   KRAUSE DR, 2007, J OPER MANAG, V25, P528, DOI 10.1016/j.jom.2006.05.007
+   LEE HL, 2004, HARVARD BUS REV, V82, P102
+   LUNSFORD JL, 2007, WALL STREET J   1207
+   MAJD S, 1987, J FINANC ECON, V18, P7
+   MARCH JG, 1958, ORGANIZATIONS
+   MCGRATH RG, 2004, ACAD MANAGE REV, V29, P86
+   MCGRATH RG, 2004, STRATEGIC MANAGE J, V25, P1, DOI 10.1002/smj.358
+   MILLER KD, 2002, STRATEGIC MANAGE J, V23, P655
+   MYERS SC, 1977, J FINANC ECON, V5, P147
+   ORIANI R, 2008, STRATEG MANAGE J, V29, P343, DOI 10.1002/smj.664
+   PODSAKOFF PM, 2003, J APPL PSYCHOL, V88, P879, DOI
+   10.1037/0021-9101.88.5.879
+   RINDOVA V, 2005, ACAD MANAGE J, V48, P103
+   ROSSETTI CL, 2008, DECISION SCI, V39, P507
+   SCHERPEREEL CM, 2008, STRATEG MANAGE J, V29, P455, DOI 10.1002/smj.671
+   SIMON HA, 1979, AM ECON REV, V69, P493
+   SLONE RE, 2004, HARVARD BUS REV, V83, P144
+   SWINK M, 2006, INT J PROD RES, V44, P4223, DOI 10.1080/00207540600575761
+   SWINK M, 2006, J OPER MANAG, V24, P542, DOI 10.1016/j.jom.2005.09.004
+   THOMPSON JD, 1967, ORG ACTION
+   TIWANA A, 2007, DECISION SCI, V38, P157
+   TRIGEORGIS L, 1993, J FINANC QUANT ANAL, V28, P1
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   VANMIEGHEM JA, 1999, MANAGE SCI, V45, P1631
+   WALLER MA, 2000, J BUSINESS LOGISTICS, V21, P133
+   WANG H, 2008, STRATEG MANAGE J, V29, P701, DOI 10.1002/smj.681
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZSIDISIN GA, 2003, J SUPPLY CHAIN MANAG, V39, P14
+   ZSIDISIN GA, 2004, INT J PHYS DISTRIB, V34, P397
+NR 69
+TC 2
+PU WILEY-BLACKWELL PUBLISHING, INC
+PI MALDEN
+PA COMMERCE PLACE, 350 MAIN ST, MALDEN 02148, MA USA
+SN 0011-7315
+J9 DECISION SCI
+JI Decis. Sci.
+PD AUG
+PY 2010
+VL 41
+IS 3
+BP 435
+EP 458
+PG 24
+SC Management
+GA 640PB
+UT ISI:000281062600001
+ER
+
+PT J
+AU Wong, H
+   Wikner, J
+   Naim, M
+AF Wong, Hartanto
+   Wikner, Joakim
+   Naim, Mohamed
+TI Evaluation of postponement in manufacturing systems with non-negligible
+   changeover times
+SO PRODUCTION PLANNING & CONTROL
+LA English
+DT Article
+DE postponement; inventory; queuing models; changeover; setup
+ID MASS CUSTOMIZATION; PRODUCT DIFFERENTIATION; INVENTORY SYSTEMS;
+   STOCHASTIC-MODEL; HEWLETT-PACKARD; TO-ORDER; STRATEGIES; FRAMEWORK;
+   DESIGN; INTEGRATION
+AB This article aims to examine the cost or benefit implications of
+   employing postponement in the manufacturing environments characterised
+   by non-negligible changeover times incurred when switching production
+   from one product to another. Four manufacturing configurations are
+   distinguished based on the choice of manufacturing technology and on
+   whether or not postponement is employed. Analytical evaluation methods
+   based on queuing models are used to assess operational measures for
+   each configuration and solution algorithms are developed to determine
+   the optimal decisions that may include stocking level, batch size and
+   differentiation point. A numerical experiment is carried out to
+   identify how the system performance is affected by different parameters.
+C1 [Wong, Hartanto; Naim, Mohamed] Cardiff Univ, Innovat Mfg Res Ctr, Cardiff, Wales.
+   [Naim, Mohamed] Cardiff Univ, Logist Syst Dynam Grp, Cardiff, Wales.
+   [Wikner, Joakim] Jonkoping Univ, Sch Engn, Jonkoping, Sweden.
+RP Wong, H, Cardiff Univ, Innovat Mfg Res Ctr, Cardiff, Wales.
+EM wongh@cardiff.ac.uk
+CR ABDI MR, 2004, INT J PROD RES, V42, P521, DOI
+   10.1080/00207540310001613665
+   AGRAWAL M, 2001, MCKINSEY Q, V3, P62
+   ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   BENJAAFAR S, 2004, ANN OPER RES, V126, P71
+   BI ZM, 2008, INT J PROD RES, V46, P967, DOI 10.1080/00207540600905646
+   BOWERSOX DJ, 1996, LOGISTICAL MANAGEMEN
+   BUZACOTT J, 1993, STOCHASTIC MODELS MA
+   DAPIRAN P, 1992, INT J PHYS DISTRIB, V22, P7
+   DOBSON G, 2002, PROD OPER MANAG, V11, P293
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   GARG A, 1997, IIE TRANS, V29, P641
+   GRAVES SC, 1985, MANAGE SCI, V31, P1247
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   KARMARKAR US, 1987, MANAGE SCI, V33, P409
+   KARMARKAR US, 1992, EUR J OPER RES, V58, P99
+   KLEINROCK L, 1975, QUEUEING SYSTEMS, V1
+   KOREN Y, 1999, ANN CIRP, V48, P527
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE YJ, 1992, OPER RES, V40, P936
+   MCINTOSH R, 2007, IEEE T ENG MANAGE, V54, P98, DOI
+   10.1109/TEM.2006.889070
+   MIKKOLA JH, 2004, PROD PLAN CONTROL, V15, P352, DOI
+   10.1080/0953728042000238845
+   OLSEN TL, 1999, MANAGE SCI, V45, P116
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PILLER FT, 2004, PROD PLAN CONTROL, V15, P435, DOI
+   10.1080/095372804200238773
+   SIGNORELLI S, 1984, 9685014 HARV BUS SCH
+   SU JCP, 2005, J OPER MANAG, V23, P305, DOI 10.1016/j.jom.2004.10.016
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   SWAMINATHAN JM, 2003, HDB OPERATIONS RES M, P199
+   THONEMANN UW, 2002, EUR J OPER RES, V143, P548
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WONG H, 2009, INT J PROD RES, V47, P1201, DOI 10.1080/00207540701549608
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YOUSSEF AMA, 2006, INT J PROD RES, V44, P4929, DOI
+   10.1080/00207540600620955
+   ZHAO XB, 2000, INT J PROD RES, V38, P2273
+   ZHAO XB, 2001, INT J PROD RES, V39, P747
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 39
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0953-7287
+J9 PRODUCTION PLANNING CONTROL
+JI Prod. Plan. Control
+PY 2010
+VL 21
+IS 3
+BP 258
+EP 273
+DI 10.1080/09537280903318781
+PG 16
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 595YT
+UT ISI:000277651000002
+ER
+
+PT J
+AU Trentin, A
+   Forza, C
+AF Trentin, Alessio
+   Forza, Cipriano
+TI Design for form postponement: do not overlook organization design
+SO INTERNATIONAL JOURNAL OF OPERATIONS & PRODUCTION MANAGEMENT
+LA English
+DT Article
+DE Mass customization; Production planning and control; Product
+   management; Operations management
+ID DELAY PRODUCT DIFFERENTIATION; SUPPLY CHAIN; OPERATIONS-MANAGEMENT;
+   HEWLETT-PACKARD; INVENTORY; FRAMEWORK; BENEFITS; INERTIA; SERVICE;
+   TRENDS
+AB Purpose The purpose of this paper is to develop a theory of the
+   organizational changes related to the production-planning process that
+   facilitate application of form postponement (FP), an increasingly
+   popular operations-design principle meant to alleviate the negative
+   impact of product variety and customization on operational performance.
+   Design/methodology/approach - To achieve the theory-building objective,
+   a multiple-case study involving four cases in the machinery industry
+   was designed. In the inductive theory-building process, the authors
+   borrowed from the information-processing theory to further corroborate
+   the internal validity and generalizability of the findings.
+   Findings - The theory proposed by the author indicates that greater
+   utilization of lateral relations in the production-planning process,
+   higher production-planning frequency, greater degree of
+   self-containment of the production-planning task, and simplification of
+   the production planning-related environment favor application of FP.
+   Research limitations/implications - The level of analysis of the theory
+   is the production-planning process of a product family within a
+   company. Future research could extend inquiry of the organizational
+   antecedents of FP at both higher and lower levels of analysis, such as
+   the organization as a whole or the individuals participating in the
+   production-planning process.
+   Practical implications - The theory supports managerial decision making
+   by suggesting how to redesign the organization part involved in the
+   production-planning process of a product family in order to apply FP.
+   The difficulty and cost of this organizational redesign effort should
+   be taken into account when companies consider FP implementation.
+   Originality/value - Past research has focused on changes to product
+   design and to the manufacturing and supply chain process that enable FR
+   This paper augments the understanding of FP enablers by developing the
+   first model of organizational antecedents of FP. It also responds to
+   calls for more research integrating insights from organization theory
+   and operations/supply chain management.
+C1 [Trentin, Alessio; Forza, Cipriano] Univ Padua, Dipartimento Tecn & Gest Sistemi Ind Li, Vicenza, Italy.
+RP Trentin, A, Univ Padua, Dipartimento Tecn & Gest Sistemi Ind Li,
+   Vicenza, Italy.
+EM alessio.trentin@unipd.it
+CR ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   AVIV Y, 2001, OPER RES, V49, P578
+   BOWERSOX DJ, 1999, J PROD INNOVAT MANAG, V16, P557
+   BROWN AO, 2000, INTERFACES, V30, P65
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   DUBE L, 2003, MIS QUART, V27, P597
+   EDMONDSON AC, 2007, ACAD MANAGE REV, V32, P1155
+   EISENHARDT KM, 1989, ACAD MANAGE J, V32, P543
+   EISENHARDT KM, 1989, ACAD MANAGE REV, V14, P532
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FLYNN BB, 1999, DECISION SCI, V30, P1021
+   FORZA C, 2008, INT J OPER PROD MAN, V28, P1067, DOI
+   10.1108/01443570810910197
+   GALBRAITH JR, 1974, INTERFACES, V4, P28
+   GALBRAITH JR, 1977, ORG DESIGN
+   GARG A, 1997, IIE TRANS, V29, P641
+   GILBERT CG, 2005, ACAD MANAGE J, V48, P741
+   GRAMAN GA, 2002, PROD OPER MANAG, V11, P340
+   GRAMAN GA, 2006, INT J OPER PROD MAN, V26, P1068, DOI
+   10.1108/01443570610691076
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   GUPTA S, 1998, IIE TRANS, V30, P933
+   HANNAN MT, 1984, AM SOCIOL REV, V49, P149
+   HARR C, 2008, SOC WORK HEALTH CARE, V46, P1, DOI 10.1300/J010v46n04_01
+   HESKETT JL, 1977, HARVARD BUS REV, V55, P119
+   KLEIN KJ, 1994, ACAD MANAGE REV, V19, P195
+   KOUVELIS P, 2006, PROD OPER MANAG, V15, P449
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1993, PERSPECTIVES OPERATI, P45
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1998, STRATEGIC SUPPLY CHA, P77
+   MATHER HF, 1986, PRODUCTION INVENTORY, V27, P90
+   MATTHEWS P, 2004, SUPPLY CHAIN MANAG, V8, P28
+   MCCUTCHEON DM, 1993, J OPERATIONS MANAGEM, V11, P239
+   PATTON MQ, 1990, QUALITATIVE EVALUATI
+   PFEFFER J, 1978, EXTERNAL CONTROL ORG
+   RUBIN HJ, 1995, QUALITATIVE INTERVIE
+   SALVADOR F, 2002, J OPER MANAG, V20, P549
+   SKIPWORTH H, 2004, INT J PROD RES, V42, P2063, DOI
+   10.1080/00207540410001661373
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   STRAUSS AL, 1987, QUALITATIVE ANAL SOC
+   SUTTON RI, 1987, ACAD MANAGE J, V30, P405
+   SWAMINATHAN JM, 1998, MANAGE SCI, V44, P161
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   SWAMINATHAN JM, 2003, OR MS HDB SUPPLY CHA, P199
+   TRENTIN A, 2007, 18 ANN POMS C MAY 4
+   TUSHMAN ML, 1978, ACAD MANAGE REV, V3, P613
+   ULRICH K, 1995, RES POLICY, V24, P419
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VOSS C, 2002, INT J OPER PROD MAN, V22, P195
+   WALLER MA, 2000, J BUSINESS LOGISTICS, V21, P133
+   WHETTEN DA, 1989, ACAD MANAGE REV, V14, P490
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2005, INT J PROD RES, V43, P991, DOI
+   10.1080/00207540412331316134
+   YIN RK, 2009, CASE STUDY RES DESIG
+   ZINN W, 1990, INT J LOGISTICS MANA, V1, P11
+NR 59
+TC 0
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0144-3577
+J9 INT J OPER PROD MANAGE
+JI Int. J. Oper. Prod. Manage.
+PY 2010
+VL 30
+IS 3-4
+BP 338
+EP 364
+DI 10.1108/01443571011029967
+PG 27
+SC Management
+GA 587CZ
+UT ISI:000276966600005
+ER
+
+PT J
+AU Akkerman, R
+   van der Meer, D
+   van Donk, DP
+AF Akkerman, Renzo
+   van der Meer, Dirk
+   van Donk, Dirk Pieter
+TI Make to stock and mix to order: choosing intermediate products in the
+   food-processing industry
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE food industry; decoupling point; postponement; intermediate storage;
+   case study
+ID POSTPONEMENT; IMPLEMENTATION; MANAGEMENT; POINT
+AB In contrast to discrete manufacturers, food-processing companies can
+   sometimes produce the same end products in different ways: either mix
+   first and then process, or process first and mix later. Moreover, a
+   final product can be mixed from different raw materials or
+   intermediates. That adds a new dimension to postponement and decoupling
+   point theory as choices need to be made not only with regard to where
+   to locate inventory, but also which products to store. That aspect has
+   not been covered so far. This paper explores this problem for a typical
+   two-stage food production situation in a flour mill. The number and
+   composition of intermediate products in the decoupling point is
+   determined using a stepwise solution approach supported by mathematical
+   programming models. The procedure facilitates decision-making for the
+   management of the mill regarding how many and what intermediates to
+   store. Extensions of the models presented might be helpful to solve
+   related problems such as determining the number of intermediate storage
+   tanks required.
+C1 [Akkerman, Renzo] Tech Univ Denmark, Dept Engn Management, DK-2800 Lyngby, Copenhagen, Denmark.
+   [van der Meer, Dirk; van Donk, Dirk Pieter] Univ Groningen, Fac Econ & Business, NL-9700 AV Groningen, Netherlands.
+RP Akkerman, R, Tech Univ Denmark, Dept Engn Management, Prod Storvet 424,
+   DK-2800 Lyngby, Copenhagen, Denmark.
+EM renzo@man.dtu.dk
+FU Technical University of Denmark 
+FX The authors would like to thank the company involved for their
+   willingness to participate in this research and for their suggestions
+   and remarks during discussion sessions. Also, the first author would
+   like to acknowledge support from a H.C. Orsted postdoctoral fellowship
+   from the Technical University of Denmark.
+CR ABUKHADER SM, 2007, INT J LOGISTICS SYST, V3, P215
+   AKKERMAN R, 2007, INT J PROD RES, V45, P2955, DOI
+   10.1080/00207540600806463
+   ASHAYERI J, 1994, EUR J OPER RES, V72, P460
+   BENDERS JF, 1962, NUMER MATH, V4, P238
+   BOONE CA, 2007, INT J PHYS DISTRIB, V37, P594
+   CAUX C, 2006, INT J PROD RES, V44, P3243, DOI 10.1080/00207540500521543
+   DOBSON P, 2001, J IND COMPETITION TR, V1, P247
+   FORZA C, 2008, INT J OPER PROD MAN, V28, P1067, DOI
+   10.1108/01443570810910197
+   FRANSOO JC, 1994, INT J OPER PROD MAN, V14, P47
+   GRAMAN GA, 2006, INT J OPER PROD MAN, V26, P1068, DOI
+   10.1108/01443570610691076
+   GRIFFITH CJ, 2006, BRIT FOOD J, V108, P6, DOI 10.1108/00070700610637599
+   HOEKSTRA S, 1992, INTEGRAL LOGISTIC ST
+   KERKKANEN A, 2007, INT J PROD ECON, V108, P111, DOI
+   10.1016/j.ijpe.2006.12.006
+   LYON P, 2001, INTERFACES, V31, P108
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   RAJARAM K, 1999, INTERFACES, V29, P30
+   RUTTEN WGM, 1995, THESIS EINDHOVEN U T
+   RUTTEN WGMM, 1998, EUR J OPER RES, V110, P626
+   SOMAN CA, 2004, INT J PROD ECON, V90, P223
+   VANDONK DP, 2001, INT J PROD ECON, V69, P297
+   VANDONK DP, 2008, BRIT FOOD J, V110, P218, DOI 10.1108/00070700810849925
+   VANHOEK RI, 1999, SUPPLY CHAIN MANAG, V4, P18
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WANDERS HLT, 2004, EUR J OPER RES, V155, P96, DOI
+   10.1016/S0377-2217(02)00853-6
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+NR 26
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2010
+VL 48
+IS 12
+BP 3475
+EP 3492
+DI 10.1080/00207540902810569
+PG 18
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 580TB
+UT ISI:000276471900006
+ER
+
+PT J
+AU Yang, B
+   Yang, Y
+AF Yang, Biao
+   Yang, Ying
+TI Postponement in supply chain risk management: a complexity perspective
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE postponement; risk management; supply chain management; complexity;
+   normal accident theory
+ID PRODUCT; FLEXIBILITY; TRADEOFFS; DEMAND
+AB While the poor response implications of supply are often not elaborated
+   on in the literature, postponement has recently been mentioned as a
+   useful tool for managing supply risk and disruptions. To interpret this
+   in a more complete manner, this paper has attempted to explore the role
+   of postponement in supply chain risk management from a complexity
+   perspective. After a review of the relevant literature, it first draws
+   insights emerging from normal accident theory that addresses the system
+   characteristics of catastrophic accidents and applies them to supply
+   chain disruptions. This is followed by the utilisation of normal
+   accident theory to explain the role of postponement in supply chain
+   risk management. Building on this, this paper also investigates the
+   complexity implications of some commonly recommended measures to
+   mitigate supply chain disruptions. In certain circumstances, the
+   introduction of those measures may add to the complexity of a system
+   and thus become inherently infeasible. The paper concludes with a
+   summary and some suggestions for further research.
+C1 [Yang, Biao] Univ York, York Management Sch, York YO10 5DD, N Yorkshire, England.
+   [Yang, Ying] Aberystwyth Univ, Sch Business & Management, Ceredigion SY23 3DD, Wales.
+RP Yang, B, Univ York, York Management Sch, York YO10 5DD, N Yorkshire,
+   England.
+EM by505@york.ac.uk
+CR ANDERSON P, 1999, ORGAN SCI, V10, P216
+   AVIV Y, 2001, OPER RES, V49, P578
+   BLACKHURST J, 2005, INT J PROD RES, V43, P4067, DOI
+   10.1080/00207540500151549
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CHOI TY, 2006, J OPER MANAG, V24, P637, DOI 10.1016/j.jom.2005.07.002
+   CHOPRA S, 2004, SLOAN MANAGE REV, V46, P53
+   CLARK KB, 1991, PRODUCT DEV PERFORMA
+   DASILVEIRA GJC, 2006, J OPER MANAG, V24, P932, DOI
+   10.1016/j.jom.2005.11.004
+   DOOLEY K, 2001, INT ENCY BUSINESS MA, P5013
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FINE CH, 2005, J OPER MANAG, V23, P389, DOI 10.1016/j.jom.2004.09.005
+   FISHER ML, 1994, HARVARD BUS REV, V72, P83
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   FRIZELLE G, 1995, INT J OPER PROD MAN, V15, P26
+   HALLIKAS J, 2004, INT J PROD ECON, V90, P47, DOI
+   10.1016/j.ijpe.2004.02.007
+   JUTTNER U, 2005, INT J LOGIST MANAG, V16, P120
+   KHAN KM, 2008, LETT ORG CHEM, V5, P432
+   KHURANA A, 1999, SLOAN MANAGE REV, V40, P85
+   KOTHA S, 1989, STRATEGIC MANAGE J, V10, P211
+   KOTTEAKU AG, 1995, OMEGA-INT J MANAGE S, V23, P27
+   LEE HL, 1998, STRATEGIC SUPPLY CHA, P77
+   LEE HL, 2003, SUPPLY CHAIN MANAG, V7, P12
+   LEE HL, 2004, HARVARD BUS REV, V82, P102
+   MANUJ I, 2008, INT J PHYS DISTR LOG, V38, P192, DOI
+   10.1108/09600030810866986
+   MARLEY KA, 2006, THESIS OHIO STATE U
+   MARTHA J, 2002, SUPPLY CHAIN MANAG, V6, P18
+   MCGILLIVRAY G, 2000, CANADIAN UNDERWRITER, V67, P26
+   NORRMAN A, 2004, INT J PHYS DISTRIB, V34, P434
+   OGAWA S, 2006, MIT SLOAN MANAGE REV, V47, P65
+   PAPADAKIS IS, 2003, INT J PHYS DISTRIB, V33, P934
+   PERROW C, 1999, J CONTINGENCIES CRIS, V7, P150
+   PERROW C, 1999, NORMAL ACCIDENTS LIV
+   PRASAD B, 1998, J PRODUCT BRAND MANA, V7, P208
+   PRATER E, 2001, INT J OPER PROD MAN, V21, P823
+   RICE JB, 2003, SUPPLY CHAIN RESPONS
+   ROBERTSON IJA, 1990, BRIT J NEUROSURG, V4, P101
+   SAGAN SD, 1993, LIMITS SAFETY
+   SHEFFI Y, 2001, INT J LOGISTICS MANA, V12, P1
+   TANG CS, 2006, INT J LOGIST-RES APP, V9, P33
+   TANG CS, 2006, INT J PROD ECON, V103, P451, DOI
+   10.1016/j.ijpe.2005.12.006
+   VACHON S, 2002, IEEE T ENG MANAGE, V49, P218, DOI
+   10.1109/TEM.2002.803387
+   VOORDIJK H, 2006, INT J OPER PROD MAN, V26, P600, DOI
+   10.1108/01443570610666966
+   WAGNER SM, 2006, J PURCHASING SUPPLY, V12, P301
+   WILDING R, 1998, INT J PHYS DISTRIB, V28, P599
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2005, INT J PROD RES, V43, P991, DOI
+   10.1080/00207540412331316134
+   ZSIDISIN G, 2004, INT J PHYS DISTRIB, V34, P97
+   ZSIDISIN GA, 2003, J PURCH SUPPLY MANAG, V9, P217
+NR 49
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2010
+VL 48
+IS 7
+BP 1901
+EP 1912
+DI 10.1080/00207540902791850
+PG 12
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 580RO
+UT ISI:000276467500003
+ER
+
+PT J
+AU Wadhwa, S
+   Mishra, M
+   Chan, FTS
+   Ducq, Y
+AF Wadhwa, Subhash
+   Mishra, Madhawanand
+   Chan, Felix T. S.
+   Ducq, Y.
+TI Effects of information transparency and cooperation on supply chain
+   performance: a simulation study
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE information transparency; cooperation; supply chain performance;
+   simulation
+ID VENDOR MANAGED INVENTORY; POSTPONEMENT; STRATEGIES; ENTERPRISE;
+   SERVICE; DESIGN; SYSTEM
+AB This research explores the effect of information transparency and
+   cooperation among the front nodes of supply chains. Although published
+   works in the supply chain (SC) domain underline the need for
+   information transparency and cooperation for competitiveness of firms,
+   the majority among these are conceptual or empirical. As such, the
+   domain requires fresh effort towards analytical and simulation based
+   research for validation. In the present work, simulation is used as the
+   research methodology. The simulation platform is developed in ARENA
+   (R), which is based on simulation language SIMAN. It has the capability
+   to model multi-product, multi-echelon supply chains. Cooperation is
+   depicted in the form of demand pooling and accelerated delivery of
+   consignments from cooperating SC nodes, when stock-out contingency
+   occurs at a particular node. The modelling also explores the effects of
+   full, partial and zero level of information transparency on the SC
+   performance. The simulation results suggest that these initiatives
+   improve SC service time performance. It is also observed that more
+   advantages from cooperation and information transparency are obtainable
+   when the SC is leaner. The studies also highlight that such SC
+   initiative that motivates local optimisation at the nodes is
+   counter-productive to SC wide performance.
+C1 [Chan, Felix T. S.] Univ Hong Kong, Dept Ind & Mfg Syst Engn, Hong Kong, Hong Kong, Peoples R China.
+   [Wadhwa, Subhash; Mishra, Madhawanand] Indian Inst Technol, Dept Mech Engn, Delhi, Hauz Khas, India.
+   [Ducq, Y.] Univ Bordeaux 1, LAP GRAI, Bordeaux, France.
+RP Chan, FTS, Univ Hong Kong, Dept Ind & Mfg Syst Engn, Hong Kong, Hong
+   Kong, Peoples R China.
+EM ftschan@hkucc.hku.hk
+CR *SUPPL CHAIN COUNC, 2003, SUPPL CHAIN OP REF M
+   ACHABAL DD, 2000, J RETAILING, V76, P430
+   ARTETA BM, 2004, ROBOT CIM-INT MANUF, V20, P495, DOI
+   10.1016/j.rcim.2004.05.008
+   BALAKRISHNAN A, 1999, INFORMATION SYSTEMS, V1, P25
+   BANERJEE S, 2001, INT J PROD ECON, V71, P91
+   BEAMON BM, 1998, INT J PROD ECON, V55, P281
+   BEAMON BM, 1999, INT J OPER PROD MAN, V19, P275
+   BHASKARAN S, 1998, DECISION SCI, V29, P633
+   BHATNAGAR R, 2005, TECHNOVATION, V25, P443
+   BROWNE J, 1995, COMPUT IND, V25, P235
+   CACHON GP, 2000, MANAGE SCI, V46, P1032
+   CHAN FTS, 2003, INT J ADV MANUF TECH, V21, P534
+   CHAN FTS, 2005, INT J ADV MANUF TECH, V25, P998, DOI
+   10.1007/s00170-003-1920-7
+   CHEN F, 1998, MANAGE SCI, V44, P221
+   CHRISTOPHER M, 2005, LOGISTICS SUPPLY CHA, P35
+   COHEN MA, 1990, SLOAN MANAGE REV, V31, P55
+   DAVIES FJ, 1993, GLASS TECHNOL, V34, P4
+   DISNEY SM, 2001, P 6 INT S LOG 8 10 J
+   DISNEY SM, 2003, INT J PROD ECON, V85, P199, DOI
+   10.1016/S0925-5273(03)00110-5
+   DIXON JR, 1990, NEW PERFORMANCE CHAL, P66
+   DONG M, 2001, THESIS VIRGINIA POLY
+   EVERTSE JH, 1999, NUMBER THEORY PROGR, V1, P121
+   FRY MJ, 2001, MANUFACTURING SERVIC, V3, P151
+   GAVIRNENI S, 1999, MANAGE SCI, V45, P16
+   HOLMSTROM J, 1998, EUROPEAN J PURCHASIN, V4, P127
+   HOOVER SV, 1989, SIMULATION PROBLEM S
+   HWARNG HB, 2005, INT J PROD RES, V43, P2829, DOI
+   10.1080/00207540500066812
+   KAPLAN RS, 1992, HARVARD BUS REV, V70, P71
+   KEEGAN DP, 1989, MANAGE ACCOUNTING, V70, P45
+   LALONDE B, 2004, OHIO STATE U 2003 SU
+   LAMBERT DM, 1990, INT J PHYS DISTRIB, V20, P17
+   LAW AM, 2003, SIMULATION MODELLING
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 2000, MANAGE SCI, V46, P626
+   LEVY DL, 1995, J INT BUS STUD, V26, P343
+   LEVY M, 2000, J RETAILING, V76, P415
+   LI J, 2001, EFFECTS INFORM SHARI
+   MERKURYEV YA, 2002, P 14 EUR SIM S, P294
+   NEELY A, 1995, INT J OPER PROD MAN, V15, P4
+   OVALLE OR, 2003, J PURCHASING SUPPLY, V9, P151
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PERSSON F, 2002, INT J PROD ECON, V77, P231
+   RIGBY C, 2000, INT J AGILE MANAGEME, V2, P178
+   SAHIN F, 2002, DECISION SCI, V33, P505
+   SAHIN F, 2005, J OPERATIONS MANAGEM, V23, P579
+   SERGIO T, 2004, COMPUT IND, V53, P3
+   SHAPIRO RD, 1984, HARVARD BUS REV, V62, P119
+   SHEPHERD C, 2006, INT J PRODUCTIVITY P, V55, P242
+   SILVER EA, 1998, INVENTORY MANAGEMENT
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 2001, INT J OPER PROD MAN, V21, P126
+   WADHWA S, 2003, P INT C CAD CAM ROB
+   WADHWA S, 2006, IND MANAGE DATA SYST, V106, P307, DOI
+   10.1108/02635570610653470
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YU ZX, 2001, IND MANAGE DATA SYST, V101, P114
+   YUSUF YY, 1999, INT J PROD ECON, V62, P33
+   ZINN W, 1988, INT J PHYS DISTRIB, V18, P34
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 58
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2010
+VL 48
+IS 1
+BP 145
+EP 166
+DI 10.1080/00207540802251617
+PG 22
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 535RF
+UT ISI:000272987600007
+ER
+
+PT J
+AU McIntosh, RI
+   Matthews, J
+   Mullineux, G
+   Medland, AJ
+AF McIntosh, R. I.
+   Matthews, J.
+   Mullineux, G.
+   Medland, A. J.
+TI Late customisation: issues of mass customisation in the food industry
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE food industry; chemical industry; mass customisation; product and
+   manufacturing system design review
+ID DESIGN; POSTPONEMENT; FLEXIBILITY; METHODOLOGY; INVESTIGATE; REDESIGN
+AB The strategy of mass customisation is being increasingly adopted as
+   companies seek to exploit market trends for greater product variety and
+   individualisation. The implications of changing to mass customisation
+   practice are considerable, where traditional contradictions of high
+   volume and extensive product variety require being reconciled. The
+   literature discusses the need for an integrated approach to mass
+   customisation across all business functions if micro-segmentation of
+   markets is to be profitably pursued, and the current paper investigates
+   extending the paradigm of mass customisation into the, until now,
+   poorly represented sector of food processing. Product design and
+   manufacturing system design for mass customisation are reviewed and
+   contrasted with good practice in more traditional mass customisation
+   industries.
+C1 [McIntosh, R. I.; Matthews, J.; Mullineux, G.; Medland, A. J.] Univ Bath, Innovat Design & Mfg Res Ctr, Dept Mech Engn, Bath BA2 7AY, Avon, England.
+RP Matthews, J, Univ Bath, Innovat Design & Mfg Res Ctr, Dept Mech Engn,
+   Bath BA2 7AY, Avon, England.
+EM j.matthews2@bath.ac.uk
+FU Department for Environment Food and Rural Affairs (DEFRA) ; Food
+   Processing Faraday Knowledge Transfer Network ; EPSRC Innovative Design
+   and Manufacturing Research Centre at the University of Bath
+   [GR/R67507/01]
+FX The work reported in this paper has been supported by the Department
+   for Environment Food and Rural Affairs (DEFRA) and the Food Processing
+   Faraday Knowledge Transfer Network, involving a large number of
+   industrial collaborators. In particular, current research is being
+   undertaken as part of the EPSRC Innovative Design and Manufacturing
+   Research Centre at the University of Bath (reference GR/R67507/01). The
+   authors gratefully express their thanks for the advice and support of
+   all concerned.
+CR *FACT LOG, 2003, BULLWH EFF
+   ABERNATHY WJ, 1978, PRODUCTIVITY DILEMMA
+   ANSARI A, 2003, J MARKETING RES, V40, P131
+   AVIV Y, 2001, OPER RES, V49, P578
+   BICHENO J, 2003, NEW LEAN TOOLBOX FAS
+   BILLE GP, 2002, J FOOD TECHNOLOGY AF, V7, P21
+   BOLAND M, 2006, J SCI FOOD AGR, V86, P7, DOI 10.1002/jsfa.2348
+   BRADFORD J, 2002, COMPUT IND, V49, P9
+   CHRISTOPHER M, 2004, INT J RETAIL DISTRIB, V32, P367
+   COATES JB, 1974, SHEET METAL IND, V51, P73
+   CORONADO AE, 2004, PROD PLAN CONTROL, V15, P398, DOI
+   10.1080/095372804200238809
+   DAVIS S, 1987, FUTURE PERFECT
+   DOLE C, 1999, ENVIRON PLANN, V31, P69
+   DUGUAY CR, 1997, INT J OPER PROD MAN, V17, P1183
+   DYCHE J, 2001, CRM HDB BUSINESS GUI
+   FISCHER C, 2005, ADV INTEGRATED DESIG, P377
+   FISHER C, 1997, FOOD FLAVOURS BIOL C
+   FRANZA RM, 1998, INT J FLEX MANUF SYS, V10, P43
+   GARVIN DA, 1998, SLOAN MANAGE REV, V39, P33
+   GENTLE M, 2002, CRM PROJECT MANAGEME
+   GREENWOOD R, 1996, ACAD MANAGE REV, V21, P1022
+   GU P, 2004, CIRP ANN-MANUF TECHN, V53, P539
+   HASHIM FM, 1994, ENG COMPUT, V10, P125
+   HERRMANN JW, 2004, P ASME 2004 DES ENG, P1
+   HOBBS DP, 2003, LEAN MANUFACTURING I
+   IMAI M, 1986, KAISEN KEY JAPANS CO
+   JIAO J, 1999, CIRP ANN-MANUF TECHN, V48, P93
+   JONES V, 1993, M CHALLENGE JAPANESE
+   KRATOCHVIL M, 2005, GROWING MODULAR MASS
+   LAKHNECH L, 2004, FORMAL TECHNIQUES MO
+   MACCARTHY B, 2003, INT J PROD ECON, V85, P289, DOI
+   10.1016/S0925-5273(03)00117-8
+   MARTIN MV, 2002, RES ENG DES, V13, P213, DOI 10.1007/S00163-002-0020-2
+   MATHLOUTHI M, 1999, FOOD PACKAGING PRESE
+   MATTHEWS J, 2006, COMPUT IND ENG, V51, P809, DOI
+   10.1016/j.cie.2006.09.003
+   MATTHEWS J, 2007, STROJ VESTN-J MECH E, V53, P462
+   MATTHEWS R, 2008, CAN REV SOCIOL, V45, P1
+   MCCARTHY IP, 2004, PROD PLAN CONTROL, V15, P347, DOI
+   10.1080/0953728042000238854
+   MCINTOSH RI, 2001, IMPROVING CHANGEOVER
+   MELLO S, 2002, CUSTOMER CENTRIC PRO
+   MEYER MH, 1993, SLOAN MANAGEMENT SPR, P1
+   MULLINEUX G, 2008, J FOOD ENG, V84, P250, DOI
+   10.1016/j.jfoodeng.2007.05.015
+   MURAKAMI T, 1995, IND RELATIONS J, V26, P293
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PAHL G, 1996, ENG DESIGN SYSTEMATI
+   PINE BJ, 1993, MASS CUSTOMISATION
+   QUARINI GL, 2002, FOOD SCI TECHNOL, V16, P46
+   REIK MP, 2006, P I MECH ENG B-J ENG, V220, P1225, DOI
+   10.1243/09544054JEM527
+   ROACH GM, 2005, INT J MASS CUSTOMIZA, V1, P83
+   SCHONBERGER RJ, 1986, WORLD CLASS MANUFACT
+   SHIMOKAWA K, 1994, JAPANESE AUTOMOTIVE
+   SHINGO S, 1985, REVOLUTION MANUFACTU
+   TAIICHI O, 1988, JUST IN TIME TODAY T
+   TSENG MM, 1996, CIRP ANN-MANUF TECHN, V45, P153
+   TSENG MM, 1997, COMPUT IND ENG, V33, P629
+   TSENG MM, 2003, CUSTOMER CENTRIC ENT
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 1999, SUPPLY CHAIN MANAG, V4, P18
+   VANHOEK RI, 2001, J OPERATIONS MANAGEM, V19, P61
+   WEDZICHA B, 2007, FOOD MANUFACTURING E, V1, P1
+   WHITNEY DE, 2004, MECH ASSEMBLIES THEI
+   WIKNER J, 2005, INT J OPER PROD MAN, V25, P623, DOI
+   10.1108/01443570510605072
+   WILLIAMS DJ, 1994, MANUFACTURING SYSTEM
+   WOMACK JP, 1990, MACHINE CHANGED WORL
+   YANG B, 2003, INT J PROD RES, V41, P75
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+NR 65
+TC 0
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2010
+VL 48
+IS 6
+BP 1557
+EP 1574
+DI 10.1080/00207540802577938
+PG 18
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 535RR
+UT ISI:000272988900002
+ER
+
+PT J
+AU Brun, A
+   Zorzini, M
+AF Brun, Alessandro
+   Zorzini, Marta
+TI Evaluation of product customization strategies through modularization
+   and postponement
+SO INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS
+LA English
+DT Article
+DE Customization strategy; Modularization; Postponement
+ID MASS CUSTOMIZATION; SUPPLY-CHAIN; OPERATIONS MANAGEMENT;
+   CONFIGURATIONS; PERFORMANCE
+AB This paper aims at investigating the relationships existing between
+   postponement and modularization practices actually implemented by
+   Italian companies and contextual factors mainly linked to product
+   features. A multi-case study research strategy was adopted and
+   statistical techniques applied for data analysis. Two main factors were
+   identified (product/process customization and product/process
+   complexity) and four customization strategies differing in terms of
+   supply chain structure were analyzed (rigid, flexible, postponed and
+   modularized). Three main categories of constraints were identified,
+   which may lead to some exceptions compared to the prevailing
+   approaches: delivery lead-time issues. contractual obligations and
+   technical- and process-related factors. (C) 2008 Elsevier B.V. All
+   rights reserved.
+C1 [Brun, Alessandro; Zorzini, Marta] Politecn Milan, Dept Management Econ & Ind Engn, I-20133 Milan, Italy.
+RP Zorzini, M, Politecn Milan, Dept Management Econ & Ind Engn, Pza
+   Leonardo da Vinci 32, I-20133 Milan, Italy.
+EM marta.zorzini@polimi.it
+CR AHLSTROM P, 1999, INT J OPER PROD MAN, V19, P262
+   ALDENFERDER MS, 1984, CLUSTER ANAL
+   BALDWIN CY, 1994, MODULARITY IN DESIGN
+   BALDWIN CY, 1997, HARVARD BUS REV, V75, P84
+   BATTEZZATI L, 2000, INT J PHYS DISTRIB, V30, P413
+   BRUN A, 2004, LOG RES NETW 2004 C
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   DALESSANDRO AJ, 2000, INTERFACES, V30, P1
+   DAVIS SM, 1987, FUTURE PERFECT
+   DURAY R, 2000, J OPER MANAG, V18, P605
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FINE CH, 1998, CLOCKSPEED WINNING I
+   GIESBERTS PMJ, 1992, PRODUCTION PLANNING, V3, P300
+   GILLHAM B, 2000, CASE STUDY RES METHO
+   HALLGREN M, 2006, INT J PROD RES, V44, P3863, DOI
+   10.1080/00207540600702290
+   HART CWL, 1995, INT J SERV IND MANAG, V6, P36
+   HICKS C, 2000, INT J PROD ECON, V65, P179
+   HOEKSTRA S, 1992, INTEGRATED LOGISTICS
+   HSUAN J, 1999, EUROPEAN J PURCHASIN, V5, P197
+   JOHNSON RA, 2002, APPL MULTIVARIATE ST
+   KETCHEN DJ, 1996, STRATEGIC MANAGE J, V17, P441
+   KRZANOWSKI WJ, 1988, PRINCIPLES MULTIVARI
+   LEHTONEN JM, 1999, ACTA POLYTECHNICA SC, V4
+   LI J, 2007, INT J PROD ECON, V107, P31, DOI 10.1016/j.ijpe.2006.01.007
+   MIKKOLA JH, 2003, R&D MANAGE, V33, P439
+   MIKKOLA JH, 2004, PROD PLAN CONTROL, V15, P352, DOI
+   10.1080/0953728042000238845
+   MUFFATTO M, 1999, INT J PROD ECON, V60, P145
+   MURRAY JY, 1995, J INT BUS STUD, V26, P1
+   OLHAGER J, 1994, P 1994 PAC C MAN JAK
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   OLHAGER J, 2005, EUR INT C OP GLOB CO
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PHILIPOOM PR, 1992, INT J PROD RES, V30, P2559
+   PINE BJ, 1993, HARVARD BUS REV, V71, P108
+   PINE BJ, 1993, PLANNING REV, V22, P6
+   PRESCOTT JE, 1986, ACAD MANAGE J, V29, P329
+   RAY S, 2004, EUR J OPER RES, V153, P769, DOI
+   10.1016/S0377-2217(02)00655-0
+   SALVADOR F, 2002, J OPER MANAG, V20, P549
+   SALVADOR F, 2004, INT J PROD ECON, V91, P272
+   SALVADOR F, 2004, PROD PLAN CONTROL, V15, P381, DOI
+   10.1080/095372804200238818
+   SCHILLING MA, 2000, ACAD MANAGE REV, V25, P312
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   THYSSEN J, 2006, INT J PROD ECON, V103, P252, DOI
+   10.1016/j.ijpe.2005.07.004
+   ULRICH K, 1991, P 1991 ASME WINT ANN
+   ULRICH K, 1992, ROLE PRODUCT ARCHITE
+   ULRICH K, 1995, RES POLICY, V24, P419
+   VANDERVLIST P, 1997, INT J PROD ECON, V53, P35
+   VANHOEK RI, 1998, INT J LOGISTICS MANA, V9, P95
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 1999, J MARKET FOCUSED MAN, V3, P353
+   VANHOEK RI, 1999, LONG RANGE PLANN, V32, P505
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   VOSS C, 2002, INT J OPER PROD MAN, V22, P195
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YIN RX, 2003, CASE STUDY RES DESIG
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZIPKIN R, 2001, MIT SLOAN MANAGE REV, V42, P81
+NR 59
+TC 4
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0925-5273
+J9 INT J PROD ECON
+JI Int. J. Prod. Econ.
+PD JUL
+PY 2009
+VL 120
+IS 1
+SI Sp. Iss. SI
+BP 205
+EP 220
+DI 10.1016/j.ijpe.2008.07.020
+PG 16
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 477LC
+UT ISI:000268519600018
+ER
+
+PT J
+AU Harkonen, J
+   Belt, P
+   Mottonen, M
+   Kess, P
+   Haapasalo, H
+AF Harkonen, Janne
+   Belt, Pekka
+   Mottonen, Matti
+   Kess, Pekka
+   Haapasalo, Hari
+TI Analysing telecom companies using the Toyota NPD model
+SO INTERNATIONAL JOURNAL OF MOBILE COMMUNICATIONS
+LA English
+DT Article
+DE requirements management; benchmarking; new product development; NPD;
+   lean; product development; Toyota; telecom; mobile communications
+ID PRODUCT DEVELOPMENT PROCESS; RESEARCH-AND-DEVELOPMENT; DEVELOPMENT
+   CYCLE TIME; REQUIREMENTS MANAGEMENT; DEVELOPMENT PERFORMANCE; SUPPLY
+   CHAINS; KNOWLEDGE; INDUSTRY; SUCCESS; 2ND
+AB The telecom sector is facing great challenges in its New Product
+   Development (NPD) as products are getting increasingly complicated and
+   customer segments more fragmented. This study uses a benchmark from the
+   automotive industry to obtain ideas for improving NPD and requirements
+   management in the telecom sector. Toyota was chosen as the benchmark as
+   the automotive industry has been a large volume, mature and competitive
+   business sector, and Toyota has been successful in streamlining its
+   business processes and in meeting customer needs. The study clarifies
+   the similarities and the main differences between interviewed telecom
+   companies and NPD practices at Toyota.
+C1 [Harkonen, Janne; Belt, Pekka; Mottonen, Matti; Kess, Pekka; Haapasalo, Hari] Univ Oulu, Dept Ind Engn & Management, FI-90014 Oulu, Finland.
+RP Harkonen, J, Univ Oulu, Dept Ind Engn & Management, POB 4610, FI-90014
+   Oulu, Finland.
+EM janne.harkonen@oulu.fi
+   pekka.belt@oulu.fi
+   matti.mottonen@oulu.fi
+   pekka.kess@oulu.fi
+   hari.haapasalo@oulu.fi
+CR APPLETON EA, 2008, J ENG DESIGN, V19, P285, DOI
+   10.1080/09544820701402880
+   BELT P, 2008, INT J SERVICES STAND, V4, P150
+   BINDER M, 2008, J MANUFACTURING TECH, V19, P315
+   BLOG I, 2007, STRATEGIC DIRECTION, V23, P32
+   BROWN S, 2003, TECHNOVATION, V25, P307
+   CAPUTO AC, 2008, IND MANAGE DATA SYST, V108, P726, DOI
+   10.1108/02635570810883987
+   CHANG DR, 2008, J BUS RES, V61, P13, DOI 10.1016/j.jbusres.2006.05.005
+   CHIN KS, 2008, IND MANAGE DATA SYST, V108, P437, DOI
+   10.1108/026355770810868326
+   CHOW HKH, 2007, IND MANAGE DATA SYST, V107, P882, DOI
+   10.1108/02635570710758770
+   DARABI H, 2005, IEEE J SOLID-ST CIRC, V40, P698, DOI
+   10.1109/JSSC.2005.843597
+   DAWIDSON OM, 2005, INT J MOB COMMUN, V3, P49
+   DREJER A, 2008, INT J INNOVATION LEA, V5, P1
+   DYER JH, 2000, STRATEGIC MANAGE J, V21, P345
+   ENGEL M, 2007, J SYST SOFTWARE, V9, P259
+   ENGELBREKTSSON P, 2004, J ENG DESIGN, V15, P141, DOI
+   10.1080/09544820310001641245
+   FAISAL MN, 2006, IND MANAGE DATA SYST, V106, P878, DOI
+   10.1108/02635570610671533
+   FORD DN, 2005, IEEE T ENG MANAGE, V52, P175, DOI 10.1109/TEM.2005.844466
+   FRICKER S, 2006, J UNIVERSAL KNOWLEDG, V1, P85
+   FUCHS B, 2007, ACTION LEARNING RES, V4, P25
+   GILB T, 2005, COMPETITIVE ENG HDB, P480
+   GODENER A, 2004, R&D MANAGE, V34, P191
+   GRESSGARD LJ, 2006, INT J MOB COMMUN, V4, P509
+   GRIFFIN A, 1993, J PROD INNOVAT MANAG, V10, P112
+   GUPTA A, 2007, INT J PROD ECON, V106, P41, DOI
+   10.1016/j.ijpe.2006.04.008
+   HAQUE B, 2004, J ENG DESIGN, V15, P1, DOI 10.1080/0954482031000150125
+   HINES P, 2006, J MANUFACTURING TECH, V17, P866
+   HONG P, 2004, EUROPEAN J INNOVATIO, V7, P102
+   HSIEH LF, 2005, IND MANAGE DATA SYST, V105, P769, DOI
+   10.1108/0263557051060996
+   IBUSUKI U, 2007, INT J PROD ECON, V105, P459, DOI
+   10.1016/j.ijpe.2005.08.009
+   IM S, 2003, J INT MARKETING, V11, P81
+   KAMATH RR, 1994, HARVARD BUS REV, V72, P154
+   KERR CIV, 2006, INT J PROD RES, V44, P1703, DOI
+   10.1080/00207540500445263
+   KHAN Z, 2007, INT J MANAGEMENT ENT, V4, P428
+   LEE LTS, 2008, IND MANAGE DATA SYST, V108, P548, DOI
+   10.1108/02635570810868380
+   LIKER J, 2004, TOYOTA WAY, P350
+   LIU S, 2006, IND BIOTECHNOLOGY, V2, P113
+   LOCH C, 1996, J PROD INNOVAT MANAG, V13, P3
+   MATSON JE, 2007, SUPPLY CHAIN MANAG, V12, P432, DOI
+   10.1108/13598540710826362
+   MEYER MH, 1995, IEEE T ENG MANAGE, V42, P297
+   MEYER MH, 1997, MANAGE SCI, V43, P88
+   MISRA SC, 2008, BUSINESS PROCESS MAN, V14, P65
+   MORGAN JM, 2006, TOYOTA PRODUCT DEV S, P377
+   MURRAY RM, 2007, J DYN SYST-T ASME, V129, P571, DOI 10.1115/1.2766721
+   NONAKA I, 1995, KNOWLEDGE CREATING C, P284
+   OAKLEY P, 1997, J PRODUCT BRAND MANA, V6, P260
+   OJIAKO U, 2008, IND MANAGE DATA SYST, V108, P405, DOI
+   10.1108/02635570810858796
+   OLIVER N, 2004, J HIGH TECHNOL MANAG, V15, P249
+   PERTTULA A, 2007, PUBLICATION TAMPERE, V650
+   PISANO GP, 1995, HARVARD BUS REV, V73, P93
+   RADEKA K, 2007, J PROD INNOVAT MANAG, V24, P276
+   ROSEN MA, 2006, INT J EXERGY, V3, P377
+   RUI MJ, 2008, INT J TECHNOL MANAGE, V41, P96
+   SEETHARAMAN A, 2007, INT J MANAGEMENT ENT, V4, P635
+   SINHA V, 2006, IEEE SOFTWARE, V23, P52
+   SOBEK DK, 1999, SLOAN MANAGE REV, V40, P67
+   SU CT, 2007, INT J TECHNOL MANAGE, V39, P105
+   ULRICH KT, 1995, PRODUCT DESIGN DEV, P320
+   VASSILAKIS S, 1998, J MATH ECON, V28, P341
+   VERYZER RW, 2005, J PROD INNOVAT MANAG, V22, P128
+   WARD A, 1995, SLOAN MANAGE REV, V36, P43
+   WHEELWRIGHT SC, 1994, INT MARKET REV, V11, P32
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZEIDLER C, 2008, INT  J MOB COMMUN, V6, P345
+NR 63
+TC 1
+PU INDERSCIENCE ENTERPRISES LTD
+PI GENEVA
+PA WORLD TRADE CENTER BLDG, 29 ROUTE DE PRE-BOIS, CASE POSTALE 896,
+   CH-1215 GENEVA, SWITZERLAND
+SN 1470-949X
+J9 INT J MOB COMMUN
+JI Int. J. Mob. Commun.
+PY 2009
+VL 7
+IS 5
+BP 544
+EP 561
+PG 18
+SC Communication
+GA 473NP
+UT ISI:000268214400002
+ER
+
+PT J
+AU Boulaksil, Y
+   Fransoo, JC
+AF Boulaksil, Youssef
+   Fransoo, Jan C.
+TI Order release strategies to control outsourced operations in a supply
+   chain
+SO INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS
+LA English
+DT Article
+DE Ordering process; Outsourcing; Supply chain planning; Simulation;
+   Postponement
+ID COORDINATION MECHANISMS; MODELS; INVENTORY; UNCERTAINTY; INFORMATION;
+   CAPACITY; DEMAND; MANAGEMENT; COMMITMENT; OPTIONS
+AB We consider an original equipment manufacturer (OEM) that outsources
+   some Of its production activities to a contract manufacturer that
+   serves several customers on the same capacitated production line. The
+   contract manufacturer is not willing to share all relevant information
+   with the OEM, and therefore, a complex situation arises for the OEM to
+   control the outsourced operations properly.
+   In this paper, we discuss and compare the performance of three
+   different order release strategies, which differ in the number of
+   decision levels, such that the probabilistic behaviour of the contract
+   manufacturer is (partly) incorporated and production plans are
+   generated based on (deterministic) mathematical programming models.
+   Simulation results show that an order release strategy with multiple
+   decision levels performs significantly better than an order release
+   strategy with only one decision level. We also discuss the conditions
+   for a successful implementation of the more advanced order release
+   strategy. Further, some ideas for future research are presented. (C)
+   2009 Elsevier B.V. All rights reserved.
+C1 [Boulaksil, Youssef; Fransoo, Jan C.] Eindhoven Univ Technol, Sch Ind Engn, NL-5600 MB Eindhoven, Netherlands.
+RP Boulaksil, Y, Eindhoven Univ Technol, Sch Ind Engn, POB 513,Pav E16,
+   NL-5600 MB Eindhoven, Netherlands.
+EM Y.Boulaksil@tue.nl
+   J.C.Fransoo@tue.nl
+CR BERGAMASCHI D, 1997, INT J PROD RES, V35, P399
+   BERTRAND JWM, 2001, EUR J OPER RES, V128, P509
+   BHATNAGAR R, 1993, EUR J OPER RES, V67, P141
+   BOULAKSIL Y, 2008, 242 BETA EINDH U TEC
+   BOULAKSIL Y, 2009, OR SPECTRUM, V31, P121, DOI 10.1007/s00291-007-0086-3
+   CAUX C, 2006, INT J PROD RES, V44, P3243, DOI 10.1080/00207540500521543
+   CHAN FTS, 2001, INT J PHYS DISTRIB, V31, P124
+   CIARALLO FW, 1994, MANAGE SCI, V40, P320
+   DEKOK TG, 2003, HDBK OPER R, V11, P597
+   DUDEK G, 2005, EUR J OPER RES, V163, P668, DOI
+   10.1016/j.ejor.2004.01.014
+   FUDUKA Y, 1964, MANAGE SCI, V10, P690
+   GAVIRNENI S, 1999, MANAGE SCI, V45, P16
+   HOLCOMB TR, 2007, J OPER MANAG, V25, P464, DOI 10.1016/j.jom.2006.05.003
+   KAMIEN MI, 1990, MANAGEMENT SCI, V36
+   KOHLERGUDUM CK, 2002, 71 BETA TU EINDH
+   LAW AM, 2000, SIMULATION MODELLING
+   LEE HL, 1996, OPERATIONS RES, V44
+   LEE HL, 1997, MANAGEMENT SCI, V43
+   LEE HL, 2000, MANAGE SCI, V46, P626
+   LI SH, 2006, DECIS SUPPORT SYST, V42, P1641, DOI
+   10.1016/j.dss.2006.02.011
+   LI XH, 2007, EUR J OPER RES, V179, P1, DOI 10.1016/j.ejor.2006.06.023
+   MULA J, 2006, INT J PROD ECON, V103, P271, DOI
+   10.1016/j.ijpe.2005.09.001
+   PARLAR M, 1996, NAV RES LOG, V43, P191
+   RAZZAQUE MA, 1998, INT J PHYS DISTRIB, V28, P89
+   SCHNEEWEISS C, 2004, EUR J OPER RES, V153, P687, DOI
+   10.1016/S0377-2217(02)00801-9
+   SCHNIEDERJANS MJ, 2004, MANAGE DECIS, V42, P974
+   SPINLER S, 2006, EUR J OPER RES, V171, P915, DOI
+   10.1016/j.ejor.2004.11.017
+   SPITTER JM, 2005, THESIS TU EINDHOVEN
+   STADTLER H, 2003, OPER RES, V51, P487
+   STADTLER H, 2005, SUPPLY CHAIN MANAGEM
+   TANG CS, 2006, INT J PROD ECON, V103, P451, DOI
+   10.1016/j.ijpe.2005.12.006
+   TERWIESCH C, 2005, MANAGE SCI, V51, P208, DOI 10.1287/mnsc.1040.0317
+   TSAY A, 1999, MANUFACTURING SERVIC, V1, P89
+   VANMIEGHEM JA, 1999, MANAGEMENT SCI, V45
+   WHITTMORE AS, 1977, SIAM J APPL MATH, V32, P293
+   WU YN, 2008, INT J PROD ECON, V115, P1, DOI 10.1016/j.ijpe.2008.02.016
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG J, 2005, OPER RES, V53, P328, DOI 10.1287/opre.1040.0165
+   ZHAO XD, 2001, INT J PROD RES, V39, P3923
+   ZHAO XD, 2002, DECISION SCI, V33, P251
+   ZHAO XD, 2007, EUR J OPER RES, V180, P194, DOI
+   10.1016/j.ejor.2006.01.048
+NR 41
+TC 2
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0925-5273
+J9 INT J PROD ECON
+JI Int. J. Prod. Econ.
+PD MAY
+PY 2009
+VL 119
+IS 1
+BP 149
+EP 160
+DI 10.1016/j.ijpe.2009.02.001
+PG 12
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 453XR
+UT ISI:000266646700013
+ER
+
+PT J
+AU Hilletofth, P
+AF Hilletofth, Per
+TI How to develop a differentiated supply chain strategy
+SO INDUSTRIAL MANAGEMENT & DATA SYSTEMS
+LA English
+DT Article
+DE Supply chain management; Product differentiation; Corporate strategy
+ID AGILE; POSTPONEMENT; MANAGEMENT; FRAMEWORK; CUSTOMIZATION
+AB Purpose - The purpose of this paper is to contribute to the
+   understanding of supply chain (SC) design and operation by
+   investigating how two case companies have developed and deployed
+   differentiated SC strategies. This study primarily focuses on the
+   operating part of the differentiated SC strategy, that is, how
+   different manufacturing strategies - such as make-to-stock,
+   assembly-to-order, and make-to-order - are used in contemporary
+   manufacturing related SCs. However, this study also includes elements
+   concerning supply and distribution parts.
+   Design/methodology/approach - This study employs a descriptive multiple
+   case study approach. The case organizations originate from Sweden, but
+   they have significant international presence. Empirical data have been
+   collected mainly from in-depth interviews with key persons representing
+   senior and middle management in the case companies.
+   Findings - This research shows how two case companies have developed
+   and deployed a differentiated SC strategy. The case study findings
+   reveal that both the case companies already are employing several
+   manufacturing strategies and also combine these with different
+   distribution strategies. Up to now, the supply part of the
+   differentiated SC strategy has been neglected but probably will be
+   incorporated in the near future. This implies that one efficient way to
+   develop a differentiated SC strategy could be to combine different
+   supply, manufacturing and distribution strategies into various SC
+   solutions. By combining relatively few strategies, it is possible to
+   develop several differentiated SC solutions.
+   Research limitations/implications - The research work is limited to
+   Swedish companies, however, the case companies are in top three in
+   their respective industries measured by sales, which provides ground
+   for the generalization of the research.
+   Practical implications - This paper gives an insight to managers and
+   practitioners in how to develop and deploy a differentiated SC strategy.
+   Originality/value - Several studies have discussed the appropriate SC
+   strategy issue but failed to address the need to utilize several SC
+   solutions concurrently. However, this paper contributes by discussing
+   how to develop and-deploy a differentiated SC. strategy and how to
+   manage these multiple SCs.
+C1 Univ Skovde, Sch Technol & Soc, Skovde, Sweden.
+RP Hilletofth, P, Univ Skovde, Sch Technol & Soc, Skovde, Sweden.
+EM per.hilletofth@his.se
+CR 2006, STRATEGIC DIRECTION, V22, P24
+   AGARWAL A, 2006, EUR J OPER RES, V173, P211, DOI
+   10.1016/j.ejor.2004.12.005
+   AGARWAL A, 2007, IND MARKET MANAG, V36, P443, DOI
+   10.1016/j.indmarman.2005.12.004
+   AMARO G, 1999, INT J OPER PROD MAN, V19, P349
+   BELL J, 1995, INTRO RES METHODOLOG
+   BONOMA TV, 1985, J MARKETING RES, V22, P199
+   BOWERSOX DJ, 1985, INT J PHYS DISTRIB, V23, P46
+   BOWERSOX DJ, 1996, LOGISTICAL MANAGEMEN
+   BRUCE M, 2004, INT J OPER PROD MAN, V24, P151, DOI
+   10.1108/01443570410514867
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CHILDERHOUSE P, 2000, LOGISTICS INFORM MAN, V13, P337
+   CHRISTOPHER M, 2000, IND MARKET MANAG, V29, P37
+   CHRISTOPHER M, 2001, INT J PHYS DISTRIB, V31, P235
+   CHRISTOPHER M, 2002, INT J LOGIST MANAG, V13, P1
+   CHRISTOPHER M, 2004, INT J RETAIL DISTRIB, V32, P367
+   CHRISTOPHER M, 2006, INT J LOGIST MANAG, V17, P277
+   DENZIN NK, 1994, HDB QUALITATIVE RES
+   DETREVILLE S, 2004, J OPER MANAG, V21, P613, DOI
+   10.1016/j.jom.2003.10.001
+   EJVEGARD R, 1996, SCI METHOD
+   ERIKSSON LA, 1999, CONDUCTING RES REPOR
+   FEARNE A, 2006, SUPPLY CHAIN MANAG, V11, P283, DOI
+   10.1108/13598540610671725
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   GIBSON BJ, 2005, J BUSINESS LOGISTICS, V26, P17
+   GOLDMAN S, 1995, AGILE COMPETITORS VI
+   GOLDSBY TJ, 2003, INT J LOGIST MANAG, V14, P33
+   GOLDSBY TJ, 2006, J BUSINESS LOGISTICS, V27, P57
+   GUNASEKARAN A, 1998, INT J PROD RES, V36, P1223
+   GUNASEKARAN A, 2005, J OPER MANAG, V23, P423, DOI
+   10.1016/j.jom.2004.10.005
+   HILLETOFTH P, 2008, INT J SERVICES SCI, V1
+   HILLETOFTH P, 2008, THESIS CHALMERS U TE
+   HOLWEG M, 2004, 2 CENTURY RECONNECTI
+   HOLWEG M, 2005, J OPER MANAG, V23, P507, DOI 10.1016/j.jom.2004.10.009
+   MASONJONES R, 1999, INT J PROD ECON, V64, P71
+   MASONJONES R, 2000, INT J AGILE MANAGEME, V2, P54, DOI
+   10.1108/14654650010312606
+   MISTRY J, 2005, QUALITATIVE RES ACCO, V2, P193
+   NAGEL R, 1991, 21 CENTURY MANUFACTU
+   NAYLOR JB, 1999, INT J PROD ECON, V62, P107
+   OHNO T, 1988, TOYOTA PRODUCTION SY
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   OLHAGER J, 2006, INT J VALUE CHAIN MA, V1, P19
+   PAGN JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   SCANDURA TA, 2000, ACAD MANAGE J, V43, P1248
+   STRATTON R, 2003, INT J PROD ECON, V85, P183, DOI
+   10.1016/S0925-5273(03)00109-9
+   SWAMINATHAN JM, 2001, CALIF MANAGE REV, V43, P125
+   VANHOEK RI, 2000, INT J AGILE MANAGEME, V2, P196
+   VANHOEK RI, 2001, J OPERATIONS MANAGEM, V19, P164
+   WARBURTON RDH, 2002, SUPPLY CHAIN MANAG, V7, P101, DOI
+   10.1016/S0925-5273(03)00109-9
+   WOMACK JP, 1990, MACHINE CHANGED WORL
+   WOMACK JP, 1996, LEAN THINKING
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YIN RK, 2003, CASE STUDY RES DESIG
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZINN W, 1990, INT J LOGISTICS MANA, V1, P11
+NR 54
+TC 8
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0263-5577
+J9 INDUSTRIAL MANAGE DATA SYST
+JI Ind. Manage. Data Syst.
+PY 2009
+VL 109
+IS 1-2
+BP 16
+EP 33
+DI 10.1108/02635570910926573
+PG 18
+SC Computer Science, Interdisciplinary Applications; Engineering,
+   Industrial
+GA 430EH
+UT ISI:000264971100002
+ER
+
+PT J
+AU Forza, C
+   Salvador, F
+   Trentin, A
+AF Forza, Cipriano
+   Salvador, Fabrizio
+   Trentin, Alessio
+TI Form postponement effects on operational performance: a typological
+   theory
+SO INTERNATIONAL JOURNAL OF OPERATIONS & PRODUCTION MANAGEMENT
+LA English
+DT Article
+DE Product specification; Decision making; Mass customization
+ID DELAYED PRODUCT DIFFERENTIATION; ORDER SUPPLY CHAINS; MASS
+   CUSTOMIZATION; HEWLETT-PACKARD; TO-ORDER; MANAGEMENT; INVENTORY;
+   DESIGN; SYSTEMS; STRATEGIES
+AB Purpose - The operational outcomes of form postponement (1 P) have been
+   increasingly investigated in the last two decades under the effects of
+   escalating product variety and diffusion of mass customisation
+   strategies. However, conflicting or hard-to-relate findings are quite
+   frequent in the literature, so that a unifying framework for operations
+   decision making is still lacking. The purpose of this paper is to
+   develop a typological theory that reconciles into a coherent picture
+   extant research oil FP effects on operational performance.
+   Design/methodology/approach - The paper defines three mutually
+   exclusive and exhaustive types of FP at the company level of analysis.
+   Then, it revisits, through the lens of this typology, the literature on
+   FP and formalizes how, why and under which assumptions each FP type
+   affects operational performance. Findings - The paper demonstrates
+   that, to predict and explain FP effects on operational performance,
+   three types of FP should be distinguished. fit fact, it is shown that
+   either these FP types have different effects on a given performance
+   dimension, or they have the same effect but the logical justification
+   for this effect is often different according to the FP type being
+   considered. Research limitations/implications - The paper's synopsis of
+   past research accomplishments indicates that future work will have to
+   investigate the operational implications of a specific FP type almost
+   ignored in the literature, as well as test the relationships
+   hypothesized in the literature. Further opportunities for future
+   research include extending the level of analysis beyond the boundaries
+   of the company and linking the paper's FP typology to the operations
+   strategy discourse. Practical implications - The lack of understanding
+   of the benefits and costs of FP has been found to be a major obstacle
+   to FP implementation. The paper's typological theory supports
+   managerial decision making by clarifying what FP alternatives companies
+   have and what are the operational implications for each of these
+   alternatives. Originality/value - The paper's typological theory
+   reconciles apparently conflicting findings in the literature by
+   explaining such differences in terms of differences in the FP type
+   being investigated. Additionally, the typology helps avoid a twofold
+   risk: on the one hand, the risk of generalizing an effect or mechanism
+   that only applies to a specific FP type and, on the other hand, the
+   risk of failing to detect type-specific effects or mechanisms.
+C1 [Forza, Cipriano; Trentin, Alessio] Univ Padua, Vicenza, Italy.
+   [Salvador, Fabrizio] Sch Business, Inst Empresa, Madrid, Spain.
+RP Trentin, A, Univ Padua, Vicenza, Italy.
+EM alessio.trentin@unipd.it
+CR AHLSTROM P, 1999, INT J OPER PROD MAN, V19, P262
+   ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   ALDERSON W, 1957, MARKETING BEHAV EXEC
+   ANAND KS, 2007, MANAGE SCI, V53, P697, DOI 10.1287/mnsc.1060.0655
+   AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   BARLOW J, 1999, HOUSING STUD, V14, P23
+   BATTEZZATI L, 2000, INT J PHYS DISTRIB, V30, P413
+   BAYUS BL, 1999, MARKET SCI, V18, P137
+   BOWERSOX DJ, 1989, EUR J MARKETING, V23, P58
+   BOWERSOX DJ, 1999, J PROD INNOVAT MANAG, V16, P557
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CAUX C, 2006, INT J PROD RES, V44, P3243, DOI 10.1080/00207540500521543
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   COOPER JC, 1993, INT J PHYS DISTRIB, V23, P12
+   DOTY DH, 1994, ACAD MANAGE REV, V19, P230
+   DUBIN R, 1969, THEORY BUILDING
+   EPPEN G, 1981, MULTILEVEL PRODUCTIO, P51
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FERDOWS K, 2004, HARVARD BUS REV, V82, P104
+   FISHER M, 1996, OPER RES, V44, P87
+   FISHER M, 1999, MANAGE SCI, V45, P297
+   FUNKE M, 2001, IMF STAFF PAPERS, V48, P225
+   GARCIADASTUGUE SJ, 2007, J BUSINESS LOGISTICS, V28, P57
+   GARG A, 1997, IIE TRANS, V29, P641
+   GRAMAN GA, 2002, PROD OPER MANAG, V11, P340
+   GRAMAN GA, 2006, INT J OPER PROD MAN, V26, P1068, DOI
+   10.1108/01443570610691076
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   GUPTA S, 1998, IIE TRANS, V30, P933
+   HANDFIELD RB, 1998, J OPER MANAG, V16, P321
+   HE D, 1998, COMPUT AIDED DESIGN, V30, P105
+   HE D, 2002, INT J PROD RES, V40, P2461
+   HESKETT JL, 1977, HARVARD BUS REV, V55, P119
+   HOEKSTRA S, 1992, INTEGRATED LOGISTICS
+   HOYT D, 2001, LUCENT TECHNOLOGIES
+   HSU HM, 2004, EUR J OPER RES, V156, P183, DOI
+   10.1016/S0377-2217(03)00018-3
+   JENKINS M, 2003, BOEING FRONTIERS, V1
+   JOHNSON EM, 2000, INT J LOGISTICS MANA, V11, P19
+   KRAJEWSKI L, 2005, J OPER MANAG, V23, P452, DOI
+   10.1016/j.jom.2004.10.006
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1993, PERSPECTIVES OPERATI, P45
+   LEE HL, 1994, MANAGEMENT DESIGN EN, P105
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1998, STRATEGIC SUPPLY CHA, P77
+   LI SH, 2005, J OPER MANAG, V23, P618, DOI 10.1016/j.jom.2005.01.002
+   LIN GY, 2000, INT J FLEX MANUF SYS, V12, P145
+   MA SH, 2002, EUR J OPER RES, V142, P523
+   MASONJONES R, 1999, INT J LOGIST MANAG, V10, P13
+   MATHER HF, 1986, PRODUCTION INVENTORY, V27, P90
+   MATTHEWS P, 2004, SUPPLY CHAIN MANAG, V8, P28
+   MOOD AM, 1974, INTRO THEORY STAT
+   NAIR A, 2005, INT J PROD RES, V43, P447, DOI
+   10.1080/00207540512331311886
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PINE JB, 1993, MASS CUSTOMIZATION N
+   PRASAD S, 2005, J OPER MANAG, V23, P551, DOI 10.1016/j.jom.2004.10.011
+   RABINOVICH E, 2003, INT J LOGIST MANAG, V14, P33
+   ROBINSON WN, 2001, J GLOBAL INFORMATION, V9, P29
+   SCHMENNER RW, 1998, J OPER MANAG, V17, P97
+   SKIPWORTH H, 2004, INT J PROD RES, V42, P2063, DOI
+   10.1080/00207540410001661373
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   SU JCP, 2005, J OPER MANAG, V23, P305, DOI 10.1016/j.jom.2004.10.016
+   SWAMINATHAN JM, 1998, MANAGE SCI, V44, P161
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   SWAMINATHAN JM, 2003, OR MS HDB SUPPLY CHA, P199
+   TIBBENLEMBKE RS, 2005, EUR J OPER RES, V165, P748
+   TWEDE D, 2000, PACKAG TECHNOL SCI, V13, P105
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 1998, INT J LOGISTICS MANA, V9, P95
+   VANHOEK RI, 1998, INT J PHYS DISTRIB, V28, P508
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 1999, J MARKET FOCUSED MAN, V3, P353
+   VANHOEK RI, 1999, LONG RANGE PLANN, V32, P505
+   VANHOEK RI, 1999, SUPPLY CHAIN MANAG, V4, P18
+   VANHOEK RI, 2000, LOGISTICS TRANSPORTA, V36, P205
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   VOLLMANN TE, 1992, MANUFACTURING PLANNI
+   WALLER MA, 2000, J BUSINESS LOGISTICS, V21, P133
+   WHANG S, 1998, PRODUCT VARIETY MANA, P65
+   WHETTEN DA, 1989, ACAD MANAGE REV, V14, P490
+   WIKNER J, 2005, INT J LOGIST-RES APP, V8, P211
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2005, INT J LOGIST MANAG, V16, P192
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZINN W, 1990, INT J LOGISTICS MANA, V1, P11
+NR 89
+TC 7
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0144-3577
+J9 INT J OPER PROD MANAGE
+JI Int. J. Oper. Prod. Manage.
+PY 2008
+VL 28
+IS 11-12
+BP 1067
+EP 1094
+DI 10.1108/01443570810910197
+PG 28
+SC Management
+GA 399SW
+UT ISI:000262820600004
+ER
+
+PT J
+AU Manuj, I
+   Mentzer, JT
+AF Manuj, Ila
+   Mentzer, John T.
+TI Global supply chain risk management strategies
+SO INTERNATIONAL JOURNAL OF PHYSICAL DISTRIBUTION & LOGISTICS MANAGEMENT
+LA English
+DT Article
+DE Risk management; Supply chain management; International business
+AB Purpose - Global supply chains are more risky than domestic supply
+   chains due to numerous links interconnecting a wide network of firms.
+   These links are prone to disruptions, bankruptcies, breakdowns,
+   macroeconomic and political changes, and disasters leading to higher
+   risks and making risk management difficult. The purpose of this paper
+   is to explore the phenomenon of risk management and risk management
+   strategies in global supply chains.
+   Design/methodology/approach - This paper is based on an extensive
+   literature review and a qualitative study comprising 14 in-depth
+   interviews and a focus group meeting with senior supply chain
+   executives.
+   Findings - The study provides insights into the applicability of six
+   risk management strategies with respect to environmental conditions and
+   the role of three moderators.
+   Research limitations/implications - The model is developed in a global
+   manufacturing supply chain context. It should be tested in other
+   contexts and with other methods to provide generalizability. The study
+   takes a much needed step toward building a theory of risk management in
+   global supply chains, which opens important future research directions.
+   Practical implications - This research provides direction to managers
+   for choosing risk management strategies based on the global supply
+   chain environment. Moderators have practical implications for global
+   supply chain managers.
+   Originality/value - The paper addresses an identified gap in the
+   literature for selecting risk management strategies in global supply
+   chains. It employs grounded theory, a methodology appropriate for
+   theory-building, to explore a phenomenon with an inadequate theoretical
+   base.
+C1 [Manuj, Ila] Univ N Texas, Dept Mkt & Logist, Denton, TX 76203 USA.
+   [Mentzer, John T.] Univ Tennessee, Knoxville, TN USA.
+RP Manuj, I, Univ N Texas, Dept Mkt & Logist, Denton, TX 76203 USA.
+EM ila.manuj@unt.edu
+CR ACHROL RS, 1983, J MARKETING, V47, P55
+   AGRAWAL V, 2000, IIE TRANS, V32, P819
+   ALHASHIM DD, 1980, MANAGEMENT INT REV M, V20, P33
+   AMIRASLANI A, 2006, TECHNOVATION, V26, P573, DOI
+   10.1016/j.technovation.2005.06.001
+   AMIT R, 1993, STRATEGIC MANAGE J, V14, P33
+   ANDERSON E, 1986, J INT BUS STUD, V17, P1, DOI
+   10.1057/PALGRAVE.JIBS.8490432
+   APPELQVIST P, 2005, INT J RETAIL DISTRIB, V33, P734
+   BAIRD IS, 1985, ACAD MANAGE REV, V10, P230
+   BAIRD IS, 1991, RISK STRATEGY MANAGE
+   BALDWIN CY, 1997, HARVARD BUS REV, V75, P84
+   BARRY J, 2004, INT J PHYS DISTRIB, V34, P695
+   BEAMON M, 1998, J PRODUCTION EC, V55, P281
+   BERGER PD, 2004, OMEGA-INT J MANAGE S, V32, P9, DOI
+   10.1016/j.omega.2003.09.001
+   BIROU LM, 1993, INT J PURCHASING MAT, V29, P28
+   BOEDECKER KA, 1980, J RETAILING, V56, P59
+   BUCKLEY PJ, 1998, J INT BUS STUD, V29, P21
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CACHON GP, 2004, MANAGE SCI, V50, P222, DOI 10.1287/mnsc.1030.0190
+   CARTER JR, 1989, J PURCHASING MAT MAN, V25, P19
+   CAVINATO JL, 2004, INT J PHYS DISTRIB, V34, P383
+   CHANG Y, 2001, INT J SIMULATION SYS, V2, P24
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   CHO J, 2001, INT MARKET REV, V18, P542
+   CHOI TY, 2002, J OPER MANAG, V20, P469
+   CHOPRA S, 2004, MIT SLOAN MANAGE REV, V46, P53
+   CHRISTOPHER M, 2004, INT J PHYS DISTRIB, V34, P388, DOI
+   10.1108/09600030410545436
+   CHRISTOPHER M, 2004, LOGISTICS, V15, P1
+   COMFORT LK, 1994, J CONTINGENCIES CRIS, V2, P157
+   CRESWELL JW, 1998, QUALITATIVE INQUIRY
+   DENZIN NK, 1998, INTRO ENTERING FIELD
+   DOWNEY ML, 2004, SUPPLY CHAIN MANAG, V8, P9
+   ELLRAM LM, 1998, J BUSINESS LOGISTICS, V19, P55
+   FAGAN ML, 1991, J BUS STRAT, V12, P21
+   FAWCETT SE, 1996, J BUSINESS LOGISTICS, V17, P167
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   FLINT DJ, 2000, J BUSINESS LOGISTICS, V21, P19
+   FLINT DJ, 2002, J MARKETING, V66, P102
+   FRIZELLE G, 1995, INT J OPER PROD MAN, V15, P26
+   GHOSHAL S, 1987, STRATEGIC MANAGE J, V8, P425
+   GIAKATIS G, 2001, TOTAL QUAL MANAGE, V12, P179
+   GIUNIPERO LC, 2004, INT J PHYS DISTRIB, V34, P698
+   GLASER BG, 1978, THEORETICAL SENSITIV
+   HARLAND C, 2003, J PURCH SUPPLY MANAG, V9, P51
+   HAUSER LM, 2003, SUPPLY CHAIN MANAG, V7, P64
+   HOLMQVIST M, 2003, ORGAN STUD, V24, P95
+   HUBER GP, 1991, ORGAN SCI, V2, P88
+   HULT GTA, 2003, J OPER MANAG, V21, P541, DOI 10.1016/j.jom.2003.02.001
+   HULT GTM, 1997, IND MARKET MANAG, V26, P403
+   HULT GTM, 2000, DECISION SCI, V31, P293
+   HULT GTM, 2002, J BUS RES, V55, P377
+   JOHNSON ME, 2001, CALIF MANAGE REV, V43, P106
+   JUTTNER U, 2003, INT J LOGIST-RES APP, V6, P197
+   JUTTNER U, 2005, INT J LOGIST MANAG, V16, P120
+   KOGUT B, 1985, SLOAN MANAGE REV, V27, P27
+   KOGUT B, 1994, MANAGE SCI, V40, P123
+   LEE HL, 2002, CALIF MANAGE REV, V44, P105
+   LESSARD DR, 1986, HARVARD BUS REV, V64, P107
+   MACHER JT, 2002, IND INNOV, V9, P155
+   MACNEIL IR, 1978, NORTHWEST U LAW REV, V72, P854
+   MANUJ I, 2005, 36 ANN M DEC SCI I S
+   MANUJ I, 2008, J BUSINESS IN PRESS
+   MCCRACKEN G, 1988, LONG INTERVIEW
+   MENTZER JT, 1994, J BUSINESS LOGISTICS, V15, P215
+   MENTZER JT, 1997, J BUSINESS LOGISTICS, V18, P199
+   MILLER KD, 1992, J INT BUS STUD, V23, P311
+   MIN H, 2002, COMPUT IND ENG, V43, P132
+   MITCHELL VW, 1995, BRIT J MANAGE, V6, P115
+   MORRISON MA, 2002, USING QUALITATIVE RE, P45
+   NEMBHARD HB, 2005, IIE TRANS, V37, P945, DOI 10.1080/07408170591008073
+   NEWALL D, 1991, INT J PROD RES, V29, P1747
+   NORRMAN A, 2004, INT J PHYS DISTRIB, V34, P434
+   PERRY JH, 1991, J BUSINESS LOGISTICS, V12, P1
+   PORTER ME, 1991, STRATEGIC MANAGE J, V12, P95
+   RAO K, 1994, INT J PHYS DISTRIB, V24, P11
+   SANKAR NR, 2001, INT J QUAL RELIAB MA, V18, P324
+   SCHROEDER S, 1998, RISK MANAGEMENT, V45, P72
+   SIMCHILEVI D, 2005, MANUFACTURING SERVIC, V7, P295
+   SPEKMAN RE, 2004, INT J PHYS DISTRIB, V34, P414
+   STRAUSS A, 1990, BASIC QUALITATIVE RE
+   STRAUSS A, 1998, BASICS QUALITATIVE R
+   TALLURI S, 2004, INT J PHYS DISTRIB, V34, P62
+   TEECE DJ, 1997, STRATEGIC MANAGE J, V18, P509
+   THIA CW, 2005, TQM MAGAZINE, V17, P406
+   UPTON DM, 1994, CALIF MANAGE REV, V36, P72
+   VACHON S, 2002, IEEE T ENG MANAGE, V49, P218, DOI
+   10.1109/TEM.2002.803387
+   VANDERZEE DJ, 2005, DECISION SCI, V36, P65
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WANG P, 2006, DECISION SCI, V37, P285
+   WELCH DE, 1996, J INT MARKETING, V4, P11
+   WERNERFELT B, 1987, STRATEGIC MANAGE J, V8, P187
+   WILDING R, 1998, INT J PHYS DISTRIB, V28, P599
+   WILLIAMSON OE, 1979, J LAW ECON, V22, P233
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZSIDISIN GA, 2003, J PURCH SUPPLY MANAG, V9, P217
+   ZSIDISIN GA, 2003, J SUPPLY CHAIN MANAG, V39, P14
+   ZSIDISIN GA, 2003, J SUPPLY CHAIN MANAG, V39, P15
+   ZSIDISIN GA, 2004, INT J PHYS DISTRIB, V34, P397
+NR 98
+TC 23
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0960-0035
+J9 INT J PHYS DISTRIB LOGIST MAN
+JI Int. J. Phys. Distrib. Logist. Manag.
+PY 2008
+VL 38
+IS 3-4
+BP 192
+EP 223
+DI 10.1108/09600030810866986
+PG 32
+SC Management
+GA V14MB
+UT ISI:000207737400002
+ER
+
+PT J
+AU Huang, YY
+   Li, SJ
+AF Huang, Yu-Ying
+   Li, Shyh-Jane
+TI Postponement Application in Greater China and its Related Determinants
+SO TRANSPORTATION JOURNAL
+LA English
+DT Article
+AB Postponement has a long history in both practical applications and
+   academic literature. However, past empirical research has almost always
+   been conducted in the Western countries. The purpose of this study is
+   to investigate the current situations of postponement application in
+   Greater China (which includes Mainland China, Hong Kong, and Taiwan)
+   and to verify the effects of some determinants (i.e., business
+   environment uncertainty, administration factors, IS maturity, and
+   industry characteristics). This study conducted a questionnaire survey
+   that encompassed large manufacturers across three industries. The
+   result indicates that postponement application in Greater China is
+   growing, and the degree is higher than that indicated by previous
+   findings in some Western countries. Business environment uncertainty,
+   administration factors, and IS maturity all have positive effects on
+   postponement application, while industry-specific variations truly
+   influence the presented styles of postponement strategies. In summary,
+   the findings of this study may provide another viewpoint that is
+   different from what we are used to seeing in the Western studies.
+C1 [Li, Shyh-Jane] Natl Sun Yat Sen Univ, Dept Business Management, Kaohsiung, Taiwan.
+EM y.y.huang84@hotmail.com
+   shyhjane@sense-siq.com
+CR *CLM, 1995, WORLD CLASS LOG CHAL
+   *OR CORP, 2003, AD SUPPL CHAIN POSTP
+   ARMSTRONG JS, 1977, J MARKETING RES, V14, P396
+   AVIV Y, 2001, OPER RES, V49, P578
+   BATTEZZATI L, 2000, INT J PHYS DISTRIB, V30, P413
+   BOWERSOX DJ, 1995, J BUSINESS LOGISTICS, V16, P65
+   BROWN AO, 2000, INTERFACES, V30, P65
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   CHOPRA S, 2001, SUPPLY CHAIN MANAG, P205
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FLYNN BB, 1990, J OPERATIONS MANAGEM, V9, P250
+   GRAMAN GA, 2006, INT J OPER PROD MAN, V26, P1068, DOI
+   10.1108/01443570610691076
+   GRIFFIS SE, 2003, J BUSINESS LOGISTICS, V24, P237
+   GROVER V, 1993, J MANAGEMENT INFORMA, V10, P141
+   HAIR JF, 1998, MULTIVARIATE DATA AN
+   HUANG CW, 2003, INT J MANAGEMENT, V20, P241
+   HUANG YI, 2003, P 2003 INT SYST DYN
+   JOHNSON ME, 2000, INT J LOGIST MANAG, V11, P19
+   KING WR, 1992, INFORM MANAGE, V23, P217
+   LEE GG, 2003, BEHAV INFORM TECHNOL, V22, P263, DOI
+   10.1080/0144929031000136548
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 2000, INT J TECHNOL MANAGE, V20, P373
+   LEE HL, 2001, MIT SLOAN MANAGE REV, V42, P54
+   LIN WLP, 2001, J CONTEMP CHINA, V10, P695
+   MAHMOOD MA, 2001, J ORG COMP ELECT COM, V11, P107
+   MALHOTRA MK, 1998, J OPER MANAG, V16, P407
+   MOREHOUSE JE, 1995, SUPPLY CHAIN MANAGEM
+   NAIR A, 2005, INT J PROD RES, V43, P447, DOI
+   10.1080/00207540512331311886
+   NETER JW, 1994, PSYCHOMETRIC THEORY
+   RABINOVICH E, 2003, INT J LOGIST MANAG, V14, P33
+   TIAN KT, 2001, J CONSUM RES, V28, P50
+   VANHOEK RI, 1998, INT J PHYS DISTRIB, V28, P508
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 1999, LONG RANGE PLANN, V32, P505
+   VANHOEK RI, 2000, TRANSPORT RES E-LOG, V36, P205
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WANG HW, 2006, ASIA PACIFIC MANAGEM, V11, P141
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2005, IEEE T ENG MANAGE, V52, P238, DOI 10.1109/TEM.2005.845223
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 41
+TC 1
+PU AMER SOC TRANSPORTATION LOGISTICS
+PI WASHINGTON
+PA 1400 EYE ST, NW, SUITE 1050, WASHINGTON, DC 20005 USA
+SN 0041-1612
+J9 TRANSP J
+JI Transp. J.
+PD SUM
+PY 2008
+VL 47
+IS 3
+BP 5
+EP 21
+PG 17
+SC Transportation
+GA V14KH
+UT ISI:000207732800001
+ER
+
+PT J
+AU Reiner, G
+   Demeter, K
+   Poiger, M
+   Jenei, I
+AF Reiner, Gerald
+   Demeter, Krisztina
+   Poiger, Martin
+   Jenei, Istvan
+TI The internationalization process in companies located at the borders of
+   emerging and developed countries
+SO INTERNATIONAL JOURNAL OF OPERATIONS & PRODUCTION MANAGEMENT
+LA English
+DT Article
+DE Globalization; Emerging markets; Developing countries; Supply chain
+   management; Austria; Hungary
+ID TRANSACTION-COST-ANALYSIS; SUPPLY CHAIN; OPERATIONS MANAGEMENT;
+   MANUFACTURING NETWORKS; PRODUCT; STRATEGY; ENTRY; FIRMS; PROPOSITIONS;
+   PERFORMANCE
+AB Purpose - Despite geographical proximity, major economic differences
+   exist between Western European countries and the formerly socialist
+   Eastern European countries. The main objective of this study is to
+   develop a better understanding of internationalization decision
+   processes in this specific context.
+   Design/methodology/approach - By means of multiple case study research,
+   six Austrian and five Hungarian companies in order to extend and refine
+   existing theory on internationalization decisions given the current
+   situation in Central Europe are analyzed. In particular, the paper uses
+   extant literature to build a conceptual framework from which we derive
+   propositions as a basis and a guide for data collection and analysis.
+   Findings - In addition to cost considerations, process and product
+   innovations are becoming increasingly important dimensions in
+   explaining the reasons for internationalization projects. The reasons
+   for internalization and solutions (relocated products and processes,
+   entry mode and location) are closely interrelated.
+   Originality/value - Although this framework for the
+   internationalization decision process is applied in a very specific
+   context, the authors believe that the framework can also be very
+   helpful in understanding these decision processes in a more general
+   setting. In particular, companies in other regions where developed and
+   emerging countries are relatively close to one another might be able to
+   utilize our framework and results (in Asia or America).
+C1 [Reiner, Gerald] Univ Neuchatel, CH-2000 Neuchatel, Switzerland.
+   [Demeter, Krisztina; Jenei, Istvan] Corvinus Univ Budapest, Budapest, Hungary.
+   [Poiger, Martin] Vienna Univ Econ & Business Adm, Vienna, Austria.
+RP Reiner, G, Univ Neuchatel, CH-2000 Neuchatel, Switzerland.
+EM gerald.reiner@unine.ch
+CR 2003, ECONOMIST, V369, P72
+   *UN STAT DIV, 2006, ISIC REV 3 1
+   AITKEN J, 2003, INT J PROD ECON, V85, P127, DOI
+   10.1016/S0925-5273(03)00105-1
+   ANDERSON E, 1986, J INT BUS STUD, V17, P1, DOI
+   10.1057/PALGRAVE.JIBS.8490432
+   BADRI MA, 1995, INT J OPER PROD MAN, V15, P50
+   BARNEY J, 1991, J MANAGE, V17, P99
+   BARTLETT CA, 1989, MANAGING BORDERS TRA
+   BENNETT D, 2001, WHAT REALLY MATTERS, P1288
+   BRIDOUX F, 2004, 24 ANN INT C STRAT M
+   BUCKLEY PJ, 1998, J INT BUS STUD, V29, P539
+   CALOF JL, 1995, INT BUSINESS REV, V4, P115
+   CAMUFFO A, 2007, INT J OPER PROD MAN, V27, P371, DOI
+   10.1108/01443570710736967
+   COLOTLA I, 2003, INT J OPER PROD MAN, V23, P1184, DOI
+   10.1108/01443570310496625
+   DEMETER K, 2006, INT J PROD ECON, V104, P555, DOI
+   10.1016/j.ijpe.2006.05.002
+   DESAI P, 2001, MANAGE SCI, V47, P37
+   DISDIER AC, 2004, J COMP ECON, V32, P280, DOI 10.1016/j.jce.2004.02.004
+   DUNNING JH, 1998, J INT BUS STUD, V29, P45
+   EISENHARDT KM, 1989, ACAD MANAGE REV, V14, P532
+   ERRAMILLI MK, 1993, J MARKETING, V57, P19
+   FERDOWS K, 1997, HARVARD BUSINESS MAR, P73
+   FERDOWS K, 2003, IND ENG          FEB, P28
+   FISHER ML, 1997, HARVARD BUS REV, V75, P105
+   GEREFFI G, 1999, J INT ECON, V48, P37
+   GERWIN D, 2005, INT J OPER PROD MAN, V25, P1171, DOI
+   10.1108/01443570510633576
+   HAMEL G, 1990, HARVARD BUS REV, V68, P71
+   HAYES R, 1979, HARVARD BUS REV, V57, P127
+   JAMMERNEGG W, 2007, INT J PROD ECON, V108, P183, DOI
+   10.1016/j.ijpe.2006.12.047
+   JOHANSON J, 1977, J INT BUS STUD, V8, P23
+   JOHANSON J, 1990, INT MARKET REV, V7, P11
+   MAGNUSSON K, 2004, 6 SIGMA PRAGMATIC AP
+   MALHOTRA NK, 2003, J INT MARKETING, V11, P1
+   MARITAN CA, 2004, J OPER MANAG, V22, P489, DOI 10.1016/j.jom.2004.05.007
+   MELIN L, 1992, STRATEGIC MANAGE J, V13, P99
+   MILES H, 1994, QUALITATIVE DATA ANA
+   PORTER ME, 1980, COMPETITIVE STRATEGY
+   PORTER ME, 1996, HARVARD BUS REV, V74, P61
+   SEURING S, 2005, RES METHODOLOGIES SU, P235
+   SHARMA VM, 2004, J MARKETING THEORY P, V12, P1
+   SLACK N, 2002, OPERATIONS STRATEGY
+   STERMAN J, 2000, BUSINESS DYNAMICS SY
+   STUART I, 2002, J OPER MANAG, V20, P419
+   SWAMINATHAN JM, 2003, SUPPLY CHAIN MANAGEM
+   TALLON WJ, 1993, J BUSINESS LOGISTICS, V14, P185
+   VANDONK DP, 2005, RES METHODOLOGIES SU, P31
+   VEREECKE A, 2002, INT J OPER PROD MAN, V22, P492
+   VEREECKE A, 2006, MANAGE SCI, V52, P1737, DOI 10.1287/mnsc.1060.0582
+   VERNON R, 1966, Q J ECON, V80, P191
+   VERNON R, 1979, OXFORD B ECON STAT, V41, P255
+   VOSS C, 2002, INT J OPER PROD MAN, V22, P195
+   WACKER JG, 1998, J OPER MANAG, V16, P361
+   WERNERFELT B, 1984, STRATEGIC MANAGEMENT, V5, P171, DOI
+   10.1002/SMJ.4250050207
+   WILLIAMSON O, 1975, MARKETS HIERARCHIES
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YIN RK, 2003, CASE STUDY RES DESIG
+NR 54
+TC 4
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0144-3577
+J9 INT J OPER PROD MANAGE
+JI Int. J. Oper. Prod. Manage.
+PY 2008
+VL 28
+IS 9-10
+BP 918
+EP 940
+DI 10.1108/01443570810903096
+PG 23
+SC Management
+GA 373YP
+UT ISI:000261009700006
+ER
+
+PT J
+AU Shao, XF
+   Ji, JH
+AF Shao, X. -F.
+   Ji, J. -H.
+TI Evaluation of postponement strategies in mass customization with
+   service guarantees
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE postponement; mass customization; product redesign strategy; process
+   reversal strategy
+ID DELAY PRODUCT DIFFERENTIATION; OPERATIONS REVERSAL; HEWLETT-PACKARD;
+   INVENTORY; DESIGN; MANAGEMENT; PERFORMANCE; FRAMEWORK; BENEFITS; LINES
+AB Postponement is one of the practical methods to mass customization.
+   Product redesign approach and process reversal approach are two
+   strategies applied to delay the point of differentiation in mass
+   customization systems. In the existing literature, analytical models
+   explaining and quantifying the benefits of delayed differentiation have
+   been developed. These models focus on analysing the costs and benefits
+   of certain postponement strategies. In this paper, we analyze and
+   compare two different postponement strategies applied in a mass
+   customization system with service time guarantees. The goal is to
+   determine the right strategy and to identify the key influencing
+   factors. We formulate a cost-minimisation model with general
+   distributed demand. We show that it is not beneficial to delay the
+   point of differentiation when the considered stage is a high
+   value-added process. We also show that processing time and value added
+   at the considered stages are two main factors determining the choice of
+   the right strategy.
+C1 Shanghai Jiao Tong Univ, Antai Sch Management, Shanghai 200052, Peoples R China.
+RP Shao, XF, Shanghai Jiao Tong Univ, Antai Sch Management, 535 Fa Hua
+   Zhen Rd, Shanghai 200052, Peoples R China.
+EM xfshao@sjtu.edu.cn
+CR ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   DAVIS SM, 1987, FUTURE PERFECT
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   GARG A, 1997, IIE TRANS, V29, P641
+   GRAMAN GA, 2002, PROD OPER MANAG, V11, P340
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   HOYT D, 2001, LUCENT TECHNOLOGIES
+   JAIN N, 2001, MANAGE SCI, V47, P595
+   KOPCZAK L, 1993, H PACKARD DESKJET PR
+   KOTHA S, 1995, STRATEGIC MANAGE J, V16, P21
+   KOTHA S, 1996, EUROPEAN MANAGEMENT, V14, P442
+   LAMPEL J, 1996, SLOAN MANAGE REV, V38, P21
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1998, MANAGE SCI, V44, P162
+   LEE HL, 1998, PRODUCT VARIETY MANA, P66
+   NAIR A, 2005, INT J PROD RES, V43, P447, DOI
+   10.1080/00207540512331311886
+   PINE BJ, 1993, HARVARD BUS REV, V71, P108
+   SU JCP, 2005, J OPER MANAG, V23, P305, DOI 10.1016/j.jom.2004.10.016
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   SWAMINATHAN JM, 2003, SUPPLY CHAIN MANAG, V11, P199
+   THONEMANN UW, 2000, OPER RES, V48, P1
+   TIBBENLEMBKE RS, 2005, EUR J OPER RES, V165, P748
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   ZENG AZH, 1999, INT J PROD ECON, V58, P147
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 33
+TC 7
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PY 2008
+VL 46
+IS 1
+BP 153
+EP 171
+DI 10.1080/00207540600844027
+PG 19
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 232OB
+UT ISI:000251027900007
+ER
+
+PT J
+AU Yang, B
+   Yang, Y
+   Wijngaard, J
+AF Yang, Biao
+   Yang, Ying
+   Wijngaard, Jacob
+TI Postponement: an inter-organizational perspective
+SO INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH
+LA English
+DT Article
+DE postponement; organizational structure; capacity planning
+ID MASS-CUSTOMIZATION; SUPPLY CHAIN; DEMAND UNCERTAINTY; MANAGEMENT;
+   CAPACITY; DESIGN; SALES; CENTRALIZATION; SPECULATION; DIRECTIONS
+AB In view of the slow rate of postponement applications, this paper
+   attempts to examine postponement strategies from an
+   inter-organizational perspective. The paper first reviews the
+   literature on different postponement strategies (including logistics
+   postponement, production postponement, purchasing postponement, and
+   product-development postponement) mainly within the context of the
+   supply chain or supply network. Then, two research questions are
+   formulated. This is followed by the investigation into the
+   inter-organizational structure and capacity planning in postponement
+   applications. The paper concludes with some suggestions for further
+   research.
+C1 Univ Ulster, Sch Business Org & Management, Jordanstown BT37 0QB, Antrim, North Ireland.
+   Univ Wales, Sch Business & Management, Aberystwyth SY23 3DD, Dyfed, Wales.
+   Univ Groningen, Dept Prod Management, Fac Management & Org, NL-9700 AV Groningen, Netherlands.
+RP Yang, B, Univ Ulster, Sch Business Org & Management, Jordanstown BT37
+   0QB, Antrim, North Ireland.
+EM b.yang@ulster.ac.uk
+CR *OR CORP, 2004, ADP SUPPL CHAIN POST
+   AVIV Y, 2001, OPER RES, V49, P578
+   BAILEY JP, 2005, TRANSPORT RES E-LOG, V41, P159, DOI
+   10.1016/j.tre.2004.03.004
+   BALDWIN CY, 1997, HARVARD BUS REV, V75, P84
+   BASK AH, 2001, J BUS IND MARK, V16, P470
+   BITNER MJ, 2000, J ACAD MARKET SCI, V28, P138
+   BIYALOGORSKY E, 1999, MARKET SCI, V18, P605
+   BLACKSTONE JH, 1989, CAPACITY MANAGEMENT
+   BOWERSOX DJ, 1989, EUR J MARKETING, V23, P58
+   BUCKLIN LP, 1965, J MARKETING RES, V2, P26
+   CHASE RB, 1978, HARVARD BUS REV, V56, P137
+   CHASE RB, 1983, MANAGE SCI, V29, P1037
+   CHOI TY, 2002, J OPER MANAG, V20, P469
+   DAUGHERTY PJ, 1995, INT J OPER PROD MAN, V15, P54
+   DUCLOS LK, 1995, INT J SERV IND MANAG, V6, P36
+   DURAY R, 2000, J OPER MANAG, V18, P605
+   ELLIOTT SS, 2000, P 9 INT C MAN TECHN
+   EPPEN GD, 1979, MANAGE SCI, V25, P498
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FERDOWS K, 2004, HARVARD BUS REV, V82, P104
+   FISHER M, 1996, OPER RES, V44, P87
+   FISHER ML, 1994, HARVARD BUS REV, V72, P83
+   FISHER ML, 1999, MANAGE SCI, V45, P771
+   FORD D, 2002, INT MARKET REV, V19, P225
+   GALUNIC DC, 2001, ACAD MANAGE J, V44, P1229
+   GATTORNA JL, 1996, MANAGING SUPPLY CHAI
+   GILMORE JH, 1997, HARVARD BUS REV, V75, P91
+   GOLDRATT E, 1990, THEORY CONSTRAINTS
+   GUNASEKARAN A, 2001, INT J OPER PROD MAN, V21, P71
+   HAGEL J, 2002, HARVARD BUS REV, V80, P68
+   HARLAND CM, 1996, BRIT J MANAGE, V7, P63
+   HILL AV, 2002, J OPER MANAG, V20, P189
+   HOEKSTRA S, 1992, INTEGRATED LOGISTICS
+   HUANG MG, 2005, INT J PROD RES, V43, P2743, DOI
+   10.1080/00207540500056482
+   JIN BH, 2004, INT J OPER PROD MAN, V24, P1292, DOI
+   10.1108/01443570410569056
+   KIMES SE, 1989, J OPERATIONS MANAGEM, V8, P348
+   KOTHA S, 1996, INT J TECHNOL MANAGE, V11, P846
+   KRAJEWSKI L, 2005, J OPER MANAG, V23, P452, DOI
+   10.1016/j.jom.2004.10.006
+   LAMPEL J, 1996, SLOAN MANAGE REV, V38, P21
+   LEE HL, 1998, STRATEGIC SUPPLY CHA, P77
+   LIKER JK, 2004, HARVARD BUS REV, V82, P104
+   MAISTER DH, 1976, INT J PHYS DISTRIB, V6, P124
+   MATTHEWS HS, 2002, J IND ECOL, V6, P71
+   METTERS R, 2000, J OPER MANAG, V18, P663
+   MINTZBERG H, 1979, STRUCTURING ORG
+   NAYLOR JB, 1999, INT J PROD ECON, V62, P107
+   OLHAGER J, 2001, INT J PROD ECON, V69, P215
+   OLHAGER J, 2003, INT J PROD ECON, V85, P319, DOI
+   10.1016/S0925-5273(03)00119-1
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PEPPERS D, 1997, ENTERPRISE ONE ONE
+   SAKO M, 1994, EUROPEAN J PURCHASIN, V1, P237
+   SASSER WE, 1976, HARVARD BUS REV, V54, P133
+   SCHILLING MA, 2001, ACAD MANAGE J, V44, P1149
+   SHINGO S, 1981, STUDY TOYOTA PRODUCT
+   SKIPWORTH H, 2004, INT J PROD RES, V42, P2063, DOI
+   10.1080/00207540410001661373
+   TU Q, 2004, DECISION SCI, V35, P147
+   UMBLE MM, 1990, SYNCHRONOUS MANUFACT
+   VANHOEK RI, 1998, INT J LOGIST MANAG, V9, P35
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 1999, J MARKET FOCUSED MAN, V3, P353
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   VANMIEGHEM JA, 1999, MANAGE SCI, V45, P1631
+   WALLER MA, 2000, J BUSINESS LOGISTICS, V21, P133
+   WARD A, 1995, SLOAN MANAGE REV, V36, P43
+   WIKNER J, 2005, INT J OPER PROD MAN, V25, P623, DOI
+   10.1108/01443570510605072
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   YANG B, 2005, INT J PROD RES, V43, P991, DOI
+   10.1080/00207540412331316134
+   ZINN W, 1990, INT J LOGISTICS MANA, V1, P11
+NR 70
+TC 3
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0020-7543
+J9 INT J PROD RES
+JI Int. J. Prod. Res.
+PD FEB 15
+PY 2007
+VL 45
+IS 4
+BP 971
+EP 988
+DI 10.1080/00207540600698886
+PG 18
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 135HF
+UT ISI:000244144000011
+ER
+
+PT J
+AU Graman, GA
+   Magazine, MJ
+AF Graman, Gregory A.
+   Magazine, Michael J.
+TI Implementation issues influencing the decision to adopt postponement
+SO INTERNATIONAL JOURNAL OF OPERATIONS & PRODUCTION MANAGEMENT
+LA English
+DT Article
+DE mass customization; product differentiation; supply chain management
+ID SUPPLY CHAIN; PRODUCT; DIFFERENTIATION; INVENTORY; SERVICE
+AB Purpose-Postponement (also known as delayed product differentiation)
+   has been shown to be an effective supply chain strategy from an
+   inventory-reduction, service-level improvement standpoint. However,
+   there has been relatively little empirical research on identifying the
+   drivers and/or obstacles to a successful implementation of a
+   postponement strategy. This study aims to identify the importance of
+   several managerial issues surrounding the implementation of such a
+   strategy.
+   Design/methodology/approach-Exploratory depth inter-views with company
+   managers were conducted to identify and examine issues that may affect
+   a successful implementation. Borrowing from the concept of
+   triangulation, the findings are integrated with results reported
+   elsewhere in the literature to understand the interrelated aspects of
+   postponement implementation issues. This approach provides insights
+   that would not be had if the results of each study were viewed
+   independently of one another.
+   Findings-The identification of managerial issues implies that there is
+   more to implementing a partial postponement strategy than the
+   repositioning of inventories prescribed by a mathematical inventory
+   model. Several issues that may influence a postponement implementation
+   are identified and discussed including product integrity, operations
+   scheduling, and organizational readiness.
+   Research limitations/implications-The depth interview process is an
+   empirical methodology subject to the limitations of judgmental
+   conclusions, interpreter bias and small sample size. The results of
+   this exploratory study provide a more in-depth understanding of drivers
+   and obstacles to implementing this supply chain strategy. The findings
+   suggest the need for further investigation of the issues surrounding
+   the decision to adopt postponement.
+   Practical implications-The findings have broad implications for
+   manufacturing managers regarding the impact of adopting a postponement
+   strategy on several aspects of the operations function.
+   Originality/value-Although principally exploratory in nature, the
+   investigation demonstrates the need for researchers to identify and
+   better understand the managerial issues surrounding an attempt to
+   implement a specific partial postponement strategy.
+C1 Michigan Technol Univ, Sch Business & Econ, Houghton, MI 49931 USA.
+   Univ Cincinnati, Coll Business Adm, Dept Quantitat Anal & Operat Management, Cincinnati, OH 45221 USA.
+RP Graman, GA, Michigan Technol Univ, Sch Business & Econ, Houghton, MI
+   49931 USA.
+EM greggraman@hotmail.com
+CR BOWERSOX DJ, 1968, PHYS DISTRIBUTION MA, P14
+   CHAKRAVARTY AK, 1989, INT J FLEX MANUF SYS, V2, P43
+   COOK RL, 1980, THESIS MICHIGAN STAT
+   COOPER JC, 1993, INT J PHYS DISTRIB, V23, P12
+   DEXTER LA, 1970, ELITE SPECIALIZED IN
+   ERNST R, 2000, EUR J OPER RES, V124, P495
+   FINE CH, 1990, MANAGE SCI, V36, P449
+   GARG A, 1997, IIE TRANS, V29, P641
+   GRAMAN GA, 2002, PROD OPER MANAG, V11, P340
+   HOWARD KA, 1994, J ELECTRON MANUF, V4, P65
+   JICK TD, 1979, ADM SCI Q, V24, P602
+   LEE HL, 1992, SLOAN MANAGE REV, V33, P65
+   LEE HL, 1994, MANAGEMENT DESIGN EN
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   MATTHEWS P, 2004, SUPPLY CHAIN MANAG, V8, P28
+   MEREDITH JR, 1989, J OPERATIONS MANAGEM, V8, P297
+   MURPHY JT, 1980, GETTING FACTS
+   PAGH JD, 1998, J BUSINESS LOGISTICS, V19, P13
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   RABINOVICH E, 2003, INT J LOGIST MANAG, V14, P33
+   SOX CR, 1997, MANAGE SCI, V43, P1189
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   TAYUR SH, 1999, QUALITATIVE MODELS S
+   VANHOEK RI, 1998, INT J PHYS DISTRIB, V28, P508
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WHANG S, 1999, PRODUCT VARIETY MANA, P65
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   ZIKMUND WG, 2003, BUSINESS RES METHODS
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+   ZINN W, 1990, BUS HORIZONS, V33, P70
+NR 33
+TC 6
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BRADFORD
+PA 60/62 TOLLER LANE, BRADFORD BD8 9BY, W YORKSHIRE, ENGLAND
+SN 0144-3577
+J9 INT J OPER PROD MANAGE
+JI Int. J. Oper. Prod. Manage.
+PY 2006
+VL 26
+IS 9-10
+BP 1068
+EP 1083
+DI 10.1108/01443570610691076
+PG 16
+SC Management
+GA 083VX
+UT ISI:000240487400006
+ER
+
+PT J
+AU Tang, CS
+AF Tang, Christopher S.
+TI Perspectives in supply chain risk management
+SO INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS
+LA English
+DT Review
+DE supply chain risk management; quantitative models; review
+ID INVENTORY SYSTEMS; VENDOR SELECTION; RANDOM YIELD; UNCERTAIN DEMAND;
+   TO-ORDER; POSTPONEMENT STRATEGIES; PRODUCT DIFFERENTIATION; ASYMMETRIC
+   INFORMATION; PRODUCTION DECISIONS; OPERATIONS REVERSAL
+AB To gain cost advantage and market share, many firms implemented various
+   initiatives such as outsourced manufacturing and product variety. These
+   initiatives are effective in a stable environment, but they could make
+   a supply chain more vulnerable to various types of disruptions caused
+   by uncertain economic cycles, consumer demands, and natural and
+   man-made disasters. In this paper, we review various quantitative
+   models for managing supply chain risks. We also relate various supply
+   chain risk management (SCRM) strategies examined in the research
+   literature with actual practices. The intent of this paper is
+   three-fold. First, we develop a unified framework for classifying SCRM
+   articles. Second, we hope this review can serve as a practical guide
+   for some researchers to navigate through the sea of research articles
+   in this important area. Third, by highlighting the gap between theory
+   and practice, we hope to motivate researchers to develop new models for
+   mitigating supply chain disruptions. (c) 2006 Elsevier B.V. All rights
+   reserved.
+C1 Univ Calif Los Angeles, Anderson Sch, Los Angeles, CA 90095 USA.
+RP Tang, CS, Univ Calif Los Angeles, Anderson Sch, 110 Westwood Pl, Los
+   Angeles, CA 90095 USA.
+EM ctang@anderson.ucla.edu
+CR AGRAWAL N, 1998, GLOBAL SUPPLY CHAIN
+   AKELLA R, 1992, OPER RES, V40, P776
+   ANUPINDI R, 1993, MANAGE SCI, V39, P944
+   ANUPINDI R, 1993, THESIS CARNEGIEMELLO
+   ANUPINDI R, 1997, INVENTORY MODEL COMM
+   ANUPINDI R, 1998, QUANTITATIVE MODELS
+   ANUPINDI R, 1999, MANAGE SCI, V45, P178
+   ARNTZEN BC, 1995, INTERFACES, V25, P69
+   AVIV Y, 1998, OPERATIONAL BENEFITS
+   AVIV Y, 1998, QUANTITATIVE MODELS
+   AVIV Y, 2001, MANAGE SCI, V47, P1326
+   AVIV Y, 2001, MANAGE SCI, V47, P512
+   AVIV Y, 2001, OPER RES, V49, P578
+   AVIV Y, 2002, MANUFACTURING SERVIC, V4, P55
+   AVIV Y, 2004, HDB QUANTITATIVE SUP
+   AVIV Y, 2005, BENEFITS COLLABORATI
+   BABICH V, 2004, COMPETITION DIVERSIF
+   BADINELLI RD, 2000, EUR J OPER RES, V121, P476
+   BAGANHA MP, 1998, OPER RES, V46, P572
+   BASSOK Y, 1991, MANAGE SCI, V37, P1556
+   BASSOK Y, 1997, IIE TRANS, V29, P373
+   BAZARAA MS, 1993, NONLINEAR PROGRAMMIN
+   BILLINGTON C, 1998, SLOAN MANAGE REV, P23
+   BITRAN G, 1992, OPER RES, V50, P999
+   BITRAN GR, 1996, OPER RES, V44, P35
+   BOER L, 2001, EUROPEAN J PURCHASIN, V7, P75
+   BOONE Y, 2002, SUPPLY CHAIN MANAGEM
+   BRESNAHAN TF, 1985, RAND J ECON, V16, P253
+   BROWN AO, 1997, OPTIMAL PAY DELAY CA
+   BROWN AO, 2005, IMPLICATIONS POOLED
+   BROWN AO, 2005, IN PRESS J IND MANAG
+   BROWN D, 2004, WASHINGTON POST
+   CACHON G, 1997, PRODUCTION OPERATION, V6, P266
+   CACHON G, 2001, ALLOCATION INVENTORY
+   CACHON G, 2003, HDB OPERATIONS RES M
+   CACHON GP, 2000, MANAGE SCI, V46, P1032
+   CACHON GP, 2005, MANAGE SCI, V51, P30, DOI 10.1287/mnsc.1040.0215
+   CAMM JD, 1997, INTERFACES, V27, P128
+   CARO F, 2005, DYNAMIC ASSORTMENT D
+   CARR S, 2000, MANAGE SCI, V47, P912
+   CETINKAYA S, 2000, MANAGE SCI, V46, P217
+   CHAPMAN P, 2002, LOGISTICS TRANSPORT, V4, P59
+   CHEN F, 1998, QUANTITATIVE MODELS
+   CHEN F, 2000, MANAGE SCI, V46, P436
+   CHEN F, 2000, NAV RES LOG, V47, P269
+   CHENG TCE, 2005, J OPER RES SOC, V56, P1159, DOI
+   10.1057/palgrave.jors.2601934
+   CHOD J, 2005, OPER RES, V53, P532, DOI 10.1287/opre.1040.0191
+   CHOI TY, 1996, J OPERATIONS MANAGEM, V14, P333
+   CHONG JK, 2001, MANUFACTURING SERVIC, V3, P141
+   CHONG JK, 2004, MANAGING BUSINESS IN
+   CHOPRA S, 2004, SLOAN MANAGE REV, V46, P53
+   CHRISTOPHER M, 1992, LOGISTICS SUPPLY CHA
+   CHRISTOPHER M, 2004, LOGISTICS EUROPE, P14
+   CIARALLO FW, 1994, MANAGE SCI, V40, P320
+   CLARK T, 1997, J PRODUCTION OPERATI, V34, P18
+   CLOSS D, 2004, IBM CTR BUSINESS APR
+   COHEN MA, 1999, IIE TRANS, V31, P783
+   CORBETT C, 1998, QUANTITATIVE MODELS
+   CORBETT CJ, 2000, MANAGE SCI, V46, P444
+   CORBETT CJ, 2001, OPER RES, V49, P487
+   CREW M, 1986, EC PUBLIC UTILITY RE
+   CURRENT J, 1994, EUR J OPER RES, V76, P387
+   DAHEL NE, 2003, SUPPLY CHAIN MANAG, V8, P335, DOI
+   10.1108/13598540310490099
+   DANA J, 1998, J POLITICAL EC, V166, P395
+   DANA J, 2001, J IND ECON, V59, P223
+   DANA JD, 1999, RAND J ECON, V30, P456
+   DAPIRAN P, 1992, ASIAN PACIFIC INT J, V5, P7
+   DASU S, 1997, MANAGE SCI, V43, P705
+   DENARDO EV, 1992, OPER RES, V40, P259
+   DENARDO EV, 1996, OPER RES, V44, P382
+   DENARDO EV, 1997, MANAGE SCI, V43, P1296
+   DISNEY SM, 2003, INT J PROD ECON, V85, P199, DOI
+   10.1016/S0925-5273(03)00110-5
+   DONOHUE KL, 2000, MANAGE SCI, V46, P1397
+   DYER J, 1996, SLOAN MANAGE REV, V34, P51
+   DYER JH, 1996, HARVARD BUSINESS JUL, P42
+   ELIASHBERG J, 1993, HDB OPERATIONS RES M
+   ELLRAM LM, 1990, J PURCHASING MAT FAL, P8
+   ELMAGHRABY W, 2003, MANAGE SCI, V49, P1287
+   EMMONS H, 1998, MANAGE SCI, V44, P276
+   EPPEN G, 1981, MULTILEVEL PRODUCTIO
+   EPPEN GD, 1997, MANAGE SCI, V43, P1469
+   EPPEN GD, 1997, OPER RES, V45, P805
+   ERNST R, 1999, MANAGE SCI, V45, P1142
+   FEDERGRUEN A, 1998, COMMENTS VARIABILITY
+   FISCHHOFF B, 1981, ACCEPTABLE RISK
+   FISHER M, 1996, OPER RES, V44, P87
+   FISHER ML, 1997, HARVARD BUSINESS MAR, P105
+   FUKUDA Y, 1964, MANAGE SCI, V10, P690
+   GARG A, 1997, IIE TRANS, V29, P641
+   GARG A, 1998, QUANTITATIVE MODELS
+   GAUR V, 2005, MANAGE SCI, V51, P961, DOI 10.1287/mnsc.1050.0385
+   GAVIRNENI S, 1999, MANAGE SCI, V45, P16
+   GERCHAK Y, 1988, IIE TRANS, V20, P144
+   GILBERT K, 2005, MANAGE SCI, V51, P305, DOI 10.1287/mnsc.1040.0308
+   GILBERT SM, 1999, J OPER MANAG, V18, P61
+   GONG L, 1997, J OPTIMIZ THEORY APP, V95, P149
+   GUNASEKARAN A, 2005, J OPER MANAG, V23, P423, DOI
+   10.1016/j.jom.2004.10.005
+   GUPTA D, 2004, IIE TRANS, V36, P529, DOI 10.1080/07408170490438519
+   GURNANI H, 1999, MANAGE SCI, V45, P1456
+   HA AY, 2001, NAV RES LOG, V48, P41
+   HELPER S, 1991, SLOAN MANAGE REV, V32, P15
+   HENDRICKS K, 2005, PRODUCTION OPERATION, P25
+   HERNIG M, 1990, OPER RES, V38, P634
+   HO T, 1998, PRODUCT VARIETY MANA
+   HOPKINS K, 2005, BUSINESS WEEK
+   HSU A, 1999, OPER RES, V47, P277
+   HUCHZERMEIER A, 1996, OPER RES, V44, P100
+   IYER A, 1998, QUANTITATIVE MODELS
+   IYER AV, 1997, MANAGE SCI, V43, P559
+   IYER AV, 2003, MANAGE SCI, V49, P983
+   JAIN N, 2001, MANAGE SCI, V47, P595
+   JANSSEN F, 1999, INT J PROD ECON, V59, P395
+   JOHNSON M, 1999, J BUSINESS LOGISTICS, V20, P183
+   KAPUSCINSKI R, 1999, MANAGE SCI, V45, P21
+   KLEINDORFER PR, 2005, PROD OPER MANAG, V14, P53
+   KOGUT B, 1985, SLOAN MANAGEMENT FAL, P27
+   KOGUT B, 1994, MANAGE SCI, V40, P123
+   KOUVELIS P, 1997, MANAGE SCI, V43, P571
+   KOUVELIS P, 1998, QUANTITATIVE MODELS
+   KOUVELIS P, 2000, SUPPLY CHAIN MANAGEM
+   KRISHNAN M, 1998, PRODUCT VARIETY MANA
+   KUNREUTHER H, 1976, PUBLIC POLICY, V24, P227
+   LARIVIERE M, 1998, QUANTITATIVE MODELS
+   LARIVIERE MA, 2001, MANUFACTURING SERVIC, V3, P293
+   LEE H, 2004, HARVARD BUS REV, P102
+   LEE HL, 1996, OPER RES, V44, P151
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEE HL, 1997, MANAGE SCI, V43, P546
+   LEE HL, 1997, SLOAN MANAGE REV, V38, P93
+   LEE HL, 1998, GLOBAL SUPPLY CHAIN
+   LEE HL, 1998, MANAGE SCI, V44, P162
+   LEE HL, 2000, MANAGE SCI, V46, P626
+   LEVY DL, 1995, J INT BUS STUD, V26, P343
+   LI CL, 1999, MANAGE SCI, V45, P1378
+   LI G, 2005, COMPUT OPER RES, V32, P707, DOI 10.1016/j.cor.2003.08.013
+   LILIEN G, 1992, MARKETING MODELS
+   MACDUFFIE JP, 1996, MANAGE SCI, V42, P350
+   MANDAL A, 1996, INT J OPER PROD MAN, V14, P52
+   MARCH J, 1986, MANAGE SCI, V33, P1404
+   MARCH JG, 1987, MANAGE SCI, V33, P1404
+   MARTINEZMORO E, 2004, IEEE T INFORM THEORY, V50, P701, DOI
+   10.1109/TIT.2004.825036
+   MCCARDLE K, 2005, IN PRESS J OPERATION
+   MCFARLAN W, 2002, LI FUNG INTERNET ISS
+   MINNER S, 2003, INT J PROD ECON, P265
+   MOINZADEH K, 1988, MANAGE SCI, V34, P761
+   MORTIMER J, 2004, VERTICAL CONTRACTS V
+   NAGURNEY A, 2005, EUR J OPER RES, V164, P120
+   PADMANABHAN V, 1997, MARKET SCI, V16, P81
+   PARLAR M, 1984, OPSEARCH, V21, P1
+   PARLAR M, 1996, NAV RES LOG, V43, P191
+   PASTERNACK B, 2002, SUPPLY CHAIN MANAGEM
+   PASTERNACK BA, 1985, MARKET SCI, V4, P166
+   PETRUZZI NC, 1999, OPER RES, V47, P183
+   PETRUZZI NC, 2001, MANUFACTURING SERVIC, V3, P242
+   PORTER M, 1985, COMPETITIVE ADVANTAG
+   PORTEUS E, 2002, FDN STOCHASTIC INVEN
+   QUELCH J, 1984, HARVARD BUS REV, P27
+   QUELCH JA, 1994, HARVARD BUS REV, V72, P153
+   RAGHUNATHAN S, 2001, MANAGE SCI, V47, P605
+   RAJARAM K, 2001, EUR J OPER RES, V135, P582
+   RAJU J, 1995, MANAGE SCI, P957
+   RAMAN A, 1998, QUANTITATIVE MODELS
+   RAMASESH RV, 1991, MANAGE SCI, V37, P428
+   RAMDAS K, 2003, PROD OPER MANAG, V12, P79
+   REPENNING NP, 2001, CALIF MANAGE REV, V43, P64
+   RICE B, 2003, SUPPLY CHAIN RESPONS
+   RITCHIE RL, 2001, J MARKETING INTELLIG, V19, P29
+   SAHIN F, 2005, J OPERATIONS MANAGEM, V23, P579
+   SCHELLERWOLF A, 1999, QUANTITATIVE MODELS, P703
+   SEDARAGE D, 1999, EUR J OPER RES, V116, P389
+   SHARPIRA Z, 1986, UNPUB RISK MANAGERIA
+   SHEFFI Y, 2001, INT J LOGISTICS MANA, V12, P1
+   SHIN H, 2000, J OPER MANAG, V18, P317
+   SIGNORELLI S, 1984, BENETTON
+   SMITH C, 2002, SUPPLY CHAIN MANAGEM
+   STERMAN JD, 1989, MANAGE SCI, V35, P321, DOI 10.1287/MNSC.35.3.321
+   STREMERSCH S, 2002, J MARKETING, V66, P55
+   SU JCP, 2005, J OPER MANAG, V23, P305, DOI 10.1016/j.jom.2004.10.016
+   SWAMINATHAN J, 1998, QUANTITATIVE MODELS
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   TAGARAS G, 1996, MANAGE SCI, V42, P1531
+   TALLURI K, 2005, THEORY PRACTICE REV
+   TANG CS, 1990, MANAGE SCI, V36, P1518
+   TANG CS, 1999, INT J LOGIST-RES APP, V2, P39
+   TANG CS, 2004, MANAGE SCI, V50, P465
+   TANG CS, 2005, IN PRESS INT J LOGIS
+   TANG CS, 2005, RENTAL PRICE RENTAL
+   TANG K, 1988, J QUAL TECHNOL, V20, P81
+   TAYUR S, 1998, QUANTITATIVE MODELS
+   TERWIESCH C, 2005, MANAGE SCI, V51, P208, DOI 10.1287/mnsc.1040.0317
+   TIROLE J, 1988, THEORY IND ORG
+   TSAY A, 1999, MANUFACTURING SERVIC, V1, P89
+   TSAY AA, 1998, QUANTITATIVE MODELS
+   ULRICH K, 1998, PRODUCT VARIETY MANA
+   VANMIEGHEM J, 2001, MANAGE SCI, V45, P1631
+   VEVERKA M, 1999, BARRONS         1025, P15
+   VLACHOS D, 2001, INT J PROD ECON, V72, P41
+   VOKURKA RJ, 1996, INT J OPER PROD MAN, V16, P106
+   WANG YZ, 1996, MANAGE SCI, V42, P130
+   WEATHERFORD LR, 1992, OPER RES, V40, P841
+   WEBER CA, 1993, EUR J OPER RES, V68, P173
+   WEBER CA, 2000, SUPPLY CHAIN MANAG, V5, P90
+   WENG ZK, 1999, IIE TRANS, V31, P1051
+   WENG ZK, 2005, J OPER MANAG, V23, P482, DOI 10.1016/j.jom.2004.10.008
+   WHANG S, 1998, PRODUCT VARIETY MANA
+   XIE JH, 2001, MARKET SCI, V20, P219
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANO C, 1993, OPER RES, V43, P311
+   YANO C, 2004, MANAGING BUSINESS IN
+   YEH C, 2003, INT J ADV MANUF TECH, V22, P134, DOI
+   10.1007/s00170-002-1453-5
+   ZHANG VL, 1996, NAV RES LOG, V43, P691
+   ZHANG XL, 2004, INT J PROD ECON, V88, P15, DOI
+   10.1016/S0925-5273(03)00128-2
+   ZHAO XD, 2002, EUR J OPER RES, V142, P321
+   ZIPKIN P, 2000, FDN INVENTORY MANAGE
+   ZSIDISIN G, 2001, SUPPLY CHAIN MANAG, P187
+   ZSIDISIN GA, 2004, INT J PHYS DISTRIB, V34, P397
+NR 216
+TC 122
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0925-5273
+J9 INT J PROD ECON
+JI Int. J. Prod. Econ.
+PD OCT
+PY 2006
+VL 103
+IS 2
+BP 451
+EP 488
+DI 10.1016/j.ijpe.2005.12.006
+PG 38
+SC Engineering, Industrial; Engineering, Manufacturing; Operations
+   Research & Management Science
+GA 069VW
+UT ISI:000239477900001
+ER
+
+PT J
+AU Yang, B
+   Burns, ND
+   Backhouse, CJ
+TI The application of postponement in industry
+SO IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT
+LA English
+DT Article
+DE managerial practices; performance; postponement; questionnaire survey;
+   uncertainty
+ID PERCEIVED ENVIRONMENTAL UNCERTAINTY; SUPPLY CHAIN; OPERATIONS
+   MANAGEMENT; HEWLETT-PACKARD; PRODUCT; DIFFERENTIATION; PERFORMANCE;
+   FLEXIBILITY; STRATEGIES; CONSTRUCTS
+AB It has been well documented that the growing importance of postponement
+   is significantly driven by the current business environment. However,
+   there has been an absence of empirical research supporting this
+   implication. Therefore, a questionnaire survey was conducted (by way of
+   both post and e-mail) with a random sample of 368 British manufacturing
+   companies across four industrial sectors to investigate the
+   implementation of postponement. A total of 76 usable responses were
+   received giving an overall response rate of 20.7%. After presenting
+   research questions and hypotheses, this paper first reviews the methods
+   previously used in postponement research, and then presents the
+   research methodology for this research. The results from data analysis
+   indicate that the relationships among the variables (postponement,
+   uncertainty, managerial practices, and company performance) were
+   significant and positive. However, the respondents expected
+   postponement to be less used in three years. Finally, we draw some
+   conclusions, determine limitations of our research, and make some
+   suggestions for further research.
+C1 Univ Groningen, Fac Management & Org, NL-9700 AV Groningen, Netherlands.
+   Univ Loughborough, Wolfson Sch Mech & Mfg Engn, Loughborough LE11 3TU, Leics, England.
+RP Yang, B, Univ Groningen, Fac Management & Org, NL-9700 AV Groningen,
+   Netherlands.
+EM b.yang@ieee.org
+   N.D.Burns@lboro.ac.uk
+   C.J.Backhouse@lboro.ac.uk
+CR 2003, SIZE ANAL UK BUSINES
+   2004, ADAPTIVE SUPPLY CHAI
+   *CLM, 1995, WORLD CLASS LOG CHAL
+   ALDERSON W, 1950, COST PROFIT OUTLOOK, V3, P15
+   ANDERSON JC, 1988, PSYCHOL BULL, V103, P453
+   ARMSTRONG JS, 1977, J MARKETING RES, V14, P396
+   ASHER HB, 1983, CAUSAL MODELING
+   BOWERSOX D, 1999, 21 CENTURY LOGISTICS
+   BOWERSOX DJ, 1989, EUR J MARKETING, V23, P58
+   BOWERSOX DJ, 1993, INT J PHYS DISTRIB, V23, P46
+   BOWERSOX DJ, 1999, J PROD INNOVAT MANAG, V16, P557
+   BROWN AO, 2000, INTERFACES, V30, P65
+   BUCKLIN LP, 1965, J MARKET RES     FEB
+   CHIOU JS, 2002, J BUSINESS LOGISTICS, V23, P107
+   CHRISTOPHER M, 2000, IND MARKET MANAG, V29, P37
+   CHURCHILL GA, 1979, J MARKETING RES, V16, P64
+   DAVIS T, 1995, MECH ENG         NOV, P105
+   DEVELLIS RF, 1991, SCALE DEV
+   DROGE C, 1995, P AM MARK ASS ED C W, P263
+   DUNCAN RB, 1972, ADM SCI Q, V17, P313
+   ELMORE PE, 1975, EDUCATION, V4, P325
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FINK A, 1995, ASK SURVEY QUESTIONS
+   FLYNN BB, 1990, J OPERATIONS MANAGEM, V9, P250
+   GARG A, 1997, IIE TRANS, V29, P641
+   GIL N, P 2001 WINT SIM C VA, P515
+   HAIR JF, 1992, MULTIVARIATE DATA AN
+   HAIR JF, 1995, MULTIVARIATE DATA AN
+   HENSLEY RL, 1999, J OPER MANAG, V17, P343
+   HITT MA, 1982, ACAD MANAGE J, V25, P265
+   JOHNSON ME, 2000, INT J LOGIST MANAG, V11, P19
+   KETOKIVI MA, 2004, J OPER MANAG, V22, P247, DOI
+   10.1016/j.jom.2002.07.001
+   LEE HL, 1993, INTERFACES, V23, P1
+   LEE HL, 1998, STRATEGIC SUPPLY CHA, P77
+   LEE HL, 2001, MIT SLOAN MANAGE REV, V42, P54
+   LEWIS GJ, 2001, J MANAGE STUD, V38, P201
+   MALHOTRA MK, 1998, J OPER MANAG, V16, P407
+   MARCOULIDES GA, 1996, ADV STRUCTURAL EQUAT
+   MILLER JG, 1994, MANAGE SCI, V40, P285
+   MILLER KD, 1993, J INT BUS STUD, V24, P693
+   MOREHOUSE JE, 1995, SUPPLY CHAIN MANAGEM
+   NEWMAN WR, 1993, INT J OPER PROD MAN, V13, P19
+   NUNNALLY JC, 1978, PSYCHOMETRIC THEORY
+   PAGELL M, 1999, J OPER MANAG, V17, P307
+   PRATER E, 2001, INT J OPER PROD MAN, V21, P823
+   RABINOVICH E, 2003, INT J LOGIST MANAG, V14, P33
+   RUNGTUSANATHAM MJ, 2003, J OPER MANAG, V21, P475, DOI
+   10.1016/S0272-6963(03)00020-2
+   SAWYERR OO, 1993, STRATEGIC MANAGE J, V14, P287
+   SCHUMACHER R, 1996, BEINNGERS GUIDE STRU
+   SEKARAN U, 1992, RES METHODS BUSINESS
+   SWAMIDASS PM, 1987, MANAGE SCI, V33, P509
+   SWAMIDASS PM, 1991, ACAD MANAGE REV, V16, P793
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   TOWILL DR, 1999, INT J LOGISTICS MANA, V10, P83
+   VANHOEK RI, 1997, SUPPLY CHAIN MANAG, V2, P63
+   VANHOEK RI, 1998, INT J PHYS DISTRIB, V28, P508
+   VANHOEK RI, 1998, J BUSINESS LOGISTICS, V19, P33
+   VANHOEK RI, 2001, J OPER MANAG, V19, P161
+   WALLER MA, 2000, J BUSINESS LOGISTICS, V21, P133
+   WARD DM, 1996, ADV RENAL REPLACE TH, V3, P337
+   YANG B, 2003, INT J PROD RES, V41, P2075, DOI
+   10.1080/00207544031000077284
+   YANG B, 2004, INT J OPER PROD MAN, V24, P468, DOI
+   10.1108/01443570410532542
+   YANG B, 2004, INT J PROD RES, V42, P1049, DOI
+   10.1080/00207540310001631601
+   ZINN W, 1988, J BUSINESS LOGISTICS, V9, P117
+NR 64
+TC 5
+PU IEEE-INST ELECTRICAL ELECTRONICS ENGINEERS INC
+PI PISCATAWAY
+PA 445 HOES LANE, PISCATAWAY, NJ 08855 USA
+SN 0018-9391
+J9 IEEE TRANS ENG MANAGE
+JI IEEE Trans. Eng. Manage.
+PD MAY
+PY 2005
+VL 52
+IS 2
+BP 238
+EP 248
+DI 10.1109/TEM.2005.845223
+PG 11
+SC Business; Engineering, Industrial; Management
+GA 919WB
+UT ISI:000228647200008
+ER
+
+EF

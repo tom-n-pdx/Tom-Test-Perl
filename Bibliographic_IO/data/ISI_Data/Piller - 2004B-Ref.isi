@@ -1,0 +1,867 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Eyers, D
+   Dotchev, K
+AF Eyers, Daniel
+   Dotchev, Krassimir
+TI Technology review for mass customisation using rapid manufacturing
+SO ASSEMBLY AUTOMATION
+LA English
+DT Article
+DE Manufacturing systems; Rapid prototypes; Mass customisation
+AB Purpose - The purpose of this paper is to discuss the opportunities and
+   challenges of mass customisation (MC), together with the possibilities
+   for enablement using the technologies of rapid manufacturing (RM).
+   Design/methodology/approach - A thorough evaluation of numerous
+   approaches to RM of customised products is presented, with particular
+   focus on relative advantages and limitations of each technology. To
+   demonstrate the applicability of specific techniques, case studies from
+   both consumer and medical applications are reported based on original
+   research.
+   Findings - The paper highlights not only the opportunities for RM
+   technologies, but also the limitations of specific processes. This
+   approach provides guidance for practitioners in the selection of
+   appropriate technologies for MC enablement.
+   Research limitations/implications - The focus of this practitioner
+   review is limited to proprietary RM materials and systems which are
+   already commercially available, with relatively little attention given
+   the technologies presently in development.
+   Originality/value - Whilst RM and MC have already received much
+   attention in the literature, comparatively little consideration has
+   been given to the unification of both concepts. This paper has
+   particular emphasis on this unification with respect to the selection
+   of appropriate technologies, and presents an appraisal of existing
+   applications making use of RM. Through this approach, practitioners
+   gain information in the selection of appropriate technologies for MC.
+C1 [Eyers, Daniel] Cardiff Univ, Innovat Mfg Res Ctr, Cardiff, S Glam, Wales.
+   [Dotchev, Krassimir] Univ Portsmouth, Dept Mech & Design Engn, Portsmouth, Hants, England.
+RP Eyers, D, Cardiff Univ, Innovat Mfg Res Ctr, Cardiff, S Glam, Wales.
+EM eyersDR@cf.ac.uk
+FU Engineering and Physical Sciences Research Council 
+FX The authors wish to gratefully acknowledge the financial support of the
+   Engineering and Physical Sciences Research Council, together with the
+   comments and assistance of Dr Bart van der Schueren and Mr Philip
+   Hudson (both of Materialise), Lars Ryberg (Arcam AB), Stuart Jackson
+   (EOS GmbH) and Martin Forth (Envisiontec GmbH) during the development
+   of this paper.
+CR AIGBEDO H, 2007, EUR J OPER RES, V181, P704, DOI
+   10.1016/j.ejor.2006.06.037
+   ANASANE S, 2007, INT C TOT ENG AN MAN
+   BIBB R, 2006, RAPID PROTOTYPING J, V12, P95, DOI
+   10.1108/135525406106524381
+   BOUCHER M, 2008, TAILORING PRODUCTS C
+   CORTEZ R, 2004, HEAR REV, V11, P30
+   DURSO PS, 2000, BRIT J NEUROSURG, V14, P555
+   EYERS DR, 2008, P LOG RES NETW ANN C, P539
+   GERRITS A, 2004, RPS 2004 RAP PROD DE
+   GERSHENSON JK, 2003, J ENG DESIGN, V14, P295, DOI
+   10.1080/0954482031000091068
+   HART CWL, 1995, INT J SERV IND MANAG, V6, P36
+   HOPKINSON N, 2006, RAPID MANUFACTURING, P304
+   KARUNAKARA KP, 2003, BIMAO2003 14 NAT C B
+   KIM GD, 2008, P I MECH ENG B-J ENG, V222, P201, DOI
+   10.1243/09544054JEM724
+   KRUTH JP, 1991, ANN CIRP, V40, P603
+   MCCUTCHEON DM, 1994, SLOAN MANAGE REV, V35, P89
+   MUELLER T, 2004, P RAP PROT MAN C DEA
+   PHAM DT, 2001, RAPID MANUFACTURING
+   PHAM DT, 2003, P I MECH ENG C-J MEC, V217, P1
+   PILLER FT, 2004, INT J COMP INTEG M, V17, P583, DOI
+   10.1080/0951192042000273140
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   POUKENS J, 2008, INT J MED ROBOT COMP, V4, P46, DOI 10.1002/rcs.171
+   SEGAL J, 2006, WOHLERS REPORT 2006, P151
+   SERCOMBE T, 2008, RAPID PROTOTYPING J, V14, P300, DOI
+   10.1108/13552540810907974
+   SQUIRE B, 2006, PROD OPER MANAG, V15, P10
+   SUBBURAJ K, 2007, INT J ORAL MAX SURG, V36, P938, DOI
+   10.1016/j.ijom.2007.07.013
+   VANHOEK RI, 1999, J MARKET FOCUSED MAN, V3, P353
+   WILSON J, 2007, SURVEY RESULTS BEST
+   WOHLERS TT, 2008, WOHLERS REPORT 2008
+NR 29
+TC 0
+PU EMERALD GROUP PUBLISHING LIMITED
+PI BINGLEY
+PA HOWARD HOUSE, WAGON LANE, BINGLEY BD16 1WA, W YORKSHIRE, ENGLAND
+SN 0144-5154
+J9 ASSEMBLY AUTOMATION
+JI Assem. Autom.
+PY 2010
+VL 30
+IS 1
+BP 39
+EP 46
+DI 10.1108/01445151011016055
+PG 8
+SC Automation & Control Systems; Engineering, Manufacturing
+GA 582XI
+UT ISI:000276633400006
+ER
+
+PT J
+AU Salvador, F
+   De Holan, PM
+   Piller, F
+AF Salvador, Fabrizio
+   De Holan, Pablo Martin
+   Piller, Frank
+TI Cracking the Code of Mass Customization
+SO MIT SLOAN MANAGEMENT REVIEW
+LA English
+DT Article
+ID PRODUCT DEVELOPMENT; MODULARITY; CUSTOMER; VARIETY
+AB Executives tend to think of mass customization as a fascinating but
+   impractical idea, implemented in only a small number of extreme cases,
+   such as Dell Inc. in the PC market. But over the past decade, the
+   authors have studied mass customization at different organizations,
+   including a survey of more than 200 manufacturing plants in eight
+   countries. From that investigation, they found that mass customization
+   is applicable to most businesses, provided that it is appropriately
+   understood and deployed. The key is to view it fundamentally as a
+   process for aligning an organization with its customers' needs through
+   the development of a set of three organizational capabilities.
+   Those three fundamental capabilities are: (1) the ability to identify
+   the product attributes along which customer needs diverge, (2) the
+   ability to reuse or recombine existing organizational and value-chain
+   resources, and (3) the ability to help customers identify or build
+   solutions to their own needs. Admittedly, the development of these
+   capabilities requires organizational changes that are often difficult
+   because of powerful inertial forces in a company, but many obstacles
+   can be overcome by using a variety of tools and approaches, and even
+   small improvements can reap substantial benefits. The trick is to
+   remember that there is no one best way to mass customize: Managers need
+   to tailor their approach in ways that make the most sense for their
+   specific business.
+CR DAHAN E, 2002, J PROD INNOVAT MANAG, V19, P332
+   DEHOLAN PM, 2004, MIT SLOAN MANAGE REV, V45, P45
+   DESMUELES R, 2002, ACAD MARKETING SCI R, V12
+   EISENHARDT KM, 2000, STRATEGIC MANAGE J, V21, P1105
+   FORZA C, 2007, INFORM MANAGEMENT MA
+   FRANKE N, 2004, J PROD INNOVAT MANAG, V21, P401
+   HUFFMAN C, 1998, J RETAILING, V74, P491
+   HVAM L, 2006, INT J MASS CUSTOMIZA, V1, P410
+   LAMPEL J, 1996, SLOAN MANAGE REV, V38, P21
+   OGAWA S, 2006, MIT SLOAN MANAGE REV, V47, P65
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PILLER FT, 2004, PROD PLAN CONTROL, V15, P435, DOI
+   10.1080/095372804200238773
+   PINE J, 1993, HARVARD BUS REV, V71, P108
+   PINE JB, 1993, MASS CUSTOMIZATION N
+   RUNGTUSANATHAM M, PRODUCTION IN PRESS
+   RUNGTUSANATHAM MJ, 2008, PROD OPER MANAG, V17, P385, DOI
+   10.3401/poms.1080.0025
+   SALVADOR F, J OPERATION IN PRESS
+   SALVADOR F, 2002, J OPER MANAG, V20, P549
+   SALVADOR F, 2007, IEEE T ENG MANAGE, V54, P219, DOI
+   10.1109/TEM.2007.893996
+   SALVADOR F, 2008, ACAD MANAGEMENT P, P1
+   TSENG MM, 2003, CUSTOMER CENTRIC ENT
+   VONHIPPEL E, 1998, MANAGE SCI, V44, P629
+   ZIPKIN P, 2001, MIT SLOAN MANAGE REV, V42, P81
+NR 23
+TC 2
+PU SLOAN MANAGEMENT REVIEW ASSOC, MIT SLOAN SCHOOL MANAGEMENT
+PI CAMBRIDGE
+PA 77 MASSACHUSETTS AVE, E60-100, CAMBRIDGE, MA 02139-4307 USA
+SN 1532-9194
+J9 MIT SLOAN MANAGE REV
+JI MIT Sloan Manage. Rev.
+PD SPR
+PY 2009
+VL 50
+IS 3
+BP 71
+EP +
+PG 10
+SC Business; Management
+GA 430TU
+UT ISI:000265012500016
+ER
+
+PT J
+AU Reinhart, G
+   Wiedemann, M
+   Rimpau, C
+AF Reinhart, G.
+   Wiedemann, M.
+   Rimpau, C.
+TI An approach for the offer specification process for customised products
+SO INTERNATIONAL JOURNAL OF COMPUTER INTEGRATED MANUFACTURING
+LA English
+DT Proceedings Paper
+DE business and production models; customisation; offer specification;
+   integrated workflow
+ID MASS CUSTOMIZATION; CONFIGURATION; MANAGEMENT; SYSTEM
+AB In today's competitive environment, the customisation of products is
+   often considered as a market opportunity. In this situation, processing
+   the customer orders as fast as possible is important in order to avoid
+   reducing a customer's specific benefit. The realisation of these
+   requirements necessitates an integrated process chain for an efficient
+   order processing. Furthermore, the customer integrated order processing
+   for individualised products must be established as a regular business
+   process defined by the main process steps offer specification, order
+   specification and production. In this paper, the main focus of the
+   order processing for individualised products lies upon the optimised
+   generation of the offer. Therefore, a new business process model for an
+   optimised offer specification for customised products is presented.
+C1 [Reinhart, G.; Wiedemann, M.; Rimpau, C.] Tech Univ Munich, Inst Machine Tools & Ind Management Iwb, Munich, Germany.
+RP Wiedemann, M, Tech Univ Munich, Inst Machine Tools & Ind Management
+   Iwb, Munich, Germany.
+EM markus.wiedemann@iwb.tum.de
+CR *DEUTSCH I NORM, 1992, DIN 4000 CLASS LIST
+   BAER W, 1977, PRODUKTIONSPLANUNG A
+   BOCK HH, 1974, AUTOMATISCHE KLASSI
+   DAVIS SM, 1987, FUTURE PERFECT
+   DETONI A, 1998, INT J PROD RES, V36, P1587
+   DURAY R, 2000, J OPER MANAG, V18, P605
+   EVERSHEIM W, 2002, ORG PRODUKTIONSTECHN, V3
+   FORZA C, 2002, INT J PROD ECON, V76, P87
+   FRUTOS JD, 2004, CONCURRENT ENG-RES A, V12, P131, DOI
+   10.1177/1063293X04044382
+   GLOBERSON S, 1997, INT J PROJECT MANAGE, V15, P199
+   GRAESSLER I, 2003, INT J COMP INTEG M, V16, P566, DOI
+   10.1080/0951192031000115714
+   HIGGINS P, 1996, MANUFACTURING PLANNI, V2
+   HOPP W, 2000, FACTORY PHYS
+   HOSSAM I, 2007, IEEE T ENG MANAGE, V54, P86
+   KLEINALTENKAMP M, 1999, ANGEBOTSBEARBEITUNG
+   KNOBLACH J, 1999, BEITRAG RECHNERUNTER
+   KRAUSE FL, 2005, PROZESSOPTIMIERUNG A, V95, P7
+   MCCARTHY IP, 2004, PROD PLAN CONTROL, V15, P347, DOI
+   10.1080/0953728042000238854
+   MERTENS P, 2001, INTEGRIERTE INFORMAT, V1
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PILLER FT, 2004, PROD PLAN CONTROL, V15, P435, DOI
+   10.1080/095372804200238773
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   PORTER ME, 1980, COMPETITIVE STRATEGY
+   RAJENDRAN C, 2004, EUR J OPER RES, V155, P426, DOI
+   10.1016/S0377-2217(02)00908-6
+   SAATY T, 1996, MULTICRITERIA DECISI
+   SALVADOR F, 2004, INT J PROD ECON, V91, P273, DOI
+   10.1016/j.ijpe.2003.09.003
+   SCHIRRMEISTER E, 2003, UNTERSUCHUNG ZUKUNFT
+   TRIANTIS AJ, 2005, RISK MANAGEMENT CHAL, P591
+   TU Q, 2001, J OPER MANAG, V19, P201
+   WESTKAEMPER E, 2006, 1 CIRP INT SEM ASS S
+   YING KC, 2004, COMPUT OPER RES, V31, P791, DOI
+   10.1016/S0305-0548(03)00038-8
+   ZAEH MF, 2006, 1 CIRP INT SEM ASS S
+   ZENG FS, 2007, INT J ADV MANUF TECH, V33, P766, DOI
+   10.1007/s00170-006-0500-z
+   ZHANG J, 2006, T I MEAS CONTROL, V28, P93, DOI 10.1191/0142331206tm165oa
+NR 34
+TC 1
+PU TAYLOR & FRANCIS LTD
+PI ABINGDON
+PA 4 PARK SQUARE, MILTON PARK, ABINGDON OX14 4RN, OXON, ENGLAND
+SN 0951-192X
+J9 INT J COMP INTEG MANU
+JI Int. J. Comput. Integr. Manuf.
+PY 2009
+VL 22
+IS 1
+BP 69
+EP 82
+DI 10.1080/09511920802369316
+PG 14
+SC Computer Science, Interdisciplinary Applications; Engineering,
+   Manufacturing; Operations Research & Management Science
+GA 400ID
+UT ISI:000262860400007
+ER
+
+PT J
+AU Kumar, A
+   Gattoufi, S
+   Reisman, A
+AF Kumar, Ashok
+   Gattoufi, Said
+   Reisman, Arnold
+TI Mass customization research: trends, directions, diffusion intensity,
+   and taxonomic frameworks
+SO INTERNATIONAL JOURNAL OF FLEXIBLE MANUFACTURING SYSTEMS
+LA English
+DT Article
+DE mass customization; taxonomy; content analysis; meta review; research
+   strategy; application intensity
+ID PRODUCT DIFFERENTIATION; PRESIDENTS SYMPOSIUM; OPERATIONS-RESEARCH;
+   FLAGSHIP JOURNALS; STRATEGIES; OR/MS; TECHNOLOGY; VARIETY; COSTS; MODEL
+AB Mass customization (MC) as a business strategy is designed to
+   simultaneously compete on two rival competitive priorities-the price
+   and customization level of a product. MC academics and experts have
+   gone a step further. They suggest that MC is a unique strategy whose
+   implementation promises across-the-board improvement in all four of the
+   competitive priorities (price, quality, flexibility, and speed)
+   simultaneously. Its growing adoption by businesses in recent years, the
+   steep rise in success stories associated with MC, and the voluminous
+   body of publications in a short period of its existence have created a
+   need to study the directions, trends, application potential, and
+   research strategies embedded in these publications. Accordingly, this
+   paper studies and analyzes the trends and directions of the research
+   published in 1,124 MC publications that have appeared in journals and
+   magazines since the inception of the term mass customization in 1987 by
+   Stan Davis in his classic book Future Perfect. Statistical trend
+   analyses are conducted to study the vitality and health of the field of
+   MC using number of publications and number of publication outlets and
+   their respective trends. The publication outlet data conform to an S
+   curve, establishing maturity of the MC field. The publication data show
+   that the MC field has passed through four stages of growth: incubation
+   or slow (1987-1992), exponential (1993-2003), stable and matured
+   (2003-2005). There is a slight dip in 2006 in terms of publication
+   outlets; there are, however, confirmatory factors that indicate that
+   the dip in 2006 may be an outlier. This paper also suggests developing
+   a clear understanding of the value and type of research embodied in MC
+   publications through three types of taxonomic analyses. The frameworks
+   for all three taxonomies are set forth, two of which have been
+   previously employed in other areas of OR/MS (Reisman and Kirschnik,
+   Oper Res 42(4):577-588, 1994; Oper Res 43(5):731-740, 1995): The first
+   taxonomic framework first classifies the paper as a theory paper or an
+   application paper. At the second stage, the application content of the
+   publication is determined based on a five-point scale ranging from
+   simple modeling of the real world to bona fide real-world application.
+   The second taxonomic framework suggests usage of a taxonomy comprised
+   of seven distinct types of research strategies. The former analysis
+   provides important information about the application worthiness of the
+   MC publications and hence their usefulness to the real world. The
+   second analysis provides information about the type of research
+   strategies used by MC researchers, which, in turn, allows drawing
+   conclusions about the quality and rigor of such research. The third
+   taxonomic framework suggested recommends classification of all
+   publications among multi-level containers based on the disciplines that
+   intersect with MC and their branches.
+C1 [Kumar, Ashok] Grand Valley State Univ, Grand Rapids, MI USA.
+   [Gattoufi, Said] Sultan Qaboos Univ, Muscat, Oman.
+   [Reisman, Arnold] Reisman & Associates, Shaker Hts, OH USA.
+RP Kumar, A, Grand Valley State Univ, Grand Rapids, MI USA.
+EM kumara@gvsu.edu
+   Gattoufi@squ.edu.om
+   arnoldreisman@sbcglobal.net
+CR ABBOTT A, 1988, SYSTEM PROFESSIONS E
+   ACKOFF RL, 1987, OPER RES, V35, P471
+   ALPTEKINOGLU A, 2004, MANUF SERV OPER MANA, V6, P98
+   BALAKRISHNAN PV, 1996, MANAGE SCI, V42, P1105
+   CHEN S, 2007, INT J FLEX MANUF SYS, V19
+   COOPER CM, 1984, INTEGRATIVE RES REV
+   COOPER CM, 1988, KNOWLEDGE SOC, V1, P104
+   COOPER H, 1998, SYNTHESIZING RES GUI
+   CORBETT CJ, 1993, OPER RES, V41, P625
+   DASILVEIRA G, 2001, INT J PROD ECON, V72, P1
+   DAVIS SM, 1987, FUTURE PERFECT
+   DELLAERT BGC, 2005, J MARKETING RES, V42, P219
+   DESMEULES R, 2002, ACAD MARK SCI REV, V12, P1
+   DURAY R, 2000, J OPER MANAG, V18, P605
+   EASTWOOD MA, 1996, COMPUT IND, V30, P171
+   EPPEN G, 1981, MULTILEVEL PRODUCTIO, P163
+   EPPEN GD, 1979, MANAGE SCI, V25, P498
+   FALKENBERG L, 1998, MONEY, V1, P60
+   FRANKE N, 2003, RES POLICY, V32, P1199, DOI
+   10.1016/S0048-7333(03)00049-0
+   GARG A, 1997, IIE TRANS, V29, P641
+   GATTOUFI S, 2004, J OPER RES SOC, V55, P911, DOI
+   10.1057/palgrave.jors.2601767
+   GATTOUFI S, 2004, SOCIOECON PLANN SCI, V38, P123
+   GATTOUFI S, 2004, SOCIOECONOMIC PLANNI, V38, P141
+   HART CWL, 1995, INT J SERV IND MANAG, V6, P36
+   HART CWL, 1996, MARK MANAG, V5, P11
+   JIANG K, 2004, SATISFYING CUSTOMER
+   JIAO RJ, 2007, INT J MANUF SYST, V19
+   KOTHA S, 1995, STRATEGIC MANAGE J, V16, P21
+   KOTLER P, 1967, MARKETING MANAGEMENT
+   KOTLER P, 1989, PLANNING REV, V17, P10
+   KRAEMER KL, 2000, INFORM SOC, V16, P5
+   KUBIAK J, 1993, PLANNING REV, V21, P25
+   KUMAR A, 1995, MANAGE SCI, V41, P344
+   KUMAR A, 1999, IEEE T ENG MANAGE, V46, P247
+   KUMAR A, 2006, 43 MIDW BUS ADM ASS
+   KUMAR A, 2006, GRAND RAPIDS BU 0814
+   KUMAR A, 2007, INT J FLEX MANUF SYS, V19
+   KUMAR S, 2004, CURR GENE THER, V4, P287
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   LEHMANN DR, 1998, J ACAD MARKET SCI, V26, P62
+   LEYUAN S, 2001, MANAGE SCI, V47, P1681
+   MCCARTHY JE, 1960, BASIC MARKETING MANA
+   MISER HJ, 1987, OPER RES, V35, P314
+   ORMEROD RJ, 1997, OMEGA-INT J MANAGE S, V25, P599
+   ORMEROD RJ, 1997, OPER RES, V45, P179
+   PENTLAND BT, 2003, ORGAN SCI, V14, P528
+   PEPPERS D, 1997, INC MAGAZINE, V19, P63
+   PILLER FT, 2003, MASS CUSTOMIZATION N, V6, P2
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PILLER FT, 2004, PROD PLAN CONTROL, V15, P435, DOI
+   10.1080/095372804200238773
+   PILLER FT, 2007, INT J FLEX MANUF SYS, V19
+   PINE BJ, 1992, MASS CUSTOMIZATION N
+   PINE BJ, 1993, HARVARD BUS REV, V71, P108
+   PINE BJ, 1993, PLANNING REV, V21, P23
+   POTTER A, 2004, PROD PLAN CONTROL, V15, P472, DOI
+   10.1080/095372804200238746
+   REISMAN A, 1988, OPER RES LETT, V7, P295
+   REISMAN A, 1989, INT J KNOWL TRANSF, V14, P67
+   REISMAN A, 1992, MANAGEMENT SCI KNOWL
+   REISMAN A, 1994, OPER RES, V42, P577
+   REISMAN A, 1995, OPER RES, V43, P731
+   REISMAN A, 1997, IEEE T ENG MANAGE, V44, P316
+   REISMAN A, 1997, OPER RES, V45, P508
+   REISMAN A, 2001, MANAGE DECIS, V39, P147
+   SCHWARTZ B, 2000, AM PSYCHOL, V55, P79
+   SCHWARZ LB, 1989, MANAGE SCI, V35, P828
+   SIMPSON TW, 2004, CONCURRENT ENG-RES A, V12, P119, DOI
+   10.1177/1063293X04044383
+   SMITH WR, 1956, J MARKETING, V21, P3
+   SPIRA JS, 1993, PLANNING REV, V22, P23
+   SQUIRE B, 2006, PROD OPER MANAG, V15, P10
+   TAYUR S, 1999, KLUWER INT SERIES
+   TOFFLER A, 1970, FUTURE SHOCK
+   TOFFLER A, 1984, 3 WAVE
+   TSENG M, 2001, MASS CUSTOMIZATION H, P684
+   VANHOEK RI, 1999, J MARKET FOCUSED MAN, V3, P353
+   ZIPKIN P, 1984, MATH OPER RES, V9, P402
+   ZIPKIN P, 2001, SLOAN MANAGE REV, V42, P81
+NR 76
+TC 6
+PU SPRINGER
+PI DORDRECHT
+PA VAN GODEWIJCKSTRAAT 30, 3311 GZ DORDRECHT, NETHERLANDS
+SN 0920-6299
+J9 INT J FLEXIBLE MANUF SYST
+JI Int. J. Flexible Manuf. Syst.
+PD DEC
+PY 2007
+VL 19
+IS 4
+BP 637
+EP 665
+DI 10.1007/s10696-008-9051-y
+PG 29
+SC Engineering, Manufacturing; Operations Research & Management Science
+GA 307SX
+UT ISI:000256339700017
+ER
+
+PT J
+AU Helms, MM
+   Ahmadi, M
+   Jih, WJK
+   Ettkin, LP
+AF Helms, Marilyn M.
+   Ahmadi, Mohammad
+   Jih, Wen Jang Kenny
+   Ettkin, Lawrence P.
+TI Technologies in support of mass customization strategy: Exploring the
+   linkages between e-commerce and knowledge management
+SO COMPUTERS IN INDUSTRY
+LA English
+DT Article
+DE knowledge management; electronic commerce; information technology; mass
+   customization
+ID E-BUSINESS; PRODUCT; RESPONSIVENESS; SYSTEM; MODEL
+AB This paper explores two major interdisciplinary techniques facilitating
+   mass customization strategies-e-commerce and knowledge management. The
+   linkages between the two serve to validate the strategic shift toward
+   mass customization. Internet-enabled e-commerce provides capabilities
+   for firms to reach global buyers and suppliers and is increasingly
+   recognized as a way to support the gathering of knowledge, specifically
+   customer preferences. Knowledge management provides frameworks needed
+   to manage intellectual capital as a valuable organizational resource
+   for supporting customized preferences. Knowledge management makes mass
+   customization a more viable strategy for manufacturers as they work to
+   meet changing customer needs and desires. This article posits the
+   linkage between e-commerce and knowledge management can support firms
+   as they gather customer preferences and evaluate the data to advance
+   mass customization. A profile for firms to assess their readiness for
+   mass customization, specifically considering available knowledge
+   management and e-commerce linkages, is provided along with areas for
+   future research. Published by Elsevier B.V.
+C1 [Helms, Marilyn M.] Dalton State Coll, Dalton, GA USA.
+   [Ahmadi, Mohammad; Ettkin, Lawrence P.] Univ Tennessee, Chattanooga, TN 37403 USA.
+   [Jih, Wen Jang Kenny] Middle Tennessee State Univ, Jennings A Jones Coll Business, Dept Comp Informat Syst, Murfreesboro, TN 37132 USA.
+RP Helms, MM, Dalton State Coll, 213 N Coll Dr, Dalton, GA USA.
+EM mhelms@daltonstate.edu
+   ahmadi@utc.edu
+   kjih@mtsu.edu
+   Lawrence-ettkin@utc.edu
+CR ADCOCK K, 1993, INFORM STRATEGY EXEC, V9, P10
+   AHLSTROM P, 1999, INT J OPER PROD MAN, V19, P262
+   ALVESSON M, 2004, KNOWLEDGE WORK KNOWL
+   BAIRD L, 2006, ORGAN DYN, V35, P372, DOI 10.1016/j.orgdyn.2006.08.002
+   BARDAKCI A, 2005, EUROPEAN BUSINESS RE, V17, P397
+   BARUA A, 2001, SLOAN MANAGE REV, V43, P36
+   BLECKER T, 2004, ELECT MARKETS, V14, P232
+   BLECKER T, 2004, WORKSH INF SYST MASS, V4, P1
+   BOSE R, 2003, KNOWLEDGE PROCESS MA, V10, P3
+   BRAND A, 1998, J KNOWLEDGE MANAGEME, V2, P17
+   CAO J, 2006, INFORM SOFTWARE TECH, V48, P280, DOI
+   10.1016/j.infsof.2005.04.007
+   CAVUSOGLU H, 2007, IEEE T ENG MANAGE, V54, P12, DOI
+   10.1109/TEM.2006.889064
+   CHEN YH, 2001, J MANUF SYST, V20, P280
+   CHILD PN, 2002, MCKINSEY Q, V3
+   CHU CH, 2006, COMPUT IND, V57, P272, DOI 10.1016/j.compind.2005.12.004
+   DAVENPORT TH, 2000, WORKING KNOWLEDGE OR
+   DAVENPORT TH, 2002, HARVARD BUS REV, V80, P107
+   DAVIS SM, 1987, FUTURE PERFECT
+   DIAKOULAKIS IE, 2004, J KNOWLEDGE MANAGEME, V8, P32
+   DIETRICH AJ, 2007, IEEE T ENG MANAGE, V54, P190, DOI
+   10.1109/TEM.2006.889076
+   FAHEY L, 2001, IBM SYST J, V40, P889
+   FEENEY A, 2001, SLOAN MANAGE REV, V42, P41
+   FELFERNIG A, 2007, IEEE T ENG MANAGE, V54, P41, DOI
+   10.1109/TEM.2006.889066
+   FINGAR P, 2001, DEATH E BIRTH REAL N
+   GARBI E, 2002, J BUSINESS STRATEGIE, V19, P1
+   GRENCI RT, 2007, BUS HORIZONS, V50, P123
+   GROVER V, 2001, J MANAGE INFORM SYST, V18, P5
+   HART C, 1996, MARK MANAG, V5, P10
+   HART CWL, 1995, INT J SERV IND MANAG, V6, P36
+   HOGUE F, 2000, E ENTERPRISE BUSINES
+   HOLSAPPLE CW, 2001, EXPERT SYST APPL, V20, P77
+   HUOSONG X, 2003, J KNOWLEDGE MANAGEME, V7, P96
+   JARVENPAA SL, 1997, INT J ELECTRON COMM, V1, P59
+   JIH WJK, 2002, J COMPUTER INFORM SY, P56
+   JIH WJK, 2003, 34 ANN M SE DEC SCI, P110
+   JIH WJK, 2005, J GLOB INF MANAG, V13, P1
+   KAIYA D, 2006, COMPUT IND, V57, P827
+   KALAKOTA R, 1996, ELECT COMMERCE MANAG
+   KALAKOTA R, 1996, FRONTIERS EC
+   KAPLAN AM, 2006, J PROD INNOVAT MANAG, V23, P168
+   KIM WC, 1999, SLOAN MANAGE REV, V40, P41
+   KOCH H, 2002, INFORMATION RESOURCE, V15, P13
+   KOTHA S, 1995, STRATEGIC MANAGE J, V16, P21
+   KOTHA S, 1996, INT J TECHNOL MANAGE, V11, P846
+   LANIGRO G, 2006, INT J PROD RES, V44, P3743
+   LEE HL, 2001, SLOAN MANAGE REV, V42, P54
+   LESEURE MJ, 2004, J KNOWLEDGE MANAGEME, V8, P103
+   MALHOTRA Y, 2000, EXECUTIVES J, V16, P5
+   MCAFEE AP, 2006, MIT SLOAN MANAGE REV, V47, P21
+   MCCUTCHEON DM, 1994, SLOAN MANAGE REV, V35, P89
+   MULBERGER JL, 2004, DEC 2004 ASME 2004 I, P1
+   ONG SK, 2006, INT J PROD RES, V44, P351, DOI 10.1080/00207540500244153
+   PAN B, 2006, J FASHION MARKETING, V10, P345
+   PAN SL, 1998, J KNOWLEDGE MANAGEME, V2, P55
+   PILLER F, 2006, IND ENG, V38, P40
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PINE BJ, 1993, HARVARD BUS REV, V71, P108
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   PORTER M, 2001, HARVARD BUSINESS MAR, P63
+   PRUSAK L, 1998, CALIFORNIA MANAGEMEN, V40, P265
+   RAMAN M, 2006, INFORM SYST MANAGE, V23, P59
+   ROWLEY JE, 2002, QUALITATIVE MARKET R, V5, P268
+   SAMIOTIS K, 2003, KNOWLEDGE PROCESS MA, V10, P175
+   SAVARY M, 1999, CALIFORNIA MANAGEMEN, V41, P41
+   SCHNEIDER G, 2007, ELECT COMMERCE
+   SCHREIER M, 2006, J CONSUMER BEHAV, V5, P317
+   SCOBLE R, 2006, NAKED CONVERSATIONS
+   SILVEIRA GD, 2001, INT J PROD ECON, V72, P1
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   SOLIMAN F, 2001, INT J OPER PROD MAN, V21, P538
+   SONG QB, 2006, COMPUT IND, V57, P622, DOI 10.1016/j.compind.2005.11.006
+   SOO C, 2002, CALIF MANAGE REV, V44, P129
+   SPIEGLER I, 2003, INFORM MANAGE-AMSTER, V40, P533
+   SRINIVASAN R, 2002, J MARKETING, V68, P58
+   STANKOSKY M, 2004, KM WORLD, V13, P1
+   SUGUMARAN V, 2006, INFORM SYSTEMS EBUSI, V4, P83
+   TOFFLER A, 1970, FUTURE SHOCK
+   TURBAN E, 2000, MANAGERIAL PERSPECTI
+   WANG SH, 2004, INFORM MANAGE-AMSTER, V41, P445, DOI
+   10.1016/S0378-7206(03)00083-1
+   WARKENTIN M, 2001, LOGISTICS INFORMATIO, V14, P149
+   WENGER E, 2004, IVEY BUSINESS J, V68, P456
+   WIGAND RT, 1997, INFORM SOC, V13, P16
+   WOLFINBARGER M, 2001, CALIF MANAGE REV, V43, P34
+   WOLFINBARGER M, 2002, COMQ DIMENSIONALIZIN
+   WOODS E, 2004, KM WORLD, V13, P12
+   ZACK MH, 1999, CALIFORNIA MANAGEMEN, V41, P25
+   ZACK MH, 1999, SLOAN MANAGE REV, V40, P45
+NR 87
+TC 8
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0166-3615
+J9 COMPUT IND
+JI Comput. Ind.
+PD APR
+PY 2008
+VL 59
+IS 4
+BP 351
+EP 363
+DI 10.1016/j.compind.2007.09.003
+PG 13
+SC Computer Science, Interdisciplinary Applications
+GA 286AR
+UT ISI:000254818000003
+ER
+
+PT J
+AU Gupta, S
+   Roth, AV
+AF Gupta, Sushil
+   Roth, Aleda V.
+TI Martin K. Starr: A visionary proponent for system integration, modular
+   production, and catastrophe avoidance
+SO PRODUCTION AND OPERATIONS MANAGEMENT
+LA English
+DT Article
+DE Martin (Marty) Kenneth Starr; production and operations management;
+   system integration; interdisciplinary research; modular production;
+   catastrophe and risk
+ID MASS CUSTOMIZATION; MANAGEMENT SCIENCE; RISK; TECHNOLOGY; OPERATIONS;
+   COORDINATION; POSTPONEMENT; PERFORMANCE; CLOCKSPEED; DISRUPTION
+AB Martin K. Starr facilitated the creation of an identity for production
+   and operations management (POM) as an academic discipline. This paper
+   aims to summarize Starr's substantial contributions to scholarly
+   inquiry on system integration and interfunctional coordination, modular
+   production, and catastrophe avoidance. Even after four decades, we
+   describe how his legacy in these areas continues to define several
+   major drivers of operations and supply chain management research and
+   practice. Starr has influenced several generations of students,
+   professors, and executives with his writings, teaching, and leadership
+   roles in the POM community that include 32 years on the faculty of the
+   Columbia School of Business, 15 years as Editor-in-Chief of Management
+   Science, and presidency of the Production and Operations Management
+   Society.
+C1 Florida Int Univ, Coll Business Adm, Dept Decis Sci & Informat Syst, Miami, FL 33199 USA.
+   Clemson Univ, Coll Business & Behav Sci, Clemson, SC 29631 USA.
+RP Gupta, S, Florida Int Univ, Coll Business Adm, Dept Decis Sci &
+   Informat Syst, 11200 SW 8th St,RB 255, Miami, FL 33199 USA.
+EM guptask@fiu.edu
+   aroth@clemson.edu
+CR 1998, HERMES MAGAZINE  FAL, P33
+   *NATL I STAND TECH, 2000, MALC BALDR NAT QUAL
+   BALDWIN CY, 1997, HARVARD BUS REV, V75, P84
+   BERNE E, 1964, GAMES PEOPLE PLAY
+   BOREL E, 1962, PROBABILITIES LIFE
+   BOWEN EK, 1982, BASIC STAT BUSINESS
+   BUFFA ES, 1961, MODERN PROD MANAGEME
+   BUHMAN C, 2005, PROD OPER MANAG, V14, P493
+   CARRILLO JE, 2005, PROD OPER MANAG, V14, P125
+   CHRISTENSEN CM, 2002, IND CORP CHANGE, V11, P955
+   CORREA LH, 2006, COMMUNICATION
+   DANNENBRING DG, 1981, MANAGEMENT SCI INTRO
+   DANNENBRING DG, 2006, COMMUNICATION
+   FAULL N, 2006, COMMUNICATION
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FINE CH, 2000, PROD OPER MANAG, V9, P213
+   FREDRIKSSON P, 2006, INT J OPER PROD MAN, V26, P350, DOI
+   10.1108/01443570610650530
+   GAN XH, 2005, PROD OPER MANAG, V14, P80
+   GIFFI C, 1990, COMPETING WORLD CLAS
+   GRAEML AR, 2006, COMMUNICATON
+   GUMBEL EJ, 1958, STAT EXTREMES
+   GUPTA S, 2006, PROD OPER MANAG, V15, P173
+   HENDRICKS KB, 2005, PROD OPER MANAG, V14, P35
+   HERTZ D, 1972, COMMUNICATION
+   HERTZ DB, 1971, INNOVATION MAGAZINE, V71, P12
+   JAIN S, 2005, PROD OPER MANAG, V14, P362
+   KLEINDORFER PR, 2005, PROD OPER MANAG, V14, P53
+   KOTHA S, 1995, STRATEGIC MANAGE J, V16, P21
+   LEDERER PJ, 2005, PROD OPER MANAG, V14, P21
+   LEE HL, 1997, PRODUCTION OPERATION, V6, P191
+   MALLICK DN, 2005, PROD OPER MANAG, V14, P142
+   MARTINEZDEALBENIZ V, 2005, PROD OPER MANAG, V14, P90
+   MENOR LJ, 2001, MANUFACTURING SERVIC, V3, P273
+   MIKKOLA JH, 2006, J PROD INNOVAT MANAG, V23, P128
+   MILLER DW, 1960, EXECUTIVE DECISIONS
+   MILLER DW, 1967, STRUCTURE HUMAN DECI
+   MILLER DW, 1969, EXECUTIVE DECISIONS
+   MILLER LT, 2005, PROD OPER MANAG, V14, P5
+   MORAN WT, 2006, COMMUNICATION
+   PATNAYAKUNI R, 2006, J MANAGE INFORM SYST, V23, P13
+   PERSSON M, 2006, TECHNOVATION, V26, P1201, DOI
+   10.1016/j.technovation.2005.09.020
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PINE JB, 1993, MASS CUSTOMIZATION N
+   ROBERTSON P, 2006, COMMUNICATION
+   RONEN B, 1990, COMPUT IND ENG, V18, P585
+   ROSENZWEIG E, 2007, B2B ARCHETYPES EMPIR
+   ROTH AV, 1992, OPERATIONS MANAGEMEN, V9, P3
+   ROTH AV, 1996, STRATEGY LEADERSHIP, V24, P30
+   SCHMIDT GM, 2005, PROD OPER MANAG, V14, P272
+   SESHADRI S, 2005, PROD OPER MANAG, V14, P1
+   SHANNON CE, 1949, MATH THEORY COMMUNIC
+   SINGHAL J, 2006, MORPHOLOGICAL BASIS
+   SINGHAL K, 2007, J OPER MANAG, V25, P310, DOI 10.1016/j.jom.2006.06.004
+   SKIPWORTH H, 2006, INT J PROD RES, V44, P1627, DOI
+   10.1080/00207540500362120
+   SOBOL MG, 1983, STAT BUSINESS EC ACT
+   SOBOL MG, 1993, INTRO STAT EXECUTIVE
+   SODHI MS, 2005, PROD OPER MANAG, V14, P69
+   STARR M, 1984, OMEGA, V12, P353
+   STARR M, 1993, INT J TECHNOL MANAGE, V8, P86
+   STARR MK, 1962, INVENTORY CONTROL TH
+   STARR MK, 1963, PROD DESIGN DECISION
+   STARR MK, 1964, MANAGE SCI, V10, P557
+   STARR MK, 1964, PROD MANAGEMENT SYST
+   STARR MK, 1965, HARVARD BUS REV, V43, P131
+   STARR MK, 1965, MODELS MEASUREMENT M
+   STARR MK, 1966, MANAGE SCI, V13, B115
+   STARR MK, 1969, ED PROD MANAGERS TOP
+   STARR MK, 1970, MANAGE SCI, V17, B32
+   STARR MK, 1971, INTERFACES, V1, P31
+   STARR MK, 1971, MANAGEMENT MODERN AP
+   STARR MK, 1971, SYSTEMS MANAGEMENT O
+   STARR MK, 1972, PROD MANAGEMENT SYST
+   STARR MK, 1973, CALIFORNIA MANAGEMEN, V16, P32
+   STARR MK, 1975, OPERATIONAL RES Q, V26, P847
+   STARR MK, 1976, PRACTICE MANAGEMENT
+   STARR MK, 1976, ROLE BUSINESS SCH US, P1
+   STARR MK, 1978, J MARKETING RES, V15, P378
+   STARR MK, 1978, OPERATIONS MANAGEMEN
+   STARR MK, 1980, BEHAV SCI, V25, P171
+   STARR MK, 1983, NATL PROD REV, V2, P410
+   STARR MK, 1984, COLUMBIA J WORLD BUS, V19, P17
+   STARR MK, 1987, OMEGA-INT J MANAGE S, V15, P383
+   STARR MK, 1989, MANAGING PROD OPERAT
+   STARR MK, 1991, GLOBAL CORPORATE ALL
+   STARR MK, 1992, BUS HORIZONS, V35, P44
+   STARR MK, 1993, DISCOVERING ADV TRAI
+   STARR MK, 1993, ED MANAGERS COMPETE, P445
+   STARR MK, 1996, OPERATIONS MANAGEMEN
+   STARR MK, 1997, PRODUCTION OPERATION, V6, P114
+   STARR MK, 2000, OPERATIONS MANAGEMEN
+   STARR MK, 2001, ADV TRAINING METHODO
+   STARR MK, 2001, APPL ONLINE LEARNING
+   STARR MK, 2001, PROD OPER MANAG, V10, P361
+   STARR MK, 2002, DIRECCION OPERACIONE
+   STARR MK, 2003, INT J OPER PROD MAN, V23, P105, DOI
+   10.1108/01443570310453280
+   STARR MK, 2004, PROD OPERATIONS MANA
+   STARR MK, 2004, ROLLINS BUSINESS J
+   STARR MK, 2006, FDN PROD OPERATIONS
+   THYSSEN J, 2006, INT J PROD ECON, V103, P252, DOI
+   10.1016/j.ijpe.2005.07.004
+NR 99
+TC 0
+PU PRODUCTION OPERATIONS MANAGEMENT SOC
+PI BALTIMORE
+PA UNIV BALTIMORE, 1420 CHARLES ST, BALTIMORE, MD 21201 USA
+SN 1059-1478
+J9 PROD OPER MANAG
+JI Prod. Oper. Manag.
+PD JAN-FEB
+PY 2007
+VL 16
+IS 1
+BP 1
+EP 12
+PG 12
+SC Engineering, Manufacturing; Operations Research & Management Science
+GA 167KV
+UT ISI:000246451500001
+ER
+
+PT J
+AU Kumar, A
+TI Mass customization: Metrics and modularity
+SO INTERNATIONAL JOURNAL OF FLEXIBLE MANUFACTURING SYSTEMS
+LA English
+DT Article
+DE mass customization; competitive priority; modularity; metrics
+ID METHODOLOGY
+AB Mass customization as a competitive strategy is getting progressively
+   increasing attention in business and academic arenas due to its high
+   potential to provide sustained strategic advantage in a unique fashion.
+   It is well documented that a manufacturing company competes with others
+   in its industry on five dimensions: Price, quality, flexibility,
+   delivery, and service. According to the existing literature, mass
+   customization provides significant strategic advantage in two of these
+   dimensions-price and customization. We, however, argue that when
+   properly implemented, the cellular manufacturing structure associated
+   with the appropriate implementation of mass customization strategy,
+   provides additional competitive value in quality and delivery.
+   Furthermore by virtue of the customer co-design as an integral aspect
+   of mass customization, customer satisfaction also improves under this
+   strategy. Mass customization strategy, therefore, provides competitive
+   advantage in all five competitive dimensions simultaneously-a truly
+   unique strategic accomplishment. We also propose, in this paper, new
+   metrics for mass customization strategy that measure the "mass" as well
+   as the "customization" aspects of this strategy. Finally, we describe
+   in the clearest terms the modus operandi of modularity in product
+   design and the role it plays in bringing about high levels of
+   customization on one hand and economies of scale at component level, on
+   the other. We conclude with remarks that underscore the need for
+   conducting research in the areas at the interface of mass customization
+   and supply chain management.
+C1 Grand Valley State Univ, Grand Rapids, MI USA.
+RP Kumar, A, Grand Valley State Univ, Grand Rapids, MI USA.
+CR 1985, INTERFACES, V15
+   1993, FORTUNE          AUG
+   1996, PRODUCTION OPERATION, V5
+   ADAM G, 2002, QUALITY, V41, P44
+   ALPTEKINOGLU A, 2004, MANUF SERV OPER MANA, V6, P98
+   CLARK KB, 1996, PRODUCTION OPERATION, V5, P42
+   DAVIS SM, 1987, FUTURE PERFECT
+   DEMEYER A, 1989, STRATEGIC MANAGE J, V10, P135
+   DESMEULES R, 2002, ACAD MARKETING SCI R, V22, P1
+   DURAY R, 2000, J OPER MANAG, V18, P605
+   DURAY R, 2002, INT J OPER PROD MAN, V22, P314
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FERDOWS K, 1990, J OPERATIONS MANAGEM, V9, P168
+   FINE CH, 1985, INTERFACES, V15, P28
+   GARWIN DA, 1992, OPERATIONS STRATEGY
+   GARWIN DA, 1993, MANAGE SCI, V39, P395
+   HART CW, 1996, MARK MANAG, V5, P12
+   HAYES R, 1978, BUSINESS HORIZON FEB, P57
+   HAYES R, 1978, HARVARD BUSINESS JAN, P107
+   HAYES R, 1984, RESTORING OUR COMPET
+   HAYES RH, 1979, HARVARD BUS REV, V57, P15
+   HAYES RH, 1996, PRODUCTION OPERATION, V5, P26
+   JIAO J, 2000, INTEGRATED MANUFACTU, V111, P469
+   JIAO J, 2005, INT J FLEX MANUF SYS, V16, P335
+   JIAO JX, 1999, J INTELL MANUF, V10, P3, UNSP 1008926428533
+   KING JR, 1980, INT J PROD RES, V18, P213
+   KOTHA S, 1996, EUROPEAN MANAGEMENT, V14, P442
+   LEHMANN DR, 1998, J ACAD MARKET SCI, V26, P62
+   MILN Z, 1996, HUMAN SYSTEMS MANAGE, V15, P93
+   PILLER FT, 2003, MASS CUSTOMIZATION N, V6, P2
+   PILLER FT, 2004, INT J FLEX MANUF SYS, V16, P313, DOI
+   10.1007/s10696-005-5170-x
+   PILLER FT, 2005, PRESENTATION MASS CU
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   PINE BJ, 1993, PLANNING REV, V21, P23
+   PINE BJ, 1993, PLANNING REV, V21, P6
+   PINE BJ, 2004, STRATEGIC DIRECTIONS, V20, P2
+   SALERNO MS, 2001, INT J AUTOMOT TECHN, V1, P92
+   SCHWEITZER D, 2000, P SOC PHOTO-OPT INS, V1, P79
+   SKINNER W, 1969, HARVARD BUSINESS MAY, P136
+   SKINNER W, 1974, HARVARD BUSINESS MAY, P113
+   SKINNER W, 1996, PRODUCTION OPERATION, V5, P3
+   SUZIK HA, 1999, QUALITY, V38, P14
+   SWAMIDASS PM, 1986, J OPERATIONS MANAGEM, V6, P471
+   TSENG MM, 2001, HDB IND ENG, P684
+   TU Q, 2004, DECISION SCI, V35, P147
+   WOODWARD J, 1965, IND ORG
+NR 46
+TC 8
+PU SPRINGER
+PI DORDRECHT
+PA VAN GODEWIJCKSTRAAT 30, 3311 GZ DORDRECHT, NETHERLANDS
+SN 0920-6299
+J9 INT J FLEXIBLE MANUF SYST
+JI Int. J. Flexible Manuf. Syst.
+PD OCT
+PY 2004
+VL 16
+IS 4
+BP 287
+EP 311
+DI 10.1007/s10696-005-5169-3
+PG 25
+SC Engineering, Manufacturing; Operations Research & Management Science
+GA 996XO
+UT ISI:000234209300001
+ER
+
+EF

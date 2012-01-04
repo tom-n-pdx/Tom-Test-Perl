@@ -2,3 +2,7 @@ Endnote Web Format Info
 
 http://www.cardiff.ac.uk/insrv/educationandtraining/guides/endnote/endnote_codes.html
 
+http://www.harzing.com/pophelp/exporting.htm
+
+Parse Code http://search.cpan.org/search?query=bibtex&mode=all
+

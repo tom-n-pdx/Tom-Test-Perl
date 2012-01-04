@@ -1,0 +1,57 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Erens, F
+   Verhulst, K
+TI Architectures for product families
+SO COMPUTERS IN INDUSTRY
+LA English
+DT Article
+DE product architecture; product development; modularity; integration;
+   generic product structuring
+AB Manufacturing companies increasingly develop product families to offer
+   a large variety of products with limited development and manufacturing
+   costs, This paper asserts that the development of a product family
+   requires product architectures in three domains, defining the required
+   function, technological realisation and the physical realisation, A
+   product architecture separates the stable and the variable aspects of
+   the design. The stable aspects are then integrated to improve the
+   cost-performance ratio, and the variable aspects are developed in a
+   modular way to improve the cost-variety trade-off, The paper supports
+   its arguments through an example. (C) 1997 Elsevier Science B.V.
+C1 EINDHOVEN UNIV TECHNOL,FAC IND ENGN,NL-5600 MB EINDHOVEN,NETHERLANDS.
+   PHILLIPS MED SYST,NL-5680 DA BEST,NETHERLANDS.
+CR ALBANO LD, 1992, RES ENG DES, V4, P171
+   ANDREASEN MM, 1987, INTEGRATED PRODUCT D
+   BOTTEMA A, 1992, INTEGRATION PRODUCTI
+   CROSS N, 1989, ENG DESIGN METHODS
+   ERENS FJ, 1992, INTEGRATION PRODUCTI
+   ERENS FJ, 1995, P ASI 95 LISB ICIMS
+   ERENS FJ, 1995, P WDK WORKSH PROD ST
+   HATLEY DJ, 1987, STRATEGIES REAL TIME
+   HEGGE HMH, THESIS EINDHOVEN U T
+   MARCH LJ, 1984, DEV DESIGN METHODOLO
+   PINE BJ, 1993, NEW FRONTIER BUSINES
+   ULRICH K, 1991, ISSUES DESIGN MANUFA, V39
+   ULRICH KT, 1990, DES STUD, V11
+NR 13
+TC 63
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0166-3615
+J9 COMPUT IND
+JI Comput. Ind.
+PD SEP
+PY 1997
+VL 33
+IS 2-3
+BP 165
+EP 178
+PG 14
+SC Computer Science, Interdisciplinary Applications
+GA YH964
+UT ISI:A1997YH96400003
+ER
+
+EF

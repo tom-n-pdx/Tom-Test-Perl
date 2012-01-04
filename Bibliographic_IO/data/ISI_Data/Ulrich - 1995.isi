@@ -1,0 +1,85 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU ULRICH, K
+TI THE ROLE OF PRODUCT ARCHITECTURE IN THE MANUFACTURING FIRM
+SO RESEARCH POLICY
+LA English
+DT Article
+ID INNOVATION; COMPATIBILITY; PERFORMANCE; STRATEGY
+AB Product architecture is the scheme by which the function of a product
+   is allocated to physical components.  This paper further defines
+   product architecture, provides a typology of product architectures, and
+   articulates the potential linkages between the architecture of the
+   product and five areas of managerial importance:  (1) product change;
+   (2) product variety; (3) component standardization; (4) product
+   performance; and (5) product development management.  The paper is
+   conceptual and foundational, synthesizing fragments from several
+   different disciplines, including software engineering, design theory,
+   operations management and product development management.  The paper is
+   intended to raise awareness of the far-reaching implications of the
+   architecture of the product, to create a vocabulary for discussing and
+   addressing the decisions and issues that are linked to product
+   architecture, and to identify and discuss specific trade-offs
+   associated with the choice of a product architecture.
+RP ULRICH, K, MIT,ALFRED P SLOAN SCH MANAGEMENT,ROOM E53 390,CAMBRIDGE,MA
+   02139.
+CR ALEXANDER C, 1964, NOTES SYNTHESIS FORM
+   CLARK KB, 1989, MANAGE SCI, V35, P1247
+   CLARK KB, 1990, HARVARD BUSINESS REV, V68
+   CUSUMANO MA, 1992, RES POLICY, V21, P265
+   FARRELL J, 1985, RAND J ECON, V16, P70
+   FARRELL J, 1986, AM ECON REV, V76, P940
+   FINGER S, 1989, RES ENG DESIGN, V1
+   FOWLER T, 1990, VALUE ANAL DESIGN
+   GREEN PE, 1985, MARKETING SCI, V4
+   HENDERSON RM, 1990, ADMIN SCI QUART, V35, P9
+   HUBKA V, 1988, THEORY TECHNICAL SYS
+   JAIKUMAR R, 1986, HARVARD BUS REV, V64, P69
+   JOSEPH B, 1991, THESIS MIT
+   KORSON TD, 1986, CIS86001 GEORG STAT
+   LANGLOIS RN, 1992, RES POLICY, V21
+   LEE H, 1992, SEP C DES MAN AND GR
+   LOVEJOY WS, 1992, SEP C DES MAN AND GR
+   MEAD CA, 1980, INTRO VLSI SYSTEMS
+   NEVINS JL, 1989, CONCURRENT DESIGN PR
+   PAHL G, 1984, ENG DESIGN
+   PINE BJ, 1992, MASS CUSTOMIZATION N
+   SANCHEZ R, 1992, P INT C PRODUCT DEV, V2
+   SANDERSON S, 1992, MANAGING PRODUCT FAM
+   SANDERSON SW, 1991, J ENG TECHNOL MANAGE, V8, P339
+   SCHACH SR, 1990, SOFTWARE ENG
+   SILVERTHORNE S, 1991, INVESTORS DAILY 0917, V17
+   SUAREZ FF, 1991, MIT329891BPS SLOAN S
+   SUH NP, 1990, PRINCIPLES DESIGN
+   SUZUE T, 1990, VARIETY REDUCTION PR
+   ULLMAN DG, 1992, MECHANICAL DESIGN PR
+   ULRICH KT, 1989, RES ENG DES, V1, P3
+   ULRICH KT, 1990, DESIGN STUDIES, V11, P223
+   ULRICH KT, 1993, MIT360193MSA SLOAN S
+   ULRICH KT, 1995, PRODUCT DESIGN DEV
+   UPTON DM, 1991, 92058 HARV BUS SCH W
+   VONHIPPEL E, 1990, RES POLICY, V19, P407
+   WHEELWRIGHT SC, 1992, REVOLUTIONING PRODUC
+   WOMACK JP, 1990, MACHINE CHANGED WORL
+NR 38
+TC 467
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0048-7333
+J9 RES POLICY
+JI Res. Policy
+PD MAY
+PY 1995
+VL 24
+IS 3
+BP 419
+EP 440
+PG 22
+SC Management; Planning & Development
+GA QZ168
+UT ISI:A1995QZ16800006
+ER
+
+EF

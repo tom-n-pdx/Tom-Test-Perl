@@ -1,0 +1,138 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Jose, A
+   Tollenaere, M
+TI Modular and platform methods for product family design: literature
+   analysis
+SO JOURNAL OF INTELLIGENT MANUFACTURING
+LA English
+DT Article
+DE design optimization; flexible manufacturing; modular design; product
+   family design; product platforms
+ID MASS CUSTOMIZATION; GROUP TECHNOLOGY; DIFFERENTIATION; DECOMPOSITION;
+   ARCHITECTURE; FLEXIBILITY; EXTENSION; SYSTEMS; LINES
+AB After the industrial revolution, the literature has mentioned different
+   "principles" to allow a better management of the production and product
+   life cycle activities. For example the principle of standardization was
+   first mentioned in the literature by an automobile engineer and placed
+   in a real context by Henry Ford. Standardization has made possible the
+   configuration of different products using a large set of common
+   components. Another strategy called "modularization" was first
+   mentioned in the literature in the 60s. The modularity proposed to
+   group components of products in a module for practical production
+   objectives. Today, modularity and standardization are promising tools
+   in product family development because they allow to design a variety of
+   products using the same modules of components called "platforms". Using
+   platforms allows important family design savings and easy
+   manufacturing. In this paper we give a literature review of the
+   platform concept with a special interest on the efficient product
+   family development. This paper is organized as follows. Section 1
+   mentions the general context of modularity to develop product variety.
+   Section 2 details the importance of product architectures in the
+   literature for a modular design. Section 3 points on some important
+   works that apply some modular and platform methodologies.
+C1 Inst Natl Polytech Grenoble, GILCO Lab, F-38031 Grenoble, France.
+RP Jose, A, Inst Natl Polytech Grenoble, GILCO Lab, 46 Ave Felix Viallet,
+   F-38031 Grenoble, France.
+EM JoseFlores@gilco.inpg.fr
+   tollenaere@gilco.inpg.fr
+CR ADAM S, 1776, INQUIRY NATURE WEALT
+   BALDWIN CY, 1997, HARVARD BUSINESS SEP, P84
+   BALDWIN CY, 2000, DESIGN RULES, V1
+   BONGULIELMI L, 2001, INT C ENG DES ICED 0, P21
+   BURBIDGE JL, 1982, INT J PROD RES, V20, P339
+   CARRIE AS, 1973, INT J PROD RES, V11, P399
+   CHAKRABART A, 2001, INT C ENG DES ICED 0
+   CHAMBOLLE F, 1999, THESIS ECOLE CTR PAR
+   CHANDRASEKHARAN MP, 1986, INT J PROD RES, V24, P1221
+   CORBETT J, 1991, DESIGN MANUFACTURING
+   DAHMUS JB, 2001, DESIGN STUDIES, V22, P409
+   DAVID H, 1998, COMPTUER AIDED DESIG, V30, P105
+   DOBRESCU G, 2001, INT C ENG DES ICED 0
+   ELGARD P, 1998, P 13 IPS RES SEM FUG
+   ELLINI R, 2000, 8 AIAA USA NASA ISSM
+   EVANS D, 1963, OPER RES, V11, P637
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FIXSON SK, 2001, MIT WORKING PAPER SE
+   FUJITA K, 1999, 1999 ASME DES ENG TE
+   GALSWORTH GD, 1994, SMART SIMPLE DESIGN
+   GARD B, 2002, THESIS INPG GRENOBLE
+   GARUD R, 1995, STRATEGIC MANAGE J, V16, P93
+   GILMORE JH, 1997, HARVARD BUS REV, V75, P91
+   GONZALEZZUGASTI JP, 2000, RES ENG DES, V12, P61
+   HADJHAMOU K, 2002, THESIS I NATL POLYTE
+   HATA T, 2001, DESIGN PRODUCT MODUL
+   HUANG CC, 1998, IEEE T SYST MAN CY A, V28, P66
+   HUANG CC, 1999, IEEE-ASME T MECH, V4, P119
+   JIAO JX, 1999, J INTELL MANUF, V10, P3, UNSP 1008926428533
+   JOINES J, 1996, MANUFACTURING CELL D, P27
+   JONES A, 2004, 5 INT C INT DES MAN
+   JULIANA M, 2003, THESIS SCH TECHNOLOG
+   KING JR, 1980, INT J PROD RES, V18, P213
+   KING JR, 1982, INT J PROD RES, V20, P117
+   KOTHA S, 1995, STRATEGIC MANAGE J, V16, P21
+   KUMAR CS, 1990, INT J PROD RES, V28, P233
+   KUSIAK A, 1987, INT J PROD RES, V25, P561
+   KUSIAK A, 1995, IEEE T COMPON PACK A, V18, P664
+   KUSIAK A, 1995, J MECH DESIGN, V117, P17
+   KUSIAK A, 1999, ENG DESIGN PRODUCTS
+   LEE HL, 1997, MANAGE SCI, V43, P40
+   MARTIN M, 1997, 1997 ASME C ASME DES
+   MCAULEY J, 1972, PRODUCTION ENG, V51, P53
+   MCCORMICK WT, 1972, OPER RES, V20, P993
+   MEYER MH, 1997, POWER PRODUCT PLATFO
+   MIKKOLA JH, 1999, DRUID WINT C 7 9 JAN
+   MIKKOLA JH, 2000, LINK WORKSH 15 MAY O
+   NAYAK RU, 2000, P DETC 00 ASME 2000
+   NEVINS JL, 1989, CONCURRENT DESIGN PR
+   NEWCOMB PJ, 1998, J MECH DESIGN, V120, P483
+   OTTO K, 2000, P DETC 00 ASME DES E
+   OTTO K, 2001, IDENTYFING PRODUCT F
+   OTTO K, 2001, P DETC ASME DES ENG
+   PAHL G, 1998, ENG DESIGN SYSTEMATI
+   PEDERSEN K, 2001, INT C ENG DES ICED 0
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   ROBERTSON D, 1998, PLATFORM PRODUCT DEV
+   SANCHEZ R, 1996, STRATEGIC MANAGE J, V17, P63
+   SANCHEZ R, 2000, COMPETING LEARNING M, PII S002 4-63 01(01)00099-1
+   SIMON HA, 1996, SCI ARTIFICIAL
+   SIMPSON TW, 1996, AIAA NASA USAF ISSMO, V2, P1535
+   SIMPSON TW, 2001, RES ENG DES, V13, P2, DOI 10.1007/s001630100002
+   STARR MK, 1965, HARVARD BUS REV, V43, P131
+   STOEN RB, 1998, ASME DES ENG TECH C
+   SWAMINATHAN JM, 1998, MANAGE SCI 2, V44, S161
+   SWAMINATHAN JM, 1999, IIE TRANS, V31, P1015
+   TAYLOR FW, 1967, PRINCIPLES SCI MANAG
+   THOMAS LD, 1991, OPER RES, V39, P677
+   THOMKE S, 1998, CALIF MANAGE REV, V41, P8
+   THYSSEN J, 2001, INT C ENG DES ICED 0
+   ULRICH K, 1991, ISSUES DESIGN MANUFA, V39, P73
+   ULRICH K, 1995, RES POLICY, V24, P419
+   ULRICH TK, 2000, PRODUCT DESIGN DEV
+   VEERAKAMOLMAL P, 1999, P 1999 IEEE INT S EL, P268
+   VENKAT A, 2002, M065401 IERC U MISS
+   VIRITHTHAMULLA G, 1991, MATH PROGRAMMING MOD
+   WILHELM B, 1997, TRANSFORMING AUTOMOB, P146
+   ZAMIROWSKI EJ, 1999, PRODUCT PORTFOLIO AR
+NR 78
+TC 29
+PU SPRINGER
+PI DORDRECHT
+PA VAN GODEWIJCKSTRAAT 30, 3311 GZ DORDRECHT, NETHERLANDS
+SN 0956-5515
+J9 J INTELL MANUF
+JI J. Intell. Manuf.
+PD JUN
+PY 2005
+VL 16
+IS 3
+BP 371
+EP 390
+PG 20
+SC Computer Science, Artificial Intelligence; Engineering, Manufacturing
+GA 931SJ
+UT ISI:000229505300009
+ER
+
+EF

@@ -1,5 +1,10 @@
 Bibliographic Notes
 
+Comparison Standard Formats
+http://en.wikipedia.org/wiki/Comparison_of_reference_management_software#Import_file_formats
+
+
+
 Priority:
 Bibtex, Endnote, ISI, RIS
 
@@ -64,5 +69,12 @@ Refworks: ref
 Output for IEEE
 
 Test "Developing a process of detecting time-lag coefficients of technology licensing data of U.S. research institution"
+
+* Code Ideas
+http://search.cpan.org/search?query=biblio&mode=all
+http://codeandculture.wordpress.com/tag/perl/
+http://search.cpan.org/~timbrody/SOAP-ISIWoK-1.05/
+
+
 
 

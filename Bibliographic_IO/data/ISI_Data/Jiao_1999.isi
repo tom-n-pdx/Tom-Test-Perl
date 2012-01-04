@@ -1,0 +1,100 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Jiao, JX
+   Tseng, MM
+TI A methodology of developing product family architecture for mass
+   customization
+SO JOURNAL OF INTELLIGENT MANUFACTURING
+LA English
+DT Article
+DE product family architecture; mass customization; product development;
+   design management
+ID MODULAR PRODUCTS; DESIGN
+AB Mass customization, aiming at delivering an increasing product variety
+   that best serves customer needs while keeping mass production
+   efficiency, has recently received numerous attention and popularity in
+   industry and academia alike. This paper presents a methodology of
+   developing product family architecture (PFA) to rationalize product
+   development for mass customization. Systematic steps are developed to
+   formulate a PFA in terms of functional, technical and physical views.
+   The diverse needs of customers are matched with the capabilities of a
+   firm through systematic planning of modularity in three consecutive
+   views. The development of a PFA provides a unifying integration
+   platform to synchronize market positioning, commonality employment and
+   manufacturing scale of economy across the entire product realization
+   process. A case study in an electronics company is reported to
+   illustrate the potential and the feasibility of PFA methodology.
+C1 Hong Kong Univ Sci & Technol, Dept Ind Engn & Engn Management, Kowloon, Hong Kong.
+RP Jiao, JX, Hong Kong Univ Sci & Technol, Dept Ind Engn & Engn
+   Management, Clear Water Bay, Kowloon, Hong Kong.
+CR AOUSSAT A, 1995, P 1995 INT C ENG DES, P879
+   BAKER TC, 1989, PHYSIOL ENTOMOL, V14, P1
+   BOYNTON AC, 1991, CALIF MANAGE REV, V34, P53
+   BROWN M, 1994, POWER SUPPLY COOKBOO
+   ERENS F, 1997, COMPUT IND, V33, P165
+   FEITZINGER E, 1997, HARVARD BUS REV, V75, P116
+   FUJITA K, 1997, P ASME DES ENG TECHN
+   GU T, 1990, FUZZY SET SYST, V34, P213
+   HATLEY DJ, 1987, STRATEGIES REAL TIME
+   HUNDAL MS, 1990, MECH MACH THEORY, V25, P243
+   ISHII K, 1995, DES ENG TECHN C, P499
+   ISHII K, 1995, MANUFACTURING SCI EN, P921
+   JIAO J, 1998, FUZZY RANKING CONCEP
+   JOHANNESSON HL, 1997, P ASME DES ENG TECHN
+   KOHLHASE N, 1996, J ENG DESIGN, V7, P279
+   KOLTER P, 1989, PLANNING REV, V17, P10
+   KOTHA S, 1994, ACAD MANAGE REV, V19, P588
+   KUMAR KR, 1988, MANAGE SCI, V34, P805
+   KUSIAK A, 1987, J MANUF SYST, V6, P117
+   KUSIAK A, 1996, IEEE T COMPON PACK A, V19, P523
+   LAU RS, 1995, IND MANAGEMENT, V37, P18
+   LU SCY, 1990, ASME T, V113, P1
+   MARTIN MV, 1996, P 1996 ASME DES ENG
+   MARTIN MV, 1997, P 1997 ASME DES ENG
+   MEYER MH, 1993, SLOAN MANAGE REV, V34, P29
+   NEWCOMB PJ, 1996, P ASME DES ENG TECHN
+   PAHL G, 1996, ENG DESIGN SYSTEMATI
+   PIMMLER TU, 1994, ASME DE, V68, P343
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   PRASAD B, 1996, CONCURRENT ENG FUNDA
+   ROBERTS EB, 1991, IEEE ENG MANAGEMENT, V19, P4
+   SAATY TL, 1991, ANAL HIERARCHY PROCE
+   SANDERSON S, 1995, RES POLICY, V24, P761
+   SANDERSON SW, 1991, J ENG TECHNOL MANAGE, V8, P339
+   SHIBA S, 1993, NEW AM TQM
+   SHOCKER AD, 1979, J MARKETING RES, V16, P159
+   STEWARD DV, 1981, SYSTEMS ANAL MANAGEM
+   SUBRAHMANIAN E, 1991, COMPUTATIONAL AIDED, P20
+   SUH NP, 1990, PRINCIPLES DESIGN
+   THURSTON DL, 1990, IEEE T ENG MANAGE, V37, P296
+   TSENG CI, 1997, J INTEL MAT SYST STR, V8, P4
+   TSENG MM, 1996, ANN CIRP, V45, P153
+   TSENG MM, 1997, ADV IND ENG APPL PRA, V2, P1107
+   ULRICH K, 1991, ISSUES DESIGN MANUFA, P73
+   ULRICH K, 1995, RES POLICY, V24, P419
+   ULRICH KT, 1990, DESIGN STUDIES, V11, P223
+   ULRICH KT, 1995, PRODUCT DESIGN DEV
+   YOSHIMURA M, 1994, CONCURRENT ENG-RES A, V2, P33
+   ZIMMERMANN HJ, 1991, FUZZY SET THEORY ITS
+NR 49
+TC 89
+PU KLUWER ACADEMIC PUBL
+PI DORDRECHT
+PA SPUIBOULEVARD 50, PO BOX 17, 3300 AA DORDRECHT, NETHERLANDS
+SN 0956-5515
+J9 J INTELL MANUF
+JI J. Intell. Manuf.
+PD MAR
+PY 1999
+VL 10
+IS 1
+BP 3
+EP 20
+PG 18
+SC Computer Science, Artificial Intelligence; Engineering, Manufacturing
+GA 205RB
+UT ISI:000080833400001
+ER
+
+EF

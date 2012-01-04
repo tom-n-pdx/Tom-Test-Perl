@@ -2,4 +2,10 @@ BibTex Info
 
 http://www.bibtex.org/Format/
 
+Code
+http://www.gerg.ca/software/btOOL/
+http://www.bulheller.com/bibtexformat.html
+http://cpan.uwinnipeg.ca/htdocs/BibTeX-Parser/
+	Repeat?
+	
 	

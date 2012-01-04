@@ -1,0 +1,14 @@
+ISI Format Info
+
+http://isi-rb.rubyforge.org/
+
+http://images.webofknowledge.com/WOKRS54B7/help/WOS/hs_wos_fieldtags.html
+
+http://images.webofknowledge.com/WOK46/help/WOS/h_fieldtags.html
+
+http://community.thomsonreuters.com/t5/EndNote-Styles-Filters-and/ISI-tagged-format-output/td-p/651
+
+* Code
+http://search.cpan.org/~timbrody/SOAP-ISIWoK-1.05/
+
+

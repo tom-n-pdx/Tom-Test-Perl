@@ -1,0 +1,215 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Yu, L
+   Wang, LY
+AF Yu, Li
+   Wang, Liya
+TI Product portfolio identification with data mining based on
+   multi-objective GA
+SO JOURNAL OF INTELLIGENT MANUFACTURING
+LA English
+DT Article
+DE Mass customization; Product portfolio; Customer need; Product
+   specification; Genetic algorithm; Association rule
+ID GENETIC ALGORITHM; MASS CUSTOMIZATION; ASSOCIATION RULES; METHODOLOGY;
+   DEFINITION; DESIGN; DISCOVERY
+AB In the initial stage of product design, it is essential to define
+   product specifications according to various market niches. An important
+   issue in this process is to provide designers with sufficient design
+   knowledge to find out what customers really want. This paper proposes a
+   data mining method to facilitate this task. The method focuses on
+   mining association rules that reflect the mapping relationship between
+   customer needs and product specifications. Four objectives, support,
+   confidence, interestingness and comprehensibility, are used for
+   evaluating the extracted rules. To solve such a multi-objective
+   problem, a Pareto-based GA is utilized to perform the rule extraction.
+   Through computational experiments on an electrical bicycle case, it is
+   shown that our approach is capable of extracting useful and interesting
+   knowledge from a design database.
+C1 [Yu, Li; Wang, Liya] Shanghai Jiao Tong Univ, Dept Ind Engn & Management, Shanghai 200240, Peoples R China.
+RP Wang, LY, Shanghai Jiao Tong Univ, Dept Ind Engn & Management, Shanghai
+   200240, Peoples R China.
+EM wangliya@sjtu.edu.cn
+FU National Natural Science Foundation of China/Hong Kong Research Grants
+   Council (RGC) [70418013, N_HKUST625/04]; National Natural Science
+   Foundation of China [70471022]; Shanghai Key Laboratory of Advanced
+   Manufacturing Environment 
+FX This research is supported by the National Natural Science Foundation
+   of China/Hong Kong Research Grants Council (Grant No.70418013)/RGC
+   Ref.: N_HKUST625/04, National Natural Science Foundation of China
+   (Grant No.70471022), Shanghai Key Laboratory of Advanced Manufacturing
+   Environment.
+CR AGARD B, 2004, INT J PROD RES, V42, P2955, DOI
+   10.1080/00207540410001691929
+   AGRAWAL R, 1994, P 20 INT C VER LARG, P487
+   CHEN MS, 1996, IEEE T KNOWL DATA EN, V8, P866
+   CHUNHSIEN C, 2002, ADV ENG INFORM, V16, P229, DOI
+   10.1016/S1474-0346(03)00003-X
+   COHEN E, 2001, IEEE T KNOWL DATA EN, V13, P64
+   CONSTANCE J, 2005, HOW, V20, P101
+   CUNRONG L, 2004, 3 INT C COMP EL ITS, P153
+   DEB K, 2002, IEEE T EVOLUT COMPUT, V6, P182
+   DEHURI S, 2006, KNOWL-BASED SYST, V19, P413, DOI
+   10.1016/j.knosys.2006.03.004
+   DU X, 2003, INTEGRATED MANUFACTU, V14, P387
+   DU XH, 2006, INT J ADV MANUF TECH, V31, P396, DOI
+   10.1007/s00170-005-0177-8
+   FREITAS AA, 2002, ADV EVOLUTIONARY COM, P819
+   GHOSH A, 2004, INFORM SCIENCES, V163, P123, DOI
+   10.1016/j.ins.2003.03.021
+   GRAY B, 1998, P PAC AS C KNOWL DIS, P132
+   GUPTA Y, 1996, INT J PROD RES, V34, P447
+   HAN J, 2000, DATA MINING CONCEPTS
+   JESUS D, 2007, IEEE T FUZZY SYST, V15, P578, DOI
+   10.1109/TFUZZ.2006.890662
+   JIANXIN J, 2006, CONCURRENT ENG-RES A, V14, P173
+   JIAO J, 2007, J INTELL MANUF, V18, P5, DOI 10.1007/s10845-007-0003-2
+   JIAO JX, 1999, J INTELL MANUF, V10, P3, UNSP 1008926428533
+   JIAO JX, 2005, COMPUT AIDED DESIGN, V37, P149, DOI
+   10.1016/j.cad.2004.05.006
+   KAYA M, 2006, SOFT COMPUT, V10, P578, DOI 10.1007/s00500-005-0509-5
+   KRISHNAN V, 2001, MANAGE SCI, V47, P52
+   LI F, 2006, 2006 IEEE POW ENG SO
+   NAGAMACHI M, 2002, ERGONOMICS DESIGN, V10, P5
+   PINE BJ, 1993, MASS CUSTOMIZATION N
+   ROMAO W, 2004, APPL SOFT COMPUT, V4, P121, DOI
+   10.1016/j.asoc.2003.10.002
+   SHAO XY, 2006, INT J PROD RES, V44, P2789, DOI 10.1080/00207540600675777
+   SIKORA R, 2007, EUR J OPER RES, V180, P723, DOI
+   10.1016/j.ejor.2006.02.040
+   SUH NP, 1990, PRINCIPLES DESIGN
+   TRAN T, 1995, P 2 IEEE SOFTW ENG S, P191
+   TSENG MM, 1997, COMPUT IND ENG, V33, P629
+   TSENG MM, 1998, CONCURRENT ENG-RES A, V6, P145
+   YAN XW, 2005, APPL ARTIF INTELL, V19, P677, DOI
+   10.1080/08839510590967316
+   YU L, 2007, IEEE INTL CONF IND I, P699
+   ZITZLER E, 2000, EVOLUTIONARY COMPUTA, V8, P173, DOI
+   10.1162/106365600568202
+NR 36
+TC 1
+PU SPRINGER
+PI DORDRECHT
+PA VAN GODEWIJCKSTRAAT 30, 3311 GZ DORDRECHT, NETHERLANDS
+SN 0956-5515
+J9 J INTELL MANUF
+JI J. Intell. Manuf.
+PD DEC
+PY 2010
+VL 21
+IS 6
+BP 797
+EP 810
+DI 10.1007/s10845-009-0255-0
+PG 14
+SC Computer Science, Artificial Intelligence; Engineering, Manufacturing
+GA 683WT
+UT ISI:000284509700013
+ER
+
+PT J
+AU Liu, YL
+   Liu, ZX
+AF Liu, Yiliu
+   Liu, Zixian
+TI An integration method for reliability analyses and product configuration
+SO INTERNATIONAL JOURNAL OF ADVANCED MANUFACTURING TECHNOLOGY
+LA English
+DT Article
+DE Reliability; Product configuration; Fault tree analysis; Integration
+   method
+ID ORDER MANUFACTURING ENTERPRISES; MASS CUSTOMIZATION; FAMILY
+   ARCHITECTURE; OPTIMIZATION; DESIGN; MODEL; MANAGEMENT; ALGORITHM
+AB Reliability has been regarded as an evaluation criterion in production
+   configuration, the key step in mass customization. In this article, the
+   authors focus on the integration of reliability analysis and
+   configuration at the component level. Possible failure causes obtained
+   with a fault tree analysis (FTA) are mapped to the product
+   configuration network model via a functional model and a limitation
+   matrix. Next, when a configuration scheme is generated through
+   intersection of a connection matrix and a generation matrix, its
+   reliability can be achieved with the integrated FTA so to compare with
+   those of other schemes in optimization. Such an integration method is
+   also adaptable for situations where the original fault tree is changed,
+   and several fault trees are involved together. Finally, an example of
+   configuring a laptop computer is used to illustrate the whole
+   integration process.
+C1 [Liu, Yiliu; Liu, Zixian] Tianjin Univ, Sch Management, Tianjin 300072, Peoples R China.
+RP Liu, ZX, Tianjin Univ, Sch Management, Tianjin 300072, Peoples R China.
+EM Liuzixian@tju.edu.cn
+FU National Natural Science Foundation of China [70671071]
+FX This research is supported by the National Natural Science Foundation
+   of China (no. 70671071). At the same time, the authors sincerely thank
+   the reviewers and editors for their comments.
+CR *INT STAND ORG, 1986, 8402 ISO
+   ALBANO LD, 1992, RES ENG DES, V4, P171
+   ALDANONDO M, 2003, INTEGR COMPUT-AID E, V10, P177
+   CHEN LC, 2002, RES ENG DES, V13, P167, DOI 10.1007/s00163-002-0015-z
+   DOWLATSHAHI S, 2001, COMPUT IND ENG, V41, P187
+   ERENS F, 1997, COMPUT IND, V33, P165
+   FENG YX, 2009, INT J ADV MANUF TECH, V40, P785, DOI
+   10.1007/s00170-008-1381-0
+   FORZA C, 2002, COMPUT IND, V49, P37
+   GERSHENSON JK, 2003, J ENG DESIGN, V14, P295, DOI
+   10.1080/0954482031000091068
+   JIAO JX, 1999, J INTELL MANUF, V10, P3, UNSP 1008926428533
+   LI B, 2006, INT J ADV MANUF TECH, V30, P20, DOI
+   10.1007/s00170-005-0035-8
+   LIU YL, 2010, J ENG DESIGN, V21, P473, DOI 10.1080/09544820802474663
+   LU Y, 2004, 2004 IEEE INT ENG MA, V13, P1105
+   MITTAL S, 1989, P 11 INT JOINT C ART, P1395
+   MURTHY DNP, 2008, PRODUCT RELIABILITY
+   MURTHY DNP, 2009, RELIAB ENG SYST SAFE, V94, P1593, DOI
+   10.1016/j.ress.2009.02.031
+   MURTHY DNP, 2009, RELIAB ENG SYST SAFE, V94, P1601, DOI
+   10.1016/j.ress.2009.02.030
+   MURTHY DNP, 2009, RELIAB ENG SYST SAFE, V94, P1609, DOI
+   10.1016/j.ress.2009.02.029
+   RAUSAND M, 2004, SYSTEM RELIABILITY T
+   RUPPERT H, 2001, P A REL MAI, P264
+   SABIN D, 1998, IEEE INTELL SYST APP, V13, P42
+   SALVADOR F, 2004, INT J PROD ECON, V91, P273, DOI
+   10.1016/j.ijpe.2003.09.003
+   SINNAMON RM, 1997, QUAL RELIAB ENG INT, V13, P293
+   SMITH J, 2005, J ENG DESIGN, V16, P473, DOI 10.1080/09544820500273268
+   TENG SH, 1995, QUAL RELIAB ENG INT, V11, P203
+   TSENG HE, 2006, INT J COMPUT INTEG M, V19, P716, DOI
+   10.1080/09511920500233616
+   ULRICH K, 1995, RES POLICY, V24, P419
+   VISWANATHAN S, 2006, OMEGA-INT J MANAGE S, V34, P599, DOI
+   10.1016/j.omega.2005.01.011
+   WANG HS, 2009, EXPERT SYST APPL 1, V36, P5491, DOI
+   10.1016/j.eswa.2008.06.107
+   XIE H, 2005, INT J PROD RES, V43, P4455, DOI 10.1080/00207540500142381
+   XU ZH, 2005, J MANUF SCI E-T ASME, V127, P875, DOI 10.1115/1.2034513
+   ZENG FS, 2007, INT J ADV MANUF TECH, V33, P766, DOI
+   10.1007/s00170-006-0500-z
+   ZHANG JS, 2005, INT J ADV MANUF TECH, V25, P41, DOI
+   10.1007/s00170-003-1871-z
+   ZHOU CJ, 2008, INT J ADV MANUF TECH, V38, P185, DOI
+   10.1007/s00170-007-1089-6
+   ZHUO L, 2008, INT J ADV MANUF TECH, V36, P83, DOI
+   10.1007/s00170-006-0805-y
+NR 35
+TC 0
+PU SPRINGER LONDON LTD
+PI LONDON
+PA 236 GRAYS INN RD, 6TH FLOOR, LONDON WC1X 8HL, ENGLAND
+SN 0268-3768
+J9 INT J ADV MANUF TECHNOL
+JI Int. J. Adv. Manuf. Technol.
+PD SEP
+PY 2010
+VL 50
+IS 5-8
+BP 831
+EP 841
+DI 10.1007/s00170-010-2649-8
+PG 11
+SC Automation & Control Systems; Engineering, Manufacturing
+GA 642XK
+UT ISI:000281255000038
+ER
+
+EF
