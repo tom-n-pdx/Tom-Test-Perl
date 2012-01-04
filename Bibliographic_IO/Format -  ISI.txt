@@ -1,6 +1,11 @@
 ISI Format Info
 
-
+Issue - ISI journal abbreviations are not unique
+		For some confrences found that multuple year confrences -> same abrev
+		1) Find what abrevs are not unqiue
+		2) maybe can cut out year of confrence? so would have a short, long, long maybe value?
+		
+		
 
 http://images.webofknowledge.com/WOKRS54B7/help/WOS/hs_wos_fieldtags.html
 
