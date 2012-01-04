@@ -33,5 +33,11 @@ Working on
     * Push changes to test
       Had problems, had to reconfigure remote store  to use SSH git-hub access - then worked
 
+Git Refrences
+* http://www.vogella.de/articles/EGit/article.html
+
+Eclipse
+* templates http://www.epic-ide.org/downloads/EPIC_User%27s_Guide.pdf
+
 
 
