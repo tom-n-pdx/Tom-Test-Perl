@@ -2,3 +2,13 @@ RIS File Format
 
 http://en.wikipedia.org/wiki/RIS_%28file_format%29
 
+Format Official Definition
+http://www.refman.com/support/risformat_intro.asp
+
+Refman Support http://www.researcherid.com/resources/html/help_upload.htm
+
+Software Package for refrences - includes manual with good refman overview
+
+Discussion about use of tags by different databases http://forums.zotero.org/discussion/7961/
+
+
