@@ -102,7 +102,6 @@ foreach $journal (sort {$journal_count{$a} <=> $journal_count{$b}} keys %journal
 	if ($journal_count{$journal} > 1){
 		print $journal_count{$journal}, "\t$journal\n";
 	}
-	
 }
 
 # Do some abrevs have a count greater then 1?
