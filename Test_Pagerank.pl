@@ -7,7 +7,7 @@
 # Usage: ./pagerank.pl <query>
 
 use strict;
-use warnings;
+#use warnings;
 
 sub getpagerank {
 	my $q = shift;
