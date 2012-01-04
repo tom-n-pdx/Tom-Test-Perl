@@ -1,0 +1,68 @@
+Bibliographic Notes
+
+Priority:
+Bibtex, Endnote, ISI, RIS
+
+
+Google Scholar Output: 	Bibtex, Endnote, 	RIS, 					Refworks (No)
+
+Endnote Export:			Bibtex, Endnote, 	RIS,	Refer
+
+Endnote Import:					Endnote,	RIS,					Worldcat (OCLC),	Biz Source (EBSCO)
+
+Web of Knowledge:		Bibtex,										ISI*
+* can't test with Daim, not in database
+* Hard to export tied into script for Endnote
+
+Biz Source				BibTex,	Endnote (No),	RIS,				XML, MARC21, Refworks (No), 							
+* endnote - script only
+
+IEEE					Bibtex,					RIS,				Refworks (No)
+
+
+RIS = Easybib, endnote, procite, zotero, refrence manager
+
+
+Notes on formats
+
+http://ispiders.blogspot.com/2007/09/would-you-cite-web-page.html
+
+
+Google Scholar Output Prefrences
+* output info, not refrences in file
+
+Output for "Forecasting emerging technologies: Use of bibliometrics and patent analysis"
+
+* Bibtex: *.bib
+	http://scholar.google.com/scholar.bib?q=info:DELvHCg6y1sJ:scholar.google.com/&output=citation&hl=en&as_sdt=1,38&ct=citation&cd=0
+	
+* Endnote: *.enw
+	http://scholar.google.com/scholar.enw?q=info:DELvHCg6y1sJ:scholar.google.com/&output=citation&hl=en&as_sdt=1,38&ct=citation&cd=0
+
+* Refman: *.ris
+	http://scholar.google.com/scholar.ris?q=info:DELvHCg6y1sJ:scholar.google.com/&output=citation&hl=en&as_sdt=1,38&ct=citation&cd=0
+	
+* Refworks - no - script
+
+* WenXianWang: *.rai
+	http://scholar.google.com/scholar.ral?q=info:DELvHCg6y1sJ:scholar.google.com/&output=citation&hl=en&as_sdt=1,38&oe=GB&ct=citation&cd=0
+	* Can't even open with text editor...
+	* Don't use
+	
+Decode - OK - can generate link of right type with right download file
+
+* Output for patent "james shott beaverton"
+
+* Endnote: *.ris
+
+Output for Biz Source
+
+Test "Regional Planning of R&D and Science -- Technology Interactions in Andalucia: A Bibliometric Analysis of Patent Documents"
+
+Refworks: ref
+
+Output for IEEE
+
+Test "Developing a process of detecting time-lag coefficients of technology licensing data of U.S. research institution"
+
+

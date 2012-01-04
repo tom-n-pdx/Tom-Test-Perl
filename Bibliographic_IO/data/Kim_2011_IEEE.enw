@@ -1,0 +1,35 @@
+TY  - CONF
+JO  - Technology Management in the Energy Smart World (PICMET), 2011 Proceedings of PICMET '11:
+TI  - Developing a process of detecting time-lag coefficients of technology licensing data of U.S. research institution
+T2  - Technology Management in the Energy Smart World (PICMET), 2011 Proceedings of PICMET '11:
+IS  - 
+SN  - 
+VO  - 
+SP  - 1
+EP  - 11
+AU  - Jisun Kim
+AU  - Daim, T.
+AU  - Anderson, T.
+Y1  - July 31 2011-Aug. 4 2011
+PY  - 2011
+KW  - econometrics
+KW  - patents
+KW  - research initiatives
+KW  - technology management
+KW  - time series
+KW  - U.S. research institutions
+KW  - arithmetic lag
+KW  - distributed lag model
+KW  - dynamic model theories
+KW  - econometrics
+KW  - geometric lag structure
+KW  - polynomial lag
+KW  - time lag coefficients detection
+KW  - time series analysis
+KW  - university technology licensing data
+VL  - 
+JA  - Technology Management in the Energy Smart World (PICMET), 2011 Proceedings of PICMET '11:
+DOI  - 
+AB  - Time-series analysis in Econometrics provides advanced methods identifying relationship among time-seriesed subjects which have been rarely applied to engineering management field. While sophisticated econometrics methods such as distributed lag model with unrestricted lag, arithmetic lag, polynomial lag and geometric lag structure, and dynamics model theories enrich analysis of economic data consisting of long time periods and their lasting effect, observations in the engineering management field which tends to have highly uncertain time effect and relatively insufficient time-series hinder applying and benefiting from time lag analysis which is very important to understand dynamic behavior of subject in this field. Therefore, this study revisits and compares selected time series approaches using simulated data set representing university technology licensing and suggest a process for detecting time-lag coefficients of licensing input and output variables.
+ER  - 
+
