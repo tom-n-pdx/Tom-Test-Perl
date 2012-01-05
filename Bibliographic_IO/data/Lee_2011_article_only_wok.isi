@@ -1,0 +1,67 @@
+﻿FN Thomson Reuters Web of Knowledge
+VR 1.0
+PT J
+AU Lee, HJ
+   Lee, S
+   Yoon, B
+AF Lee, Hyoung-joo
+   Lee, Sungjoo
+   Yoon, Byungun
+TI Technology clustering based on evolutionary patterns: The case of
+   information and communications technologies
+SO TECHNOLOGICAL FORECASTING AND SOCIAL CHANGE
+LA English
+DT Article
+DE Technology clustering; Patent analysis; Trend analysis; Evolutionary
+   patterns; Information and communications technology
+ID PATENT ANALYSIS; BUSINESS VALUE; IMPACT; PERFORMANCE; INNOVATION;
+   ALGORITHM; FIRM; VISUALIZATION; CITATIONS; PORTFOLIO
+AB Technology trend analysis anticipates the direction and rate of
+   technology changes, and thus supports strategic decision-making for
+   innovation. As technological convergence and diversification are
+   regarded as emerging trends, it is important to compare the growth
+   patterns of various technologies in a particular industry to help
+   understand the industry characteristics and analyse the technology
+   innovation process. However, despite the potential value of this
+   approach, conventional approaches have focused on individual
+   technologies and paid little attention to synthesising and comparing
+   multiple technologies. We therefore propose a new approach for
+   clustering technologies based on their growth patterns. After
+   technologies with similar patterns are identified, the underlying
+   factors that lead to the patterns can be analysed. For that purpose, we
+   analysed patent data using a Hidden Markov model, followed by clustering
+   analysis, and tested the validity of the proposed approach by applying
+   it to the ICT industry. Our approach provides insights into the basic
+   nature of technologies in an industry, and facilitates the analysis and
+   forecasting of their evolution. (C) 2011 Elsevier Inc. All rights
+   reserved.
+C1 [Lee, Hyoung-joo] Univ Oxford, Dept Engn Sci, Oxford OX1 3PJ, England.
+   [Lee, Sungjoo] Ajou Univ, Dept Ind & Informat Syst Engn, Suwon, Gyeonggi Do, South Korea.
+   [Yoon, Byungun] Dongguk Univ Seoul, Dept Ind & Syst Engn, Seoul 100715, South Korea.
+RP Lee, S (reprint author), Ajou Univ, San 5, Suwon, Kyunggi Do, South Korea
+EM imhjlee@gmail.com
+   sungjoo@ajou.ac.kr
+   postman3@dongguk.edu
+NR 60
+TC 0
+Z9 0
+PU ELSEVIER SCIENCE INC
+PI NEW YORK
+PA 360 PARK AVE SOUTH, NEW YORK, NY 10010-1710 USA
+SN 0040-1625
+J9 TECHNOL FORECAST SOC
+JI Technol. Forecast. Soc. Chang.
+PD JUL
+PY 2011
+VL 78
+IS 6
+BP 953
+EP 967
+DI 10.1016/j.techfore.2011.02.002
+PG 15
+WC Business; Planning & Development
+SC Business & Economics; Public Administration
+GA 785OC
+UT WOS:000292237300006
+ER
+EF

@@ -1,0 +1,55 @@
+Search Terms
+
+Test 1 - ISI Search - 
+
+Topic=(patent citation technology forecast*)
+Timespan=All Years. Databases=SCI-EXPANDED, SSCI, A&HCI.
+Lemmatization=On   
+
+Lee_2011 - http://apps.webofknowledge.com/full_record.do?product=WOS&search_mode=GeneralSearch&qid=1&SID=3C8nmbaPJ7OjNCGjof4&page=1&doc=1
+Example: Technology clustering based on evolutionary patterns
+Lee 2011
+
+
+
+ISI Search
+* refrences - yes
+* related - yes
+* impact factor - yes
+* Citation - no - seperate search
+
+Science Direct
+* references 	- yes
+* related 		- yes
+* impact factor - no
+* Citations		- yes
+ 
+Google Scholar
+* references 	- 
+* related 		- yes
+* impact factor - no
+* Citations		- yes
+
+Blank
+* references 	-
+* related 		- 
+* impact factor - 
+* Citations		- 
+
+Blank
+* references 	-
+* related 		- 
+* impact factor - 
+* Citations		- 
+
+
+
+Used db's
+* science direct 1
+
+
+
+
+abrevs database
+WOS	-	Web Of Science
+SCI	-	Science direct

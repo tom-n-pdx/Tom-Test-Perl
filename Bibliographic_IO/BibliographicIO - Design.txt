@@ -1,0 +1,18 @@
+Bibliographic Design / Plan
+
+
+1. Read / display ISI recods
+	a) ISI - no ref / no cits
+		* Download
+			* article PDF & data file
+		* decode format
+		* create biblio object
+		* read one object
+		* object print
+	b) ISI with refs
+		* Download
+	c) ISI with citations
+		* Download
+	d) Multuple ISI in file
+	
+
