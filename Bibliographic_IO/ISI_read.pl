@@ -202,7 +202,7 @@ sub parse_cite {
         my $doi = '';
 
         @cite_data = split( /,\s*/, $cite_string );
-        print "Cite String $cite_string\n";
+#        print "Cite String $cite_string\n";
 
         #        print "Cite String: ", join(':', @cite_data), "\n";
 
