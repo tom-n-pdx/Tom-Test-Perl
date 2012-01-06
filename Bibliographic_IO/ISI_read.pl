@@ -185,6 +185,7 @@ sub parse_cite {
     # Problem, sometimes DOI spans > 1 line; how know where cit ends?
     # Need to fix DOI parse
     # Some other minor problems, thesis, etc - ignore
+    # Handle * authors
     #
 
     foreach my $cite_string (@citations) {
