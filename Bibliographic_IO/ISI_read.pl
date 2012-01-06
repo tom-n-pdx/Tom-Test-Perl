@@ -57,7 +57,7 @@ while (<main::DATA>){
 	
 	my $match = ($code, $name, $seperator) = split(/\s\t+/);
 	if ( $match >= 2){
-		print "$code:$name\n";		
+#		print "$code:$name\n";		
 		$name{$code} = $name;
 	}
 	
@@ -187,17 +187,34 @@ sub parse_cite {
 
 #
 # Problem, sometimes DOI spans > 1 line; how know where cit ends?
-# Number of problems, "in press", citations with odd formatting
-# Ignore for now
+# Need to fix DOI parse
+# Some other minor problems, thesis, etc - ignore
 #
 	
 	foreach my $cite_string (@citations) {
+
+		# Cleanup IN PRESS dates
+		$cite_string =~ s/IN PRESS/9999,/;
+				
 		my $match = ($author,$year, $journal, my @cite_data) = split(/,\s/,$cite_string);
 
 		if ($match >=3){
 			print "AU:$author YE:$year J9:$journal\n";
+
+			if ( $year !~ /\d\d\d\d/){
+				warn "WARN: Cite year - $cite_string\n";
+			}
+
+			if ( $author =~ /\d\d\d\d/){
+				warn "WARN: Cite author - $cite_string\n";
+			}
+
+			
+
 		} else {
-			print "WARN: $cite_string\n";
+			if ($cite_string !~ /10\.1/){
+#				warn "WARN Cite String Parse: $cite_string\n";
+			}
 		}
 	}	
 }
