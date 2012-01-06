@@ -67,7 +67,8 @@ while (<main::DATA>){
 }
 
 
-my $data_dir  = "/u/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
+#my $data_dir  = "/u/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
+my $data_dir  = "/Users/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
 #my $data_file = "Lee_2011_article_only_wok.isi";
 #my $data_file = "Lee_2011_article_refs_wok.isi";
 my $data_file = "ISI_Data/Jiao_1999-Ref.isi";
@@ -194,7 +195,7 @@ sub parse_cite {
 	foreach my $cite_string (@citations) {
 
 		# Cleanup IN PRESS dates
-		$cite_string =~ s/IN PRESS/9999,/;
+#		$cite_string =~ s/IN PRESS/9999,/;
 				
 		my $match = ($author,$year, $journal, my @cite_data) = split(/,\s/,$cite_string);
 
@@ -209,11 +210,9 @@ sub parse_cite {
 				warn "WARN: Cite author - $cite_string\n";
 			}
 
-			
-
-		} else {
+	   } else {
 			if ($cite_string !~ /10\.1/){
-#				warn "WARN Cite String Parse: $cite_string\n";
+				warn "WARN Cite String Parse: $cite_string\n";
 			}
 		}
 	}	
