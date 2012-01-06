@@ -14,6 +14,7 @@
 
 use strict;
 use warnings;
+
 #use feature 'state';    # Perl > 5.9.4, provides persistent varables
 
 binmode STDOUT, ":utf8";
@@ -34,13 +35,13 @@ binmode STDOUT, ":utf8";
 #);
 
 # Fields to concat with ';'
-	my %concat = (
-		'AU' => 1,		# Author
-		'AF' => 1,		# Author
-		'C1' => 1,		# Author
-		'EM' => 1,		# Email address
-		'CR' => 1,		# Cittaions
-	);
+my %concat = (
+    'AU' => 1,    # Author
+    'AF' => 1,    # Author
+    'C1' => 1,    # Author
+    'EM' => 1,    # Email address
+    'CR' => 1,    # Cittaions
+);
 
 #
 # Setup data fields
@@ -49,30 +50,33 @@ binmode STDOUT, ":utf8";
 my %name;
 
 # Data format is Field, Name, optional seperator
-while (<main::DATA>){
-	chomp;
-	my $code;
-	my $name;
-	my $seperator;
-	
-	my $match = ($code, $name, $seperator) = split(/\s\t+/);
-	if ( $match >= 2){
-#		print "$code:$name\n";		
-		$name{$code} = $name;
-	}
-	
-	if ( $match >= 3){
-#		$concat{$code} = $seperator;
-	}
+while (<main::DATA>) {
+    chomp;
+    my $code;
+    my $name;
+    my $seperator;
+
+    my $match = ( $code, $name, $seperator ) = split(/\s\t+/);
+    if ( $match >= 2 ) {
+
+        #		print "$code:$name\n";
+        $name{$code} = $name;
+    }
+
+    if ( $match >= 3 ) {
+
+        #		$concat{$code} = $seperator;
+    }
 }
 
-
 #my $data_dir  = "/u/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
-my $data_dir  = "/Users/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
+my $data_dir = "/Users/tshott/git/Tom-Test-Perl/Bibliographic_IO/data";
+
 #my $data_file = "Lee_2011_article_only_wok.isi";
 #my $data_file = "Lee_2011_article_refs_wok.isi";
-my $data_file = "ISI_Data/Jiao_1999-Ref.isi";
+my $data_file = "Patent_Search_refs_wok.isi";
 
+#my $data_file = "ISI_Data/Jiao_1999-Ref.isi";
 
 open( my $fh, $data_dir . '/' . $data_file ) || die;
 binmode $fh, ":utf8";
@@ -83,142 +87,170 @@ my $data;
 # Discard first two records
 my $null = <$fh>;
 $null = <$fh>;
- 
-while(&read_record($fh)){
-	
+
+while ( &read_record($fh) ) {
+
 }
 
 print "End\n";
 
 exit;
 
-
 #
 # Need to know if add ';' to field as grow or not
 #
 sub read_record {
 
-	my %field;
-	my $line;
-	my $code = '';
-	my $last_code;
-	my $data;
-	
+    my %field;
+    my $line;
+    my $code = '';
+    my $last_code;
+    my $data;
 
-	# Read lines until get to field with PT record or end of data file
+    # Read lines until get to field with PT record or end of data file
 
-PT:	while($line = <$fh>){
-		chomp $line;
+PT: while ( $line = <$fh> ) {
+        chomp $line;
 
-		if ($line =~ /PT (.*)/){
-			$code = 'PT';
-			$data = $1;
-			last PT;
-		}
-	}
-		
-	return if ($code ne 'PT');
+        if ( $line =~ /PT (.*)/ ) {
+            $code = 'PT';
+            $data = $1;
+            last PT;
+        }
+    }
 
-	$field{$code} = $data;
-		
+    return if ( $code ne 'PT' );
 
+    $field{$code} = $data;
 
-READ: while (my $line = <$fh>){
-		chomp $line;
+READ: while ( my $line = <$fh> ) {
+        chomp $line;
 
-		die "read blank line\n" if (length($line) <1 );
+        die "read blank line\n" if ( length($line) < 1 );
 
-		$code = substr( $line, 0, 2);
-		last READ if ( $code eq 'ER');  
+        $code = substr( $line, 0, 2 );
+        last READ if ( $code eq 'ER' );
 
-		$code = $last_code if $code eq '  ';
+        $code = $last_code if $code eq '  ';
 
-		if (length($line) >= 3){
-			$data = substr( $line, 3 ) if ( length($line) >= 3 );
+        if ( length($line) >= 3 ) {
+            $data = substr( $line, 3 ) if ( length($line) >= 3 );
 
-			my $seperator = ' ';
-			if ($concat{$code}){
-				$seperator = '; ';
-			}
+            my $seperator = ' ';
+            if ( $concat{$code} ) {
+                $seperator = '; ';
+            }
 
-			if (defined $field{$code}){
-				$field{$code} .= $seperator.$data;
-			} else { 
-				$field{$code} .= $data;
-			}
-		}		
+            if ( defined $field{$code} ) {
+                $field{$code} .= $seperator . $data;
+            }
+            else {
+                $field{$code} .= $data;
+            }
+        }
 
-		$last_code = $code;
-	}
-		
-	my @print = ('TI', 'AU', 'J9', 'PY', 'DI');
-	foreach $code (@print){
+        $last_code = $code;
+    }
 
-		printf "%-40s ",$name{$code};
-		
-		print $field{$code} if defined $field{$code};
+    my @print = ( 'TI', 'AU', 'J9', 'PY', 'DI' );
+    foreach $code (@print) {
 
-		print "\n";
-	}
-	if ($field{'CR'}){
-		print "\nCITATIONS:\n";
-		&parse_cite ($field{'CR'});
-	}
+        printf "%-40s ", $name{$code};
 
-	print "\n";	
+        print $field{$code} if defined $field{$code};
 
-#	print "Title: ",$field{'TI'},"\n";
+        print "\n";
+    }
+    if ( $field{'CR'} ) {
+        print "\nCITATIONS:\n";
+        &parse_cite( $field{'CR'} );
+    }
 
-	return 1;
+    print "\n";
+
+    #	print "Title: ",$field{'TI'},"\n";
+
+    return 1;
 }
 
 #
 #	Parse Cite string with ';'s to parse
 #
 sub parse_cite {
-	my $cite_list = shift @_;
-	
-	my @citations = split(/;\s/,$cite_list);
-	my $author;
-	my $year;
-	my $journal;
-#	my $volume;
-#	my $page;
-#	my $unsp;
+    my $cite_list = shift @_;
 
-#
-# Problem, sometimes DOI spans > 1 line; how know where cit ends?
-# Need to fix DOI parse
-# Some other minor problems, thesis, etc - ignore
-#
-	
-	foreach my $cite_string (@citations) {
+    my @citations = split( /;\s*/, $cite_list );
 
-		# Cleanup IN PRESS dates
-#		$cite_string =~ s/IN PRESS/9999,/;
-				
-		my $match = ($author,$year, $journal, my @cite_data) = split(/,\s/,$cite_string);
+    #
+    # Problem, sometimes DOI spans > 1 line; how know where cit ends?
+    # Need to fix DOI parse
+    # Some other minor problems, thesis, etc - ignore
+    #
 
-		if ($match >=3){
-			print "AU:$author YE:$year J9:$journal\n";
+    foreach my $cite_string (@citations) {
 
-			if ( $year !~ /\d\d\d\d/){
-				warn "WARN: Cite year - $cite_string\n";
-			}
+        # Cleanup IN PRESS dates
+        #		$cite_string =~ s/IN PRESS/9999,/;
+        my @cite_data;
+        my $author  = '';
+        my $year    = 0;
+        my $journal = '';
+        my $volume  = 0;
+        my $page    = 0;
 
-			if ( $author =~ /\d\d\d\d/){
-				warn "WARN: Cite author - $cite_string\n";
-			}
+        #	   my $unsp;
+        my $doi = '';
 
-	   } else {
-			if ($cite_string !~ /10\.1/){
-				warn "WARN Cite String Parse: $cite_string\n";
-			}
-		}
-	}	
+        @cite_data = split( /,\s*/, $cite_string );
+        print "Cite String $cite_string\n";
+
+        #        print "Cite String: ", join(':', @cite_data), "\n";
+
+        if ( $cite_data[0] =~ /[a-zA-Z\s]+/ ) {
+            $author = shift(@cite_data);
+        }
+
+        if ( ( $#cite_data >= 0 ) && $cite_data[0] =~ /[\d\s]+/ ) {
+            $year = shift(@cite_data);
+        }
+
+        $journal = shift(@cite_data) if ( $#cite_data >= 0 );
+
+        if ( ( $#cite_data >= 0 ) && $cite_data[0] =~ /^V(\d+)/ ) {
+            $volume = $1;
+            shift(@cite_data);
+        }
+
+        if ( ( $#cite_data >= 0 ) && $cite_data[0] =~ /^P(\d+)/ ) {
+            $page = $1;
+            shift(@cite_data);
+        }
+
+        if ( ( $#cite_data >= 0 ) && $cite_data[0] =~ /^DOI (.+)/ ) {
+            $doi = $1;
+            shift(@cite_data);
+        }
+
+        #		if ($match >=3){
+        #			print "AU:$author YE:$year J9:$journal\n";
+        #
+        #			if ( $year !~ /\d\d\d\d/){
+        #				warn "WARN: Cite year - $cite_string\n";
+        #			}
+        #
+        #			if ( $author =~ /\d\d\d\d/){
+        #				warn "WARN: Cite author - $cite_string\n";
+        #			}
+        #
+        #	   } else {
+        #			if ($cite_string !~ /10\.1/){
+        #				warn "WARN Cite String Parse: $cite_string\n";
+        #			}
+
+        #            print "Cite String: $cite_string\n";
+        print "AU:$author YE:$year J9:$journal V:$volume P:$page DOI:$doi\n";
+    }
 }
-
-
 
 __END__
 FN	File Name
