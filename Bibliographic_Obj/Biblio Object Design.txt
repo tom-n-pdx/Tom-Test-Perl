@@ -1,5 +1,8 @@
 Bibliographic Object Design
 
+Library?
+http://search.cpan.org/~cjfields/BioPerl-1.6.901/Bio/Annotation/Reference.pm
+
 Object Fields
 
 Minimum Citation ISI
