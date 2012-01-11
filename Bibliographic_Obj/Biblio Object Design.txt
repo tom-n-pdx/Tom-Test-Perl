@@ -12,6 +12,31 @@ Minimum Citation ISI
 * volume?
 * page?
 * DOI?
+* comment on where found - raw string
+* links to citing / refering links
+* Unique ID ? DOI?
+* DOI looked up?
+
+Heap Citations
+* Hash on key? author? author, year?
+* also hash on DOI
+* stupid - search by run through entire thing?
+* better - hash on author, year, has on DOI
+
+Search - Similar
+
+
+Bibliography
+* Title
+* Author List
+* Long Journal Name
+* URL to find
+
+
+
+
+
+
 
 Longer
 * author - list (last name separate from first?)
