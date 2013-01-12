@@ -1,0 +1,24 @@
+Perl Config School
+
+Display path:  perl -le 'print foreach @INC'
+
+/etc/perl							Exists, almost empty
+/usr/local/lib/perl/5.14.2			NO
+/usr/local/share/perl/5.14.2		NO
+/usr/lib/perl5						Yes, filled
+/usr/share/perl5					Yes, same as above, filled in
+/usr/lib/perl/5.14					-> 5.14.2 - same as above
+/usr/share/perl/5.14				Yes, same as above
+/usr/local/lib/site_perl			NO
+
+Setup Perl - eclipse
+
+install Padwalked for debug
+http://www.epic-ide.org/faq.php#requirements
+
+install perl-doc command
+
+ran cpan, created perl5 dir, moved to Lib/perl5
+
+
+
