@@ -28,6 +28,13 @@ Chapter4 - Modules
 * perldoc perllocal  	- lost locally installed modules (may miss some in OS installed areas)
 * perldoc module		- provides docs for the modue
 
+* use perl -c MyTest.pm	- test if code compiles ok but not run
 
+* Can export things from module into main namespace -don't. See perdoc Exporter.
+
+* somehow can use import to read paramaters from the use line
+
+
+ 
 
 
