@@ -2,3 +2,13 @@ Notes Object Oriented Perl
 
 Object Oriented Perl by Paul Fenwick and Jacinta Richardson, 2007,  Perl Training Australia, Version 1.11
 
+Book was writen for Perl 5.8.8
+
+Chapter 3
+* Figure out use vs. require - this book starts with using require
+* To Makethe code run I had to use a full filepath to the lib filepath
+* Also had to cleanup characters from cut-paste pdf
+
+
+
+
