@@ -9,6 +9,25 @@ Chapter 3
 * To Makethe code run I had to use a full filepath to the lib filepath
 * Also had to cleanup characters from cut-paste pdf
 
+* To import from local file not in Lib Path - require works well
+
+Chapter4 - Modules
+* modules end in .pm
+* import via bareword in use
+* checked at compile time, not run time
+* a module with use can take arguments for special cases
+* Module name Bob::Type - looks for Type in dir Bob - :: = /
+
+* Looks for modules in @INC.
+	* Modify PERL5LIB - but - with taintcheck turned on ignored
+	* Call with perl -I/path  to add a lib
+	* use lib "/path/to/libs";   - also adds lib
+	* Modify @INC DOES NOT WORK  -happens at runtime but use loads at compile time
+	
+* perldoc perlmodlib 	- list core modules
+* perldoc perllocal  	- lost locally installed modules (may miss some in OS installed areas)
+* perldoc module		- provides docs for the modue
+
 
 
 
