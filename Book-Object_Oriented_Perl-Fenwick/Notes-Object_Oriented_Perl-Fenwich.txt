@@ -34,6 +34,14 @@ Chapter4 - Modules
 
 * somehow can use import to read paramaters from the use line
 
+Chapter 6 - Namaed Arguments
+
+* If lots of arguments, some optional, named better then positional
+* The paramater checking routeen is pretty complex - maybe better to just write code
+
+
+
+
 
  
 
