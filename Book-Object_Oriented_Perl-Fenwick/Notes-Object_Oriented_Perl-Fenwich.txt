@@ -1,0 +1,4 @@
+Notes Object Oriented Perl
+
+Object Oriented Perl by Paul Fenwick and Jacinta Richardson, 2007,  Perl Training Australia, Version 1.11
+
