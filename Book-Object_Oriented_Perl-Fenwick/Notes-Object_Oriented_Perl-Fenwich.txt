@@ -2,3 +2,47 @@ Notes Object Oriented Perl
 
 Object Oriented Perl by Paul Fenwick and Jacinta Richardson, 2007,  Perl Training Australia, Version 1.11
 
+Book was writen for Perl 5.8.8
+
+Chapter 3
+* Figure out use vs. require - this book starts with using require
+* To Makethe code run I had to use a full filepath to the lib filepath
+* Also had to cleanup characters from cut-paste pdf
+
+* To import from local file not in Lib Path - require works well
+
+Chapter4 - Modules
+* modules end in .pm
+* import via bareword in use
+* checked at compile time, not run time
+* a module with use can take arguments for special cases
+* Module name Bob::Type - looks for Type in dir Bob - :: = /
+
+* Looks for modules in @INC.
+	* Modify PERL5LIB - but - with taintcheck turned on ignored
+	* Call with perl -I/path  to add a lib
+	* use lib "/path/to/libs";   - also adds lib
+	* Modify @INC DOES NOT WORK  -happens at runtime but use loads at compile time
+	
+* perldoc perlmodlib 	- list core modules
+* perldoc perllocal  	- lost locally installed modules (may miss some in OS installed areas)
+* perldoc module		- provides docs for the modue
+
+* use perl -c MyTest.pm	- test if code compiles ok but not run
+
+* Can export things from module into main namespace -don't. See perdoc Exporter.
+
+* somehow can use import to read paramaters from the use line
+
+Chapter 6 - Namaed Arguments
+
+* If lots of arguments, some optional, named better then positional
+* The paramater checking routeen is pretty complex - maybe better to just write code
+
+
+
+
+
+ 
+
+
