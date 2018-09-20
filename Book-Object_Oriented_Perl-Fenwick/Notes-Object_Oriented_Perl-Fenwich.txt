@@ -39,6 +39,10 @@ Chapter 6 - Namaed Arguments
 * If lots of arguments, some optional, named better then positional
 * The paramater checking routeen is pretty complex - maybe better to just write code
 
+Chapter 7- Class Methods
+
+* New is class method  -called with no object.
+
 
 
 
@@ -46,3 +50,7 @@ Chapter 6 - Namaed Arguments
  
 
 
+ToDo
+* emacs - perl autocomplete
+* electric preferences
+* MacBook - install Croak

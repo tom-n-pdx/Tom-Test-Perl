@@ -1,2 +1,10 @@
 Book Object Oriented Perl
 
+* Downloaded the code examples
+
+* Suggested Books
+  + Object-Oriented Software Construction
+  + Object-Oriented Design with Applications, 1st and 2nd.
+  + Working With Objects
+  + Object Technology: A Manager’s Guide
+
