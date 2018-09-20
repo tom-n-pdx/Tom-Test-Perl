@@ -43,6 +43,9 @@ Chapter 7- Class Methods
 
 * New is class method  -called with no object.
 
+Chapter 9 - Destructors
+
+* Look into persistens class example using Destructor
 
 
 
@@ -51,6 +54,8 @@ Chapter 7- Class Methods
 
 
 ToDo
+* FIX: ListUtil.c: loadable library and perl binaries are mismatched (got handshake key 0xd880080, needed 0xc500080)
+
 * emacs - perl autocomplete
 * electric preferences
 * MacBook - install Croak
