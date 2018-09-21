@@ -47,7 +47,10 @@ Chapter 9 - Destructors
 
 * Look into persistens class example using Destructor
 
+Chapter 10 - Inheritance
 
+* All inheritance is in Perl is method dispatch. No required checks. Very low checking. Perl looks for methods
+  using a depth-first, left-to-right search of the tree of ancestors.
 
 
  
