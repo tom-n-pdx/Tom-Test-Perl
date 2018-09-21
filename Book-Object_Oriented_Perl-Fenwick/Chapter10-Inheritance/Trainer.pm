@@ -4,6 +4,7 @@
 
 use strict;
 use warnings;
+use NEXT;
 
 #
 # Need to make sure any ISA class does exist
@@ -11,7 +12,6 @@ use warnings;
 
 package PerlTrainer;		# Works Perl > 5.6
 # Must use Our - not My - so exported
-# our @ISA =("Trainer", "Geek");
 our @ISA = qw(Trainer Geek);
 
 # sub new { 
@@ -49,11 +49,13 @@ sub _init {
     #
     # Automate calling all parents _init if exist
     #
-    foreach my $parent (@ISA) {
-	my $parent_init = $parent->can("_init"); 
-	$self->$parent_init(%args) if $parent_init;
-    }
+    # foreach my $parent (@ISA) {
+    # 	my $parent_init = $parent->can("_init"); 
+    # 	$self->$parent_init(%args) if $parent_init;
+    # }
 
+    # Call all parents using NEXT module - even in diamond calls easy parent oncly once
+    $this->NEXT::DISTINCT::_init(%args);
 
     # Class-specific initialisation. 
     $self->{_perl_courses} = $args{courses} || [];

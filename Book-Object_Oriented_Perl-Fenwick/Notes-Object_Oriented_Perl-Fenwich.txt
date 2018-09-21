@@ -2,11 +2,11 @@ Notes Object Oriented Perl
 
 Object Oriented Perl by Paul Fenwick and Jacinta Richardson, 2007,  Perl Training Australia, Version 1.11
 
-Book was writen for Perl 5.8.8
+Book was written for Perl 5.8.8
 
 Chapter 3
 * Figure out use vs. require - this book starts with using require
-* To Makethe code run I had to use a full filepath to the lib filepath
+* To Make the code run I had to use a full filepath to the lib filepath
 * Also had to cleanup characters from cut-paste pdf
 
 * To import from local file not in Lib Path - require works well
@@ -26,18 +26,18 @@ Chapter4 - Modules
 	
 * perldoc perlmodlib 	- list core modules
 * perldoc perllocal  	- lost locally installed modules (may miss some in OS installed areas)
-* perldoc module		- provides docs for the modue
+* perldoc module		- provides docs for the module
 
 * use perl -c MyTest.pm	- test if code compiles ok but not run
 
-* Can export things from module into main namespace -don't. See perdoc Exporter.
+* Can export things from module into main namespace -don't. See perldoc Exporter.
 
 * somehow can use import to read paramaters from the use line
 
-Chapter 6 - Namaed Arguments
+Chapter 6 - Named Arguments
 
 * If lots of arguments, some optional, named better then positional
-* The paramater checking routeen is pretty complex - maybe better to just write code
+* The paramater checking routine is pretty complex - maybe better to just write code
 
 Chapter 7- Class Methods
 
@@ -52,8 +52,74 @@ Chapter 10 - Inheritance
 * All inheritance is in Perl is method dispatch. No required checks. Very low checking. Perl looks for methods
   using a depth-first, left-to-right search of the tree of ancestors.
 
+* had to fix examples, using strict need to adjust @ISA values to quoted words
 
- 
+* Ideally to separate new from initialization.
+
+* If doing diamond inheritance can add check that part inheritance done so not done twice. 
+
+Chapter 11 - Redispatching method calls
+
+* If doing method search - may get wong one.
+
+* Can tell code which method to use... but this is bad programming - force user of code to know object
+  structure.
+
+* Can also have code notice it was wrong one called - and ask for another to be used.
+  Use NEXT module
+  Can also use to make initialization cleaner for multiple inheritance.
+
+* Aslo way to make sure SOME method is found.
+
+* Consider using mro for a different dispatch method if need be - ensures any paranets called before children
+  in a diamond inheritance
+
+* Should also separate DESTROY code from default name. Use  $this->EVERY::_destroy to call all parent
+  destroy.
+
+Chapter 12 - Inside-out Objects
+
+* No longer popular?
+
+* Problem is blessed hashes have weak encapsulation - users can directly access data.
+
+Chapter 13 - Class::Std
+
+* Inside out classes
+
+Chapter 14 - Abstract Class
+
+* If have a lot of simular classes, can build a base class that is actually never intended to be used
+   directly. Then every class can inherit the core functions and provide the unique ones. It does exist - but
+   if object created - not very useful.
+
+* If needed - consider using Class::Virtual or Class::Virtually::Abstract
+
+Chapter 15 - Polymorphism
+
+* Sometimes want EVERY object to have a method - even ons we didn't write.
+
+* Add to UNIVERSIAL class.
+
+* Don't do it - probably bad design.
+
+Chapter 17 - Operator overloading
+
+* See perldoc overload and Conway Book Chapter 10
+
+* Can be useful - but can be overused
+  if ($card->get_suit eq "hearts")    gets converted to    if ($card eq "hearts")
+
+* The most useful operator to overload is Perl’s stringification operator, commonly written as q{""}
+  So prints out something meaningful instead of Chess::Piece::Bishop=HASH(0x80f62ac)
+
+* Can use Attribute::Overload to make overloading easier - but - uses subroutine references - not
+  names. Inherited classes need to explicitly declare which methods are responsible for overloaded operations,
+  otherwise those in the parent class will be used.
+
+
+
+
 
 
 ToDo
