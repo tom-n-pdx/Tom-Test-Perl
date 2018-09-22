@@ -113,9 +113,32 @@ Chapter 17 - Operator overloading
 * The most useful operator to overload is Perl’s stringification operator, commonly written as q{""}
   So prints out something meaningful instead of Chess::Piece::Bishop=HASH(0x80f62ac)
 
-* Can use Attribute::Overload to make overloading easier - but - uses subroutine references - not
-  names. Inherited classes need to explicitly declare which methods are responsible for overloaded operations,
-  otherwise those in the parent class will be used.
+Chapter 18 - Exceptions
+
+* exception catching in Perl is spelled eval - a die inside the eval doesn't kill he program.
+
+* string eval - typical ons  -recompiles the code every time executed.
+
+* block eval faster - only compiled at start
+
+eval {
+     my $result = $customer->credit_card->bill($amount);
+     do_something_with($result);
+}; # Don’t forget that semi-colon!
+
+if ($@) {
+   # Oh dear, it didn’t succeed.
+}
+
+* Book describe Fatal  -don't use - use autodie
+  See: http://perltraining.com.au/tips/2008-08-20.html
+
+* CPAN has Error module which provides try blocks
+
+
+
+
+
 
 
 
