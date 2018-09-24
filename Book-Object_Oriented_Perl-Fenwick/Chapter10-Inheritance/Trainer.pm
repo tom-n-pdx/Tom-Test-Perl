@@ -55,10 +55,10 @@ sub _init {
     # }
 
     # Call all parents using NEXT module - even in diamond calls easy parent oncly once
-    $this->NEXT::DISTINCT::_init(%args);
+    $self->NEXT::DISTINCT::_init(%args);
 
     # Class-specific initialisation. 
-    $self->{_perl_courses} = $args{courses} || [];
+    # $self->{_perl_courses} = $args{courses} || [];
 
     # Return the initialised object. 
     return $self;
