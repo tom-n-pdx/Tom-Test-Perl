@@ -11,19 +11,21 @@ use autodie;			# Easier write open  /close code
 #
 
 use Number::Bytes::Human qw(format_bytes);
-use List::Util qw[min];	# Import min()
+use List::Util qw(min);	# Import min()
 use Data::Dumper;           # Debug print
-use Storable;
+
+use Storable qw(nstore_fd);
+use Fcntl qw(:DEFAULT :flock);
 
 
 # My Modules
 use lib '.';
-use Ebook_Files ;
+use Ebook_Files;
 
 sub files_scan_dir {
     my ($dir_path, @args) = @_;
     my @files;
-    
+
     # Open dir & Scan Files
     opendir(my $dh, $dir_path);
     my @filepaths = readdir $dh;
@@ -47,7 +49,7 @@ sub files_scan_dir {
 
 	# Create File Object
 	# rewrite - so can do checks inside object and return error if problem?
-	my $obj = Ebook_Files->new("filepath" => $_, @args);
+	my $obj = Ebook_Files->new("filepath"=>$_, @args);
 	push(@files, $obj);
     }
     
@@ -58,29 +60,29 @@ sub files_scan_dir {
 # Check for dupe size
 #
 
-sub check_dupe_size {
-    my @files = pop(@_);
-    my %count_size;
+# sub check_dupe_size {
+#     my @files = pop(@_);
+#     my %count_size;
 
-    for (@files) {
-	my $size = $_->size;
-	$count_size{$size}++;
-    }
+#     for (@files) {
+# 	my $size = $_->size;
+# 	$count_size{$size}++;
+#     }
 
-    my @size_dupes = grep( $count_size{$_} > 1 , keys %count_size);
+#     my @size_dupes = grep( $count_size{$_} > 1 , keys %count_size);
 
-    foreach my $size ( @size_dupes) {
-	print "Dupe Size: $size\n";
+#     foreach my $size ( @size_dupes) {
+# 	print "Dupe Size: $size\n";
 
-	my @file_dupes = grep($_->size == $size, @files);
-	foreach (@file_dupes) {
-	    my($basename, $path, $ext) = $_->fileparse();
-	    print "\t$basename$ext\n";
-	}
-	print "\n";
-    }
-    return;
-}
+# 	my @file_dupes = grep($_->size == $size, @files);
+# 	foreach (@file_dupes) {
+# 	    my($basename, $path, $ext) = $_->fileparse();
+# 	    print "\t$basename$ext\n";
+# 	}
+# 	print "\n";
+#     }
+#     return;
+# }
 
 #
 # insert objects into hashtable
@@ -139,12 +141,19 @@ my @files = files_scan_dir($test1_dir, "calc-md5"=> 1);
 #push(@files, files_scan_dir("/Users/tshott/Downloads/_ebook", "calc-md5"=> 0));
 #push(@files, files_scan_dir("/Users/tshott/Downloads/_ebook/_Studies In Big Data Series"));
 
+
+# Implement locking and network order
 # Store objs via storable into file in dir
 my $obj_store_file = $test1_dir."/.ebook_files.dbj";
-store(\@files, $obj_store_file);
+#store(\@files, $obj_store_file);
 
+sysopen(my $df, $obj_store_file, O_RDWR|O_CREAT, 0666) or die "can't open $obj_store_file: $!";
+flock($df, LOCK_EX) or die "can't lock $obj_store_file: $!";
+nstore_fd(\@files, $df) or die "can't store hash\n";
+truncate($df, tell($df));	# Why?
+close($df);
 
-
+print "Stored objs in $obj_store_file\n";
 
 
 #

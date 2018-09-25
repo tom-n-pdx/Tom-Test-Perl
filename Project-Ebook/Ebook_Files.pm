@@ -13,7 +13,7 @@ use Digest::MD5;
  
 use File::Spec;
 use File::Basename;
-
+use Scalar::Util qw(looks_like_number);
 
 
 package Ebook_Files;
@@ -64,6 +64,11 @@ sub size {
 sub md5 {
     my ($self) = pop(@_);
     return $self->{_md5};
+}
+
+sub filepath {
+    my ($self) = pop(@_);
+    return($self->{_filepath});
 }
 
 sub filename {
@@ -122,5 +127,28 @@ sub update_md5 {
     return $self;
 }
 
+sub is_equal {
+    my $self   = pop(@_);
+    my $other = pop(@_);
+
+    # if (class($other) ne "Ebook_files"){
+    # 	warn "ERROR: tried to check class ", class($other), " against Ebook_files";
+    # 	return;
+    # }
+
+    my @changes;
+    my @check_atribues = ("_dev", "_ino", "_size", "_mtime", "_ctime"); # all numeric
+
+    foreach (@check_atribues){
+	push(@changes, $_) if (defined $self->{$_} && $other->{$_} && $self->{$_} != $other->{$_});
+    }
+ 
+    @check_atribues = ("_filepath", "_md5"); # all strinf
+    foreach (@check_atribues){
+	push(@changes, "_md5") if (defined $self->{"_md5"} && $other->{"_md5"} && $self->{"_md5"} ne $other->{"_md5"});
+    }
+
+   return @changes;
+}
 1;
 
