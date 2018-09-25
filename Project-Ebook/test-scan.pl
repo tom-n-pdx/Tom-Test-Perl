@@ -10,17 +10,15 @@ use autodie;			# Easier write open  /close code
 # ToDo - expand ~ in dir path
 #
 
-#use 5.016; # implies "use strict;" 
-#use warnings;
 use Number::Bytes::Human qw(format_bytes);
 use List::Util qw[min];	# Import min()
 use Data::Dumper;           # Debug print
+use Storable;
 
 
 # My Modules
 use lib '.';
 use Ebook_Files ;
-
 
 sub files_scan_dir {
     my ($dir_path, @args) = @_;
@@ -28,34 +26,102 @@ sub files_scan_dir {
     
     # Open dir & Scan Files
     opendir(my $dh, $dir_path);
-    while (readdir $dh) {
+    my @filepaths = readdir $dh;
+    closedir $dh;
 
-	# Skip system files
-	next if /^\./;
-	my $file_path = "$dir_path/$_";
+    @filepaths = grep($_ !~ /^\./, @filepaths);		    # remove . files from last
+    @filepaths = map($dir_path.'/'.$_, @filepaths);	    # make into absoule path         
 
-	# skip non stanard files including dirs
-	# next if -d $file_path;
+    # print "List files: ", join("\n", @filepaths), "\n";
 
-	if (!-f $file_path && !-d $file_path) {
-	    warn "SKIP non-standard file $file_path\n";
-	   next;
+    foreach (@filepaths) {
+	if (!-f $_ && !-d $_) {
+	    warn "SKIP non-standard file $_\n";
+	    next;
 	}
 
-	if (! -r $file_path){
-	    warn "WARN: Can't open file $file_path\n";
+	if (! -r $_){
+	    warn "WARN: Can't open file $_\n";
 	    next;
 	}
 
 	# Create File Object
-	my $obj = Ebook_Files->new("filepath" => $file_path, "calc-md5"=> 1);
+	# rewrite - so can do checks inside object and return error if problem?
+	my $obj = Ebook_Files->new("filepath" => $_, @args);
 	push(@files, $obj);
-
     }
-    closedir $dh;
-
+    
     return @files;
 }
+
+#
+# Check for dupe size
+#
+
+sub check_dupe_size {
+    my @files = pop(@_);
+    my %count_size;
+
+    for (@files) {
+	my $size = $_->size;
+	$count_size{$size}++;
+    }
+
+    my @size_dupes = grep( $count_size{$_} > 1 , keys %count_size);
+
+    foreach my $size ( @size_dupes) {
+	print "Dupe Size: $size\n";
+
+	my @file_dupes = grep($_->size == $size, @files);
+	foreach (@file_dupes) {
+	    my($basename, $path, $ext) = $_->fileparse();
+	    print "\t$basename$ext\n";
+	}
+	print "\n";
+    }
+    return;
+}
+
+#
+# insert objects into hashtable
+#
+# hashtable, list of objects
+#
+# ToDo
+# * add check legal key to use
+# * insert singular or multuple?
+# * pass a medthod function?
+# * Move into class? But usable multuple classes...
+#
+sub hashtable_insert {
+    my ($key, @objects) = @_;
+    my %hash;
+
+    foreach (@objects){
+	next if (! exists $_->{$key});
+	my $key_value = $_->{$key};
+	push(@{ $hash{$key_value} }, $_);
+    }
+
+    # debug - print dupes
+    # Make seperate function?
+    #
+    print "\nCheck Dupe $key\n";
+    foreach my $string (sort keys %hash) {
+	my @values = @{ $hash{$string} };
+
+	if ($#values > 0){
+	    print "$string\n";
+	    foreach (@values) {
+		my $filename = $_->filename;
+		print "\t$filename\n";
+	    }
+	} 
+    }
+    
+    return(%hash);
+}
+
 
 #
 # Main
@@ -68,34 +134,31 @@ my $test1_dir = "/Users/tshott/Downloads/_ebook/_Zeppelins";
 #my $test1_dir = "/Users/tshott/Downloads/_ebook/_Zeppelins/Airship technology_test.gif";               # Fail
 # my $test1_dir = "/Users/tshott/Downloads/_ebook/_Zeppelins/Airship technology.gif";               # Fail
 
-my @files = files_scan_dir($test1_dir);
+my @files = files_scan_dir($test1_dir, "calc-md5"=> 1);
+#push(@files, files_scan_dir("/Users/tshott/Downloads/_ebook/_ships", "calc-md5"=> 0));
+#push(@files, files_scan_dir("/Users/tshott/Downloads/_ebook", "calc-md5"=> 0));
+#push(@files, files_scan_dir("/Users/tshott/Downloads/_ebook/_Studies In Big Data Series"));
 
-# How many of each size found
+# Store objs via storable into file in dir
+my $obj_store_file = $test1_dir."/.ebook_files.dbj";
+store(\@files, $obj_store_file);
 
-if (0){
-    my %count_md5;
 
-    for (@files) {
-	my $md5 = $_->md5;
-	$count_md5{$md5}++;
-    }
 
-    my @md5_dups = grep( $count_md5{$_} > 1 , keys %count_md5);
 
-    foreach my $md5 ( @md5_dups) {
-	print "Dupe MD5: $md5\n";
 
-	my @file_dupes = grep($_->md5() eq $md5, @files);
-	#print "filedupes @file_dupes\n";
-	foreach (@file_dupes) {
+#
+#
+#
+#&check_dupe_size(@files);
 
-	    #print "\t",$_->filename(),"\n";
-	    my($basename, $path, $ext) = $_->fileparse();
-	    print "\t$basename$ext\n";
-	}
-	print "\n";
-    }
-}
+my %hashtable;
+%hashtable = hashtable_insert("_size",  @files);
+%hashtable = hashtable_insert("_md5", @files);
+%hashtable = hashtable_insert("_ino", @files);
+
+#say "Data Dump hashtable";
+#print Dumper(%hashtable);
 
 #
 # Next check file names and look for problems
@@ -109,6 +172,7 @@ foreach (@files){
     next if $ext eq ".jpg";	                # pic
     next if $ext eq ".gif";	                # pic
     next if $basename =~ /^_/;	# start _
+    
 
     # Check if not end in )
     if ($basename !~ /\)([^\(]*)$/) {
@@ -121,7 +185,12 @@ foreach (@files){
 	if ($1 !~ /^_[a-zA-Z0-9]+/) {
 	    print "Bad suffix: $basename$ext\t\tSuxxfix=$1\n";
 	}
-    }	
+    }
+
+    # Check if starts with space
+    if ($basename =~ /^\s/){
+	print "Name starts with space $basename$ext\n";
+    }
 }
 
 
@@ -130,6 +199,8 @@ foreach (@files){
 #
 my $end = min(9, scalar(@files));
 
+
+say "\n\nDebug Print";
 foreach (@files[0..$end]){
     my($basename, $path, $ext) = $_->fileparse();
 

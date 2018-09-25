@@ -19,11 +19,11 @@ use File::Basename;
 package Ebook_Files;
 
 sub new {
-    my ($class, @args) = @_;
+    my ($class, %args) = @_;
     my $self = {};
     bless($self, $class);
 
-    $self->_init(@args);
+    $self->_init(%args);
 
     return $self;
 }
@@ -34,6 +34,13 @@ sub _init {
     # Call all parents using NEXT module - even in diamond calls easy parent oncly once
     $self->NEXT::DISTINCT::_init(%args);
 
+    # Check Options
+    my $calc_md5 = defined $args{"calc-md5"} ? $args{"calc-md5"} : 1; # default is yes
+    # print "Calc-md5: $calc_md5\n";
+    $self->{_calcmd5} = $calc_md5;
+
+
+
     # Class-specific initialisation. 
     my $filepath = $args{filepath};
     $self->{_filepath} = $filepath;
@@ -41,9 +48,6 @@ sub _init {
    # Fill in all basic file info
    $self-> update_stat;
  
-    # calc md5 option
-    my $calc_md5 = defined $args{"calc-md5"} ? $args{"calc-md5"} : 1; 
-    $self->{_calcmd5} = $calc_md5;
     if ($calc_md5){
 	$self->update_md5;
     }
@@ -68,12 +72,10 @@ sub filename {
     return($name);
 }
 
-
 sub fileparse {
     my ($self) = pop(@_);
     return(File::Basename::fileparse($self->{_filepath}, qr/\.[^.]*/));
 }
-
 
 sub update_stat {
     my ($self) = pop(@_);
@@ -99,27 +101,24 @@ sub update_stat {
 
 sub update_md5 {
     my ($self) = pop(@_);
-    my $filepath = $self->{_filepath};
 
-    my $md5;
+    my $filepath = $self->{_filepath};
+  
 
     if (-d $filepath){
-	warn "tried to md5 dir";
-	$md5 = 0;
+	warn "tried to md5 dir file:$filepath";
     } else {
 	open (my $fh, '<', $filepath) || die "Can't open file $! file: $filepath";
 	binmode($fh);
-
 	my $ctx = Digest::MD5->new;
 	$ctx->addfile($fh);
-	$md5 = $ctx->hexdigest;
-
+	my $md5 = $ctx->hexdigest;
 	close($fh);
+
+	$self->{_md5}   = $md5;
     }
 
-    $self->{_md5}   = $md5;
-
-    # Return the initialised object. 
+    # Return the updated object. 
     return $self;
 }
 
