@@ -2,11 +2,14 @@
 #
 # Generic check of files in dir for odd things - any type files - not specific to ebooks
 #
+# ToDo
+# * add check premissions
+#
 
 use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
-use List::Util qw(min);	# Import min()
+use List::Util qw(min max);	# Import min()
 use File::Basename;
 
 #
@@ -19,38 +22,54 @@ closedir $dh;
 @filenames = grep($_ !~ /^\./, @filenames);		    # remove . files from last
 @filenames = grep(!-d $_ , @filenames);		            # remove dirs from last
 
-my $status_print = 0;
-my $status_fix = 0;
+my $status_print = 2; # Print message if status >= this number
+my $status_fix = 2;    # rename if status <= this number
 my $nfixed = 0;
 
 # for debug only do first N 
-my $end = 20;
-$end = min($end, scalar(@filenames));                                       
-#@filenames = @filenames[0..$end];
+my $end = 100;
+#$end = min($end, scalar(@filenames)-1);                                       
+$end = min($end, $#filenames);                                       
+@filenames = @filenames[0..$end];
 
 foreach my $filename (@filenames){
+    my ($status, $message, $newname, $orginalname, $filestatus);
+    $orginalname = $filename;
+    $filestatus = 0;
+
     #
-    # repeat until fixed - but limit to 3 changes
+    # repeat until fixed - but limit changes
     #
-    for(my $i = 1; $i < 4; $i++){
-	my ($status, $message, $newname) = check_file_name($filename);
+    for(my $i = 1; $i < 5; $i++){
+	($status, $message, $newname) = check_file_name($filename);
+	$filestatus = max($filestatus, $status);
 	last if ($status == 0);
 
-	# OK - know we had problems with file
-	$nfixed++ if ($i == 1);
+	# OK - if non-zero status had problem, only count for first fix
+	$nfixed++ if ($status != 0 && $i == 1);
 
 	# Only print info on more serious errors
-	if ($status > $status_print){
+	# If any status > $sttaus_print start printing
+	# Might miss a first status 1 fix
+	if ($filestatus >= $status_print){
 	    say "\nFile: $filename" if ($i == 1);
-	    say "    $message";
+	    say "    $message Status: $status";
 	    print "\tBefore: $filename\n";
 	    print "\tAfter : $newname\n" if ($status <= 2);
-
 	}
-	last if ($status == 3);	# unfixable - exit
+ 	last if ($status >= 3);	#  fatal - status = 3, exit loop, can't fix
 
 	$filename = $newname;
     }
+
+    #
+    # Add code to really fix!
+    #
+    if  ($filestatus > 0 && $filestatus <= $status_fix){
+	print "    Do rename $orginalname to $filename Status:$filestatus\n";
+	rename($orginalname, $filename) || die ("Rename error: $! $orginalname");
+    }
+
 }
 
 print "Number Files Fixed: $nfixed\n";
