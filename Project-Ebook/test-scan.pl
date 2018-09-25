@@ -3,7 +3,7 @@
 #
 # Test Scan dir
 #
-use Modern::Perl; 		# Implies strict, warnings
+use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
 #

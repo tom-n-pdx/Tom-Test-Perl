@@ -1,5 +1,11 @@
 #!/usr/bin/env perl
 
+
+#
+#ToDo
+# * fix - new list needs to not include read only or dirs
+#
+
 #
 # Test Scan dir
 #
