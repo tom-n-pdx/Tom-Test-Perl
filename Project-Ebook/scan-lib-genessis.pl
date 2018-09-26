@@ -13,42 +13,6 @@ use File::Basename;
 # ToDo - expand ~ in dir path
 #
 
-
-
-sub files_scan_dir {
-    my ($dir_path, @args) = @_;
-    my @files;
-
-    # Open dir & Scan Files
-    opendir(my $dh, $dir_path);
-    my @filepaths = readdir $dh;
-    closedir $dh;
-
-    @filepaths = grep($_ !~ /^\./, @filepaths);		    # remove . files from last
-    @filepaths = map($dir_path.'/'.$_, @filepaths);	    # make into absoule path         
-
-    # print "List files: ", join("\n", @filepaths), "\n";
-
-    foreach (@filepaths) {
-	if (!-f $_ && !-d $_) {
-	    warn "SKIP non-standard file $_\n";
-	    next;
-	}
-
-	if (! -r $_){
-	    warn "WARN: Can't open file $_\n";
-	    next;
-	}
-
-	# Create File Object
-	# rewrite - so can do checks inside object and return error if problem?
-	my $obj = Ebook_Files->new("filepath"=>$_, @args);
-	push(@files, $obj);
-    }
-    
-    return @files;
-}
-
 #
 # Main
 #
@@ -81,19 +45,20 @@ sub parse_lib_genessis {
     my ($filename) = pop(@_);
     my ($series, $author, $title, $subtitle, $date, $publisher, $suffix);
     my ($date_rest);
+    my %values;
 
     my  ($basename, $path, $ext) = File::Basename::fileparse($filename, qr/\.[^.]*/);
 
     # If exist - grab series off front
     if ($basename =~ /^\s*\[(.*?)\s*\]\s*(.*)/){
-	$series = $1;
+	$values{series} = $1;
 	# print "\tSeries:$series:\n";
 	$basename = $2;
 	# print "\tRest:$basename:\n";
     }
 
-    if ($basename =~ /^(.*?) \- (.*)/){
-	$author = $1;
+    if ($basename =~ /^\s*(.*?) \- (.*)/){
+	$values{author} = $1;
 	# print "\tAuthor:$author:\n";
 	$basename = $2;
 	# print "\tRest:$basename:\n";
@@ -105,8 +70,10 @@ sub parse_lib_genessis {
 
 	# Check Subtitle
 	if ($title =~ /^(.*?)\s*_+\s*(.*)/){
-	    $title = $1;
-	    $subtitle = $2;
+	    $values{title} = $1;
+	    $values{subtitle} = $2;
+	} else {
+	    $values{title} = $title;
 	}
 	
 	# print "\tTitle:$title:\n";
@@ -115,18 +82,18 @@ sub parse_lib_genessis {
     }
 
     if ($basename =~ /\(\s*(\d+)\s*(.*)\)\s*(.*)$/){
-	$date = $1;
+	$values{date} = $1;
 	#print "\tDate:$date:\n";
 	$date_rest = $2;
 	#print "\tRest:$basename:\n";
 
 	# Problms with suffix - defined but blank
 	if (defined $3 && $3 ne ""){
-	    $suffix = $3;
+	    $values{suffix} = $3;
 	    #print "\tSufix:$suffix:\n";
 	}
 	if ($date_rest =~ /\s*\,\s*(.*)/){
-	    $publisher = $1;
+	    $values{publisher} = $1;
 	    #print "\tPublisher:$publisher:\n";
 	}
     }
@@ -134,26 +101,91 @@ sub parse_lib_genessis {
     
     # Print everything
 
-    my $total_defined = 3;
-    # my $total_defined = 0 + defined $series + defined $author +  defined $title + defined $subtitle + defined $date + defined $publisher + defined $suffix;
 
-    if ($total_defined >= 3 ){
+    #
+    # My guess is need at least 3 values to have valid file
+    #
+    if (scalar keys %values >= 3){
 
 	say "$filename";
 
-	print "\tSeries:$series:\n" if defined $series; 
-	print "\tAuthor:$author:\n" if defined $author;
-	print "\tTitle:$title:\n" if defined $title;
-	print "\tSubtitle:$subtitle:\n" if defined $subtitle;
-	print "\tDate:$date:\n" if defined $date;
-	print "\tPublisher:$publisher:\n" if defined $publisher;
-	print "\tSufix:$suffix:\n" if defined $suffix;
-    
-	say "\n";
+	# foreach (keys %values){
+	#     print "\t$_ = $values{$_}\n";
+	# }
+
+	#say "\n";
+
+	# Parse authors
+	parse_author($values{'author'}) if defined $values{'author'};
     }
 
     return;
 }
 
+# 
+# Parse an aauthor string into  a list of authors
+# format 0) First Last
+# format 1) First Last, First Last
+# format 2) First Last_ First Last_
+# format 3) First Last and First Last
+#
 
+#
+# OK - it correctly splits the list of authors
+# But no idea for first author what is last name - likely last....
+# It will ocasionally split a single name Last, First into two
+#
+sub parse_author {
+    my ($author) = pop(@_);
+    my @authors = [];
+
+    if ($author =~ /_/){
+	@authors = split(/_\s*/, $author);
+    } elsif ($author =~ /,/){
+	@authors = split(/\,\s*/, $author);
+    } elsif ($author =~ /\s+and\s+/){
+	@authors = split(/\s+and\s+/, $author);
+    } else {
+	$authors[0] = $author;
+    }
+
+    say "\tauthor: $author";
+    say "\t",  join(":", @authors), ":\n";
+
+    parse_author_first($authors[0]);
+
+    return(@authors);
+
+}
+
+# Fix
+# * Consider Company names
+# * de Paz
+# John Smith III
+#
+sub parse_author_first {
+    my $author_string = pop(@_);
+    my @words;
+    my $last_name;
+    
+    # If contains a (auth.) string remove it
+    if ($author_string =~ /\s*\(auth\.\)\s*/){
+	$author_string =~ s/\s*\(auth\.\)\s*//;
+    }
+    # if contains (eds.) remove it
+    if ($author_string =~ /\s*\(eds\.\)\s*/){
+	$author_string =~ s/\s*\(eds\.\)\s*//;
+    }
+
+
+    if ($author_string =~ /\,/){
+	@words = split(/\,+/, $author_string);
+	$last_name = $words[0];
+    } else {
+	@words = split(/\s+/, $author_string);
+	$last_name = $words[-1];
+    }
+    print "\tLast Name: $last_name\n";
+
+}
 
