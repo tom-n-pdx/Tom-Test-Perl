@@ -3,13 +3,22 @@
 #
 # Test Scan for Library Genesis Files
 #
+
+#
+# ToDo
+# * Move all this stuff into a object
+#
+
+
+
+
 use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
 use List::Util qw(min max);	# Import min()
 use File::Basename;
 
-#
+# 
 # ToDo - expand ~ in dir path
 #
 
