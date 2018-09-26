@@ -4,9 +4,10 @@
 #
 # ToDo
 # * add check premissions
-#
+# * make checks do all the mistakes of a type in a name, not just first one
+# * Fix number of files fixed vs number problems remaining
 
-use Modern::Perl 2016; 		# Implies strict, warnings
+use Modern::Perl 2017; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
 use List::Util qw(min max);	# Import min()
@@ -28,7 +29,6 @@ my $nfixed = 0;
 
 # for debug only do first N 
 my $end = 100;
-#$end = min($end, scalar(@filenames)-1);                                       
 $end = min($end, $#filenames);                                       
 @filenames = @filenames[0..$end];
 
@@ -66,7 +66,7 @@ foreach my $filename (@filenames){
     # Add code to really fix!
     #
     if  ($filestatus > 0 && $filestatus <= $status_fix){
-	print "    Do rename $orginalname to $filename Status:$filestatus\n";
+	print "    Do rename $orginalname to $filename Status:$filestatus\n\n";
 	rename($orginalname, $filename) || die ("Rename error: $! $orginalname");
     }
 
@@ -187,8 +187,8 @@ sub check_file_name {
 	}
     
 
-	# # Comma checks
-	 if (/\,\S/){
+	# Comma checks
+	 if (/\,\S/ && !/\d\,\d/){
 		$message =  "File has no whitespace after comma";
 		$status = 2;
 		s/\,(\S)/\, $1/;

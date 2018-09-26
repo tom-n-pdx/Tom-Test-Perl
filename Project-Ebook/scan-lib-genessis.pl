@@ -58,10 +58,15 @@ sub parse_lib_genessis {
     }
 
     if ($basename =~ /^\s*(.*?) \- (.*)/){
-	$values{author} = $1;
-	# print "\tAuthor:$author:\n";
+	# my $author_string = $1;
+	# Call Parse Authors to convert string to the required list	
+	my @authors = parse_author($1);
+	
+	$values{authors} = \@authors;
+	# print "\tAuthors: ", join('; ', @authors),"\n";
 	$basename = $2;
 	# print "\tRest:$basename:\n";
+
     }
     
     if ($basename =~ /^(.*?)\s*(\(.*)/){
@@ -87,14 +92,14 @@ sub parse_lib_genessis {
 	$date_rest = $2;
 	#print "\tRest:$basename:\n";
 
-	# Problms with suffix - defined but blank
+	# Suffix
 	if (defined $3 && $3 ne ""){
 	    $values{suffix} = $3;
 	    #print "\tSufix:$suffix:\n";
 	}
 	if ($date_rest =~ /\s*\,\s*(.*)/){
 	    $values{publisher} = $1;
-	    #print "\tPublisher:$publisher:\n";
+	    #print "\tPublisher:$values{publisher}:\n";
 	}
     }
 
@@ -109,14 +114,19 @@ sub parse_lib_genessis {
 
 	say "$filename";
 
-	# foreach (keys %values){
-	#     print "\t$_ = $values{$_}\n";
-	# }
+	foreach (keys %values){
+	    my $string = "";
+	    if ($_ eq "authors"){
+		$string = join("; ", @{$values{$_}});
+	    } else {
+		$string = $values{$_};
+	    }
+	    print "\t$_ = $string\n";
+	}
 
-	#say "\n";
+	say "\n";
 
-	# Parse authors
-	parse_author($values{'author'}) if defined $values{'author'};
+	
     }
 
     return;
@@ -149,8 +159,8 @@ sub parse_author {
 	$authors[0] = $author;
     }
 
-    say "\tauthor: $author";
-    say "\t",  join(":", @authors), ":\n";
+    # say "\tauthor: $author";
+    # say "\t",  join(":", @authors), ":\n";
 
     parse_author_first($authors[0]);
 
@@ -185,7 +195,6 @@ sub parse_author_first {
 	@words = split(/\s+/, $author_string);
 	$last_name = $words[-1];
     }
-    print "\tLast Name: $last_name\n";
-
+    return($last_name);
 }
 
