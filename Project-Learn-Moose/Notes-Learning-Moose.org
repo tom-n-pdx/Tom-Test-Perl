@@ -1,0 +1,4 @@
+
+
+Learning Moose  -started with https://metacpan.org/pod/distribution/Moose/lib/Moose/Manual.pod
+

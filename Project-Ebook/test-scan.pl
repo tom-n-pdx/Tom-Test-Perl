@@ -42,7 +42,7 @@ sub files_scan_dir {
 	    next;
 	}
 
-	if (! -r $_){
+	if (! $_){
 	    warn "WARN: Can't open file $_\n";
 	    next;
 	}
