@@ -29,8 +29,7 @@ $test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 #$test_file = $ebook_base_dir;
 
-# my $test = MooFile->new('filepath' => $test_file, 'opt_update_md5' => 0);
-my $test = MooFile->new('filepath' => $test_file);
+my $test = MooFile->new('filepath' => $test_file, 'opt_update_stat'=>1);
 #my $test = MooFile->new('FileName' => $test_file);
 # my $test = MooFile->new;
 
@@ -42,18 +41,12 @@ if (defined $test->stats){
     say "Stats: ", join(', ',  @{$test->stats});
 }
 
-# Check Dump
-say "Dump:";
-$test->dump;
-
-say "Dump:";
-$test->dump_raw;
-
 #
 # OK - try scanning dir & print size of files
 #
 
 my $test_dir;
+
 $test_dir = "$ebook_base_dir/_Zeppelins_testing";
 # $test_dir = "$ebook_base_dir";
 
@@ -63,7 +56,7 @@ opendir(my $dh, $test_dir);
 my @filepaths = readdir $dh;
 closedir $dh;
 
-@filepaths = grep(!/^\./, @filepaths);	                    # remove dot files         
+@filepaths = grep(!/^\./, @filepaths);	    # make into absoule path         
 @filepaths = map($test_dir.'/'.$_, @filepaths);	    # make into absoule path         
 
 my @files;
@@ -103,28 +96,5 @@ foreach my $size  (sort keys %hash){
 	}
     }
 }
-
-
-#
-# Check dupe md5
-#
-# Lookup size and push onto array at that size
-undef(%hash);
-
-foreach (@files){
-    push(@{ $hash{$_->md5}}, $_);
-}
-
-# Now  -walk hash  -find which values have a array > 0 length  -those are dupe sizes
-foreach my $md5  (sort keys %hash){
-    my @values = @{ $hash{$md5} };
-    if ($#values > 0){
-	say "Dupe files md5: $md5";
-	foreach (@values) {
-	    say "\t", $_->filename;
-	}
-    }
-}
-
 
 
