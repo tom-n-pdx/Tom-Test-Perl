@@ -17,68 +17,53 @@ use Data::Dumper;           # Debug print
 # use Storable qw(nstore_fd);
 # use Fcntl qw(:DEFAULT :flock);
 
+
 # My Modules
 use lib '.';
-use MooFile;
+use MooDir;
 
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-#$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
-#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
+$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
-$test_file = "$ebook_base_dir/_Zeppelins_testing/Airship technology_test.gif";   # no read access
-# $test_file = $ebook_base_dir;
+#$test_file = $ebook_base_dir;
+#$test_file = "$ebook_base_dir/_Zeppelins";
 
-my $test = MooFile->new(filepath => $test_file, 'opt_update_md5' => 1);
-# my $test = MooFile->new($test_file); # Use short version no opts
+my $test = MooDir->new(filepath => $test_file);
 #my $test = MooFile->new('FileName' => $test_file);
 # my $test = MooFile->new;
 
 my $size = $test->size || "undefined";
-say "File: ", $test->filepath, " size: ", $size, " mtime: ", $test->mtime_str;
+say "File: ", $test->filepath, " size: ", $size;
 
 # Check stats array
-say "Stats: ", join(', ',  @{$test->stats});
+if (defined $test->stats){
+    say "Stats: ", join(', ',  @{$test->stats});
+}
 
 # Check Dump
-# say "Dump:";
+#say "Dump:";
 #$test->dump;
 
 say "Dump:";
 $test->dump_raw;
 
-say "Update Stats";
-$test->update_stat;
-$test->dump_raw;
+my @filepaths = $test->list_files;
+#say join("\n", @filepaths);
+
+
+
+# 
+# Check delta dir / change dir
+#
+
+
+
 
 die;
 
-#
-# Check the iseqal & ischanged options
-#
-my $test_file_dupe = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships (2004,Osprey Publishing Ltd) copy.pdf";
-my $test_dupe = MooFile->new(filepath => $test_file_dupe);
 
-my @changes;
-my  @changes = $test->isequal($test_dupe);
-print "isequal Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
-
-my  @changes = $test->ischanged($test_dupe);
-print "ischanged Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
-
-@changes = $test->isdiskchanged($test);
-print "isdiskchanged Delta File: ", join(', ', @changes), "\n";
-
-# Fake change by point at differemt file  by change filename of $test
-$test->_set_filepath($test_file_dupe);
-@changes = $test->isdiskchanged($test);
-print "isdiskchanged fake other file Delta File: ", join(', ', @changes), "\n";
-
-# fake deleet by point at non exist file
-$test->_set_filepath("$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg");
-@changes = $test->isdiskchanged($test);
-print "isdiskchanged fake other file Delta File: ", join(', ', @changes), "\n";
 
 
 #
@@ -106,13 +91,13 @@ foreach (@filepaths){
     next if -d;
     next if !-f || !-r;
 
-    my $obj =MooFile->new(filepath => $_);;
+    my $obj =MooFile->new('filepath' => $_);
     push(@files, $obj);
 }
 
-# foreach (@files){
-#    say $_->filename;
-#}
+foreach (@files){
+    say $_->filename;
+}
 
 
 #

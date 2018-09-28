@@ -27,37 +27,38 @@ use MooFile;
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
-# $test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
+#$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
+$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 # $test_file = $ebook_base_dir;
 
-my $test = MooNode->new('filepath' => $test_file);
+my $test = MooNode->new(filepath => $test_file);
 
 my $size = $test->size;
 say "File: ", $test->filepath, " size: ", $size;
 say "Stats: ", join(', ',  @{$test->stats});
 
-$test->dump_raw;
+# $test->dump_raw;
 
-#say Dumper($test);
+# say Dumper($test);
 
-my @changes = $test->isequal($test);
-print "Delta File self to self: ", join(', ', @changes), "\n";
 
 my $test_file_dupe = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships (2004,Osprey Publishing Ltd) copy.pdf";
-my $test_dupe = MooNode->new('filepath' => $test_file_dupe);
- @changes = $test->isequal($test_dupe);
-print "Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
+my $test_dupe = MooNode->new(filepath => $test_file_dupe);
 
+my @changes;
+
+@changes = $test->isequal($test_dupe);
+print "isequal Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
+
+@changes = $test->isdiskchanged($test);
+print "isdiskchanged Delta File: ", join(', ', @changes), "\n";
 
 #
 # OK - try scanning dir & print size of files
 #
 
 
-
 my $test_dir;
-
 $test_dir = "$ebook_base_dir/_Zeppelins_testing";
 # $test_dir = "$ebook_base_dir";
 
@@ -71,7 +72,7 @@ closedir $dh;
 
 my @files;
 foreach (@filepaths){
-    my $obj =MooNode->new('filepath' => $_);
+    my $obj =MooNode->new(filepath => $_);
     push(@files, $obj);
 }
 

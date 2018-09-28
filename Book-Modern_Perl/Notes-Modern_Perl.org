@@ -1,0 +1,110 @@
+Notes Modern Perl
+
+* ToDo
++ Done install Modren
++ Done Install Moose
+
+
+* Chapter 1
+
+  + Contxt is imporant - what func returns depends on what context is used.
+  	+ Void: 	find_chores();
+	+ Scalar	my $single_result = find_chores();
+	+ List	my @all_results = find_chores();
+			my ($single_element, @rest) = find_chores();
+			my ($single_element) = find_chores();   				- careful -
+  	list contect - one value
+
+	Also for values
+	     my $numeric_x = 0 + $x; 	# forces numeric context 
+	     my $stringy_x = '' . $x; 	# forces string context
+ 	     my $boolean_x = !!$x;	# forces boolean context
+  
+
+
+
+* Chapter 2 - Community 
+  + Good tutorial configure cpan download http://learnperl.scratchcomputing.com/tutorials/configuration/
+  
+* Chapter 3 - The Perl Language
+  + Names  -start _ or letter - contain letter, number, _
+  + Package Names: Style  -should start with upprcase - only core modules lower case
+  + Lexical scope for values
+    + Scope within brackets
+    + Scope within a file
+    + A package with no { }- scope is entire file
+    + A loope variable declared in for statment doesn't exist outside loop. If want to know value of last
+      loop must use a my & declare it before loop starts.
+  + Perl Supports Unicode
+    + Always decode to/from from the appropriate encoding at the inputs and outputs of your program
+    + Open with Unicode encoding
+        open my $fh, '<:utf8', $textfile; 
+        my $unicode_string = <$fh>;
+    + To write program using unicode in source
+      	use utf8;
+  + Undef is what declared but undefined scalars contain undef
+    + A empty list () - in scalar context is a undef
+    + Will get count of list items as scalar without a temp var
+      my $count = () = get_clown_hats();
+  + if / unless - as postfix & bracket versions
+  + for has post fix version - for 1..5
+    + !! For loop aliases the iteration value. So - if modifie the iteration value - it changes the original value.
+  + while loop
+    + Does NOT alias the changes to the values
+    + Executes as long as expression true
+    + If need to - change looping condation within loop
+  + do
+    + Executes a block of code - once (unlike while or until)
+    + can use postfix while or until to get an initial execution
+  + Loop Control
+    + next - restarts loop at next iteration
+    + last - ends the loop
+    + redo  - restarts loop without re-evaluate conditional
+    + continue block - executes at end of loop iteration before next iteration starts
+      + Not executed after a last or redo
+  + No good switch statment
+    + Use for & when
+  + tailcall
+    + If last thing in sub is return calling a sub and returning it's value - a lot more effecient
+  + Arrays
+    + Length of array - access in scalar context - but last element index is length - 1
+    + $#array  -is last index of arrary
+    + -1 is index to last element of array
+    + assign to $#array to CHANGE size of array
+    + If pass multiple arrays to function - get flattened to one
+  + push / pop
+    + add to end of array
+    + can push 1 or list of items - returns the # elements in array
+    + pop can only remove one, return value is what was removed
+  + shift / unshift
+    + same as pop - to front of array
+  + splice can implement all of the pop, push, shift, unshift versions
+  + each - can iterate over array with both index & value
+    	while (my ($position, $title) = each @bookshelf) { 
+  	  say "#$position: $title";
+  	}
+  + arrays interpolate into strings using the global $" operator. To help debug can localize it and change it
+    	local $" = ')(';
+  	say "(@sweet_treats)";
+  + hash
+    + exists - is a key present
+    + key may exist and be undef - use exists && defined
+    + Can iterate
+      + keys - by each key
+      + values - list of hash values
+      + each - key & value
+	+ Only one itterator per hash
+	+ Do not start a new iterator - old one will end
+    + Hash slice
+      	my @buyer_addresses = @addresses{ @buyers };
+    + 
+	
+	
+   	 
+
+
+* Chapter 7 - Objects
+
+  * Use mouse
+
+  
