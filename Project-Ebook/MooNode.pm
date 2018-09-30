@@ -24,8 +24,9 @@ use File::Basename;         # Manipulate file paths
 use Time::localtime;        # Printing stat values in human readable time
 # use Data::Dumper qw(Dumper);           # Debug print
 
-package MooNode;
+package MooNode v0.1.2;
 use Moose;
+
 use namespace::autoclean;
 
 has 'filepath',			# full name of file including path
@@ -34,10 +35,10 @@ has 'filepath',			# full name of file including path
     writer => '_set_filepath',	# For tetsing only DEBUG - comment out
     required => 1;
 
- has 'stats',			# stats array - not live version, last time updated or created
+ has 'stat',			# stat array - not live version, last time updated or created
     is => 'ro',
     isa => 'ArrayRef[Int]',
-    writer => '_set_stats';
+    writer => '_set_stat';
 
 has 'isreadable',		# not live version
     is => 'ro',
@@ -89,7 +90,7 @@ sub BUILD {
     my ($self)=shift( @_);
     # my $args_ref = shift(@_);
 
-    # Always checks stats - assumes file always exists on creation.
+    # Always checks stat - assumes file always exists on creation.
     $self->update_stat;
 
     return
@@ -113,23 +114,26 @@ sub update_stat {
     $self->_set_isfile(-f $filepath);
 
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-    my @stats = stat(_);	# retruns stats for last file checked with a -x command
-    $self->_set_stats(\@stats);
+    # my @stat = stat(_);	# retruns stat for last file checked with a -x command
+    # $self->_set_stat(\@stat);
+    # Rework as ref to anomous array
+    $self->_set_stat( [ stat(_) ] ); # retruns stat for last file checked with a -x command
 }
 
 sub size {
     my $self = shift(@_);
     
-    my @stats = @{$self->stats};
-    my $size = $stats[7];
+    # my @stat = @{$self->stat};
+    # my $size = $stat[7];
+    my $size = ${$self->stat}[7];
     return($size);
 }
 
 sub mtime {
     my $self = shift(@_);
     
-    my @stats = @{$self->stats};
-    my $mtime = $stats[9];
+    # my @stat = @{$self->stat};
+    my $mtime =  ${$self->stat}[9];
     return($mtime);
 }
 
@@ -222,7 +226,7 @@ sub isequal {
     my $other = shift(@_);
 
     if (!$other->isa('MooNode')){
-	die "Tried to use isequal on non node object";
+	die "Tried to use isequal on non MooNode object";
     }
 
     # Collect a list of what attributes changed
@@ -246,19 +250,20 @@ sub ischanged {
     my $self   =shift(@_);
     my $other = shift(@_);
 
+    # Call isequal for basic checks
     my @changes = $self->isequal($other);
 
     push(@changes, "filepath") if ($self->filepath ne $other->filepath);
     push(@changes, "isreadable") if ($self->isreadable != $other->isreadable);
 
-    # OK need to check stats
-    my @self_stats =  @{$self->stats};
-    my @other_stats = @{$other->stats};
+    # OK need to check stat
+    my @self_stat =  @{$self->stat};
+    my @other_stat = @{$other->stat};
 
     # Check dev, ino, mtime, ctime
     # return a string
     foreach (0..1, 9..10){
-	if ($self_stats[$_] != $other_stats[$_]){
+	if ($self_stat[$_] != $other_stat[$_]){
 	    push(@changes, $stat_names[$_]);
 	}
     }
@@ -293,12 +298,12 @@ sub isdiskchanged {
     push(@changes, "isfile") if ($self->isfile != -f $filepath);
 
     # stat file - make a few quick checks
-    my @self_stats =  @{$self->stats};
-    my @new_stats = stat(_);
+    my @self_stat =  @{$self->stat};
+    my @new_stat = stat(_);
 
     # Check dev, inode, size, mtime, ctime
     foreach (0..1, 7, 9..10){
-	if ($self_stats[$_] != $new_stats[$_]){
+	if ($self_stat[$_] != $new_stat[$_]){
 	    push(@changes, $stat_names[$_]);
 	}
     }
@@ -317,12 +322,12 @@ sub dump {
    print "\tDir:  ", true($self->isdir), "\n";
    print "\tFile: ", true($self->isfile), "\n";
    print "\tRead: ", true($self->isreadable), "\n";
-   print "\tStat: ", join(', ',  @{$self->stats} ), "\n";
+   print "\tStat: ", join(', ',  @{$self->stat} ), "\n";
 
    print "\n";
-   print "\tAtime: ", Time::localtime::ctime(@{$self->stats}[8]), "\n";
-   print "\tMtime: ", Time::localtime::ctime(@{$self->stats}[9]), "\n";
-   print "\tCtime: ", Time::localtime::ctime(@{$self->stats}[10]), "\n";
+   print "\tAtime: ", Time::localtime::ctime(@{$self->stat}[8]), "\n";
+   print "\tMtime: ", Time::localtime::ctime(@{$self->stat}[9]), "\n";
+   print "\tCtime: ", Time::localtime::ctime(@{$self->stat}[10]), "\n";
 }
    
 sub dump_raw {
@@ -331,7 +336,7 @@ sub dump_raw {
     # Moose semi unfriendly - uses raw access to class variables... may break in future
     print "INFO: Dump Raw: File: ", $self->filename, "\n";
 
-    my %atributes = (isfile => 'Bool', isdir => 'Bool', isreadable => 'Bool', stats =>'ArrayRef');
+    my %atributes = (isfile => 'Bool', isdir => 'Bool', isreadable => 'Bool', stat =>'ArrayRef');
 
     my @keys = sort keys(%$self);
     foreach (@keys){

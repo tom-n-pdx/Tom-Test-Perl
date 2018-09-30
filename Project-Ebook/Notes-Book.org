@@ -1,0 +1,47 @@
+
+
+* Use cases
+** DONE Find dupe file in a dir 
+** DONE Find dupe file in multiple dirs online 
+** DONE Scan tree
+** [#C] Scan a dir for problems
+** Scan a dir and fix problems
+** Find a dupe file between a online dir and a offline dir
+
+** Create book objs
+** Rename files from one book format to another
+
+
+
+Find
+* rewrite - dir, tree - use 
+* use Dir, Node, Collection to build tree
+* check file names, check duplicates
+
+Collection
+* better sore, delete
+* write cold load & update
+* index by node, size, md5.
+
+* Scan and score tree’s
+
+* uses
++ Find dupes
++ Search against other files
++ rename files
++ Update data = isbn, etc
+
+* dup Files
+  + dupe sig
+  + where  to scan
+  + which file takes priority
+  + store ok matches
+  + handle off lined files
+  + fuzzy search
+  + store what to check
+
+* Catalog
+  + 
+
++ rewrite check file names,  rename
+

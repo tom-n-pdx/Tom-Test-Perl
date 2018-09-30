@@ -25,10 +25,10 @@ use MooDir;
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
+#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 #$test_file = $ebook_base_dir;
-#$test_file = "$ebook_base_dir/_Zeppelins";
+$test_file = "$ebook_base_dir/_Zeppelins_testing";
 
 my $test = MooDir->new(filepath => $test_file);
 #my $test = MooFile->new('FileName' => $test_file);
@@ -38,8 +38,8 @@ my $size = $test->size || "undefined";
 say "File: ", $test->filepath, " size: ", $size;
 
 # Check stats array
-if (defined $test->stats){
-    say "Stats: ", join(', ',  @{$test->stats});
+if (defined $test->stat){
+    say "Stats: ", join(', ',  @{$test->stat});
 }
 
 # Check Dump

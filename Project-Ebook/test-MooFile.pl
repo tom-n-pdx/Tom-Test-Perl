@@ -39,7 +39,7 @@ my $size = $test->size || "undefined";
 say "File: ", $test->filepath, " size: ", $size, " mtime: ", $test->mtime_str;
 
 # Check stats array
-say "Stats: ", join(', ',  @{$test->stats});
+say "Stats: ", join(', ',  @{$test->stat});
 
 # Check Dump
 # say "Dump:";

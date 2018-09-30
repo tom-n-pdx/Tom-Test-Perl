@@ -27,15 +27,17 @@ use MooFile;
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-#$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
-$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
+$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
+#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 # $test_file = $ebook_base_dir;
 
 my $test = MooNode->new(filepath => $test_file);
 
 my $size = $test->size;
 say "File: ", $test->filepath, " size: ", $size;
-say "Stats: ", join(', ',  @{$test->stats});
+say "Stat: ", join(', ',  @{$test->stat});
+
+say "Version: ", $test->VERSION;
 
 # $test->dump_raw;
 
@@ -52,6 +54,9 @@ print "isequal Delta File self to renamed copy of file: ", join(', ', @changes),
 
 @changes = $test->isdiskchanged($test);
 print "isdiskchanged Delta File: ", join(', ', @changes), "\n";
+
+
+die;
 
 #
 # OK - try scanning dir & print size of files

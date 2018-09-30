@@ -90,7 +90,7 @@ sub update_md5 {
     }
     $self->_set_md5($digest);
 
-    return;
+    return $digest;
 }
 
 #

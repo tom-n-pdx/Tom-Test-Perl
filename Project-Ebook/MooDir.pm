@@ -4,8 +4,8 @@
 #
 # ToDo
 # * consider refactor the calc dtime code into a sub
+# * list files return list file objects?
 #
-
 
 
 # Standard uses's
@@ -24,7 +24,6 @@ has 'dtime',
     isa => 'Int',
     writer => '_set_dtime';
 
-
 around BUILDARGS => sub {
     my $orig  = shift;
     my $class = shift;
@@ -41,22 +40,20 @@ around BUILDARGS => sub {
 
 
 
-
-
 #
 # Moose arranges to have all of the BUILD methods in a hierarchy called when an object is constructed, from parents to children
 #
-sub BUILD {
-    my $self=shift( @_);
-    # my $args_ref = shift(@_);
+# sub BUILD {
+#     my $self=shift( @_);
+#     # my $args_ref = shift(@_);
 
-    my $filepath =  $self->filepath;
+#     my $filepath =  $self->filepath;
    
-    # die "File Obj Construction failed - file is a not readable: ".$self->filename if !$self->isreadable;
-    # die "File Obj Construction failed - file is not a dir: ".$self->filename if !$self->isdir;
+#     # die "File Obj Construction failed - file is a not readable: ".$self->filename if !$self->isreadable;
+#     # die "File Obj Construction failed - file is not a dir: ".$self->filename if !$self->isdir;
 
-    return
-}
+#     return
+# }
 
 #
 # Extend update_stat medthod to find when last change to any file in dir
@@ -71,8 +68,10 @@ after 'update_stat' => sub {
     # We need to know when any file in dir has changed
     # Initalize to greater of the dir ctime or mtime
     #
-    my @stat = @{$self->stats};
-    my $dtime = max($stat[9], $stat[10]);
+    # my @stat;
+    # my @stat = @{$self->stat};
+    # my $dtime = max($stat[9], $stat[10]);
+    my $dtime = max(@{ $self->stat }[9, 10]);
 
     # 
     # Loop through all the files in the dir and take max of mtime & ctime
@@ -82,8 +81,9 @@ after 'update_stat' => sub {
     #
     foreach ($self->list_files){
 	if (-f $_){
-	    @stat = stat($_);
-	    $dtime = max($stat[9], $stat[10], $dtime);
+	    # @stat = stat($_);
+	    # $dtime = max(    $stat[9], $stat[10], $dtime);
+	    $dtime = max(  (stat($_) )[9, 10], $dtime);
 	}
     }
 
@@ -96,6 +96,8 @@ after 'update_stat' => sub {
 # Dir list method
 # Returns a list of filepath not objects
 # Skips ., .. and other hidden files - may need to create option for all files, etc.
+# it does include un-readable normal files
+# Store a version?
 # 
 sub list_files {
     my $self = shift(@_);
@@ -105,61 +107,44 @@ sub list_files {
     my @filepaths = readdir $dh;
     closedir $dh;
 
-    @filepaths = grep(!/^\./, @filepaths);	                            # remove dot files         
+    
+    @filepaths = grep(!/^\./, @filepaths);	                            # remove dot files
     @filepaths = map($self->filepath.'/'.$_, @filepaths);	    # make into absoule path         
+    @filepaths = grep( {-f} @filepaths);                                  # remove none standard files (drop dirs, sockets, etc)  -check absolute path
 
     return(@filepaths);
 }
 
 #
-# Extend ischanged to include dtime check
-#
-# sub ischanged {
+# Live check for if anything changed on disk
+# Or add alternative method?
+# 
+# sub isdiskdirchanged {
 #    my $self = shift(@_);
-#    my $other = shift(@_);
  
-   # First call parents ischanged
-#    my @changes = $self->SUPER::ischanged($other);
+#    # First call ischanged
+#   my @changes = $self->SUPER::ischanged($other);
 
-#    # If any of the file check items of changed - then no need to do the expensive dtimes check
-#    # this avoids redoing check for file exist or is still dir
-#    return (@changes) if (@changes);
+   # If any of the file check items of changed - then no need to do the expensive dtimes check
+   # this avoids redoing check for file exist or is still dir
+   # Know wil have to rereun list of files and andd see what added / deleted
+#     return (@changes) if (@changes);
 
-#    # Can use stored stats since know didn't change
-#    my @stat = $self->stats;
-#    my $dtime = max($stat[9], $stat[10]);
+#    # Can use stored stat values since know didn't change
+#    # my @stat = $self->stat;
+#    # my $dtime = max($stat[9], $stat[10]);
+#    my $dtime = max(@{ $self->stat }[9, 10]);
 
-#    # Find max of ctime / mtime for all normal files in dir (no check dirs or sockets, links)
-#    foreach ($self->list_files){
-# 	if (-f $_){
-# 	    @stat = stat($_);
-# 	    $dtime = max($stat[9], $stat[10], $dtime);
-# 	}
-#     }
-
-#    push(@changes, "dtime") if ($self->dtime != $dtime);
+# #    # Find max of ctime / mtime for all normal files in dir (no check dirs or sockets, links)
+# #    foreach ($self->list_files){
+# # 	if (-f $_){
+# # 	    @stat = stat($_);
+# # 	    $dtime = max($stat[9], $stat[10], $dtime);
+# # 	}
+# #    push(@changes, "dtime") if ($self->dtime != $dtime);
    
 #    return @changes;
 # }
-
-
-# #
-# # extend isdiskchanged
-# #
-# sub isdiskchanged {
-#    my $self = shift(@_);
-#    my $other = shift(@_);
- 
-#    # First call parents iseqal
-#    my @changes = $self->SUPER::ischanged($other);
-
-#    # Now check dtime
-   
-#    push(@changes, "dtime") if ($self->dtime != $other->dtime);
-   
-#    return @changes;
-# }
-
 
 
 
