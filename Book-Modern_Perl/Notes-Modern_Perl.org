@@ -26,6 +26,7 @@ Notes Modern Perl
 * Chapter 2 - Community 
   + Good tutorial configure cpan download http://learnperl.scratchcomputing.com/tutorials/configuration/
   
+
 * Chapter 3 - The Perl Language
   + Names  -start _ or letter - contain letter, number, _
   + Package Names: Style  -should start with upprcase - only core modules lower case
@@ -97,10 +98,192 @@ Notes Modern Perl
 	+ Do not start a new iterator - old one will end
     + Hash slice
       	my @buyer_addresses = @addresses{ @buyers };
-    + 
+  + A var can have two values - numeric & string
+    	use Scalar::Util 'dualvar';
+  	my $false_name = dualvar 0, 'Sparkles & Blue';
+  + Package has a few implicit values
+    	our $VERSION - or put a format like v1.2.1 in package line
+  + Reference
+    + Scalars
+  	Pass by reference
+  	\$var = $value - ref to variable
+  	$$var - deference var
+  	${ $var}} is same thing - sometimes clearer  -sometimes less
+  	@_ is a alias of values, so can modify them in place
+	    Make a copy of values in sub - don't surprise anybody
+    + Arrays
+      my $cards_ref = \@cards;				Reference
+      my $card_count = @$cards_ref; 			Dereference into scalar
+      my @card_copy = @$cards_ref;			Dereference into list
+      my $first_card = $cards_ref->[0];			Dereference an individual element - use ->
+      my $first_card = $$cards_ref[0];			An alternative - maybe less clear
+      my @high_cards = @{ $cards_ref }[0 .. 2, -1];	Dereference a slice
+      my $suits_ref = [qw( Monkeys Robots Cheese )];    Brackets create ref to ananmouse array
+
+    + Hash
+      my $colors_ref = \%colors;			Hash Red
+      my @english_colors = keys %$colors_ref; 		Dereference hash
+      my @spanish_colors = values %$colors_ref;
+      return $colors_ref->{$color};			Use -> for individual values
+      
+      my @colors = qw( red blue green );		Slice a hash
+      my @colores = @{ $colors_ref }{@colors};
+
+      my $food_ref = {					Anonymous hash
+  	'birthday cake' => 'la torta de cumpleantildeos',
+      }
+
+      Assigning an anonymous hash to a standard hash produces a warning about an odd number of elements in the
+      hash. Use parentheses for a named hash and curly brackets for an anonymous hash.
+
+    + Function
+      Functions are first class data type.
+
+      sub bake_cake { say 'Baking a wonderful cake!' }; Reference to function
+      my $cake_ref = \&bake_cake;			Without & sigil would be reference to return values
+
+      my $pie_ref = sub { say 'Making a pie!' };	Ref to anonymous function
+
+      $pie_ref->();					Executes the function
+
+    + Can take ref to filehandle
+    + Nested Data structure
+      + Arrary of arrays
+	my @famous_triplets = ( \@counts, \@ducks, \@game);
+      
+        my @famous_triplets = (				Ananamous version
+  		[qw( eenie miney moe )], 
+  		[qw( huey dewey louie )],
+  		[qw( duck duck goose )],
+  	);
+
+	my $nephew = $famous_triplets[1]->[2];		Refrence into nested datastruture
+  	my $side = $meals{breakfast}->{side};
+
+	my $nephew = $famous_triplets[1][2]; 		Must use Ref - so can skip arrow
+  	my $meal = $meals{breakfast}{side};
+
+	my ($entree, $side) 				Slice a nested datastructure
+  		= @{ $meals{breakfast} }{ qw( entree side ) };
 	
+	($entree, $side) 				Or use for - not no my
+  		= @{ $_ }{qw( entree side )} for $meals{breakfast};
 	
-   	 
+	Read perldoc perldsc
+
+	If write to non-exisitent element nested datastructure - perl will create the whole path to it. This
+        is autovivification.
+
+	Problem is - perl can't tell difference between creating a new element and a mistake.
+
+	autovivification pragma allows you to disable after code in production.
+
+
+* Chapter 4 - Operators
+  + defined-or operator, //, tests the definedness of its operand
+    // evaluates to a true value even if its operand evaluates to a numeric zero or the empty string
+    my $name = shift // 'Fluffy';
+  + auto-increment operator has special behavior
+    ++ is magic on a clearly string value
+  + infix range operator (..)
+    my @cards = ( 2 .. 10, 'J', 'Q', 'K', 'A' );	List context - produces list of items
+    
+    In boolean context, the range operator performs a flip-flop operation
+    
+* Chapter 5 - Functions
+  + Paramaters passed in @_
+    array built in's use @_ as default within a sub
+  + Function signatures added in Perl 5.20 but experimental
+    use experimental 'signatures';			To enable
+    
+    sub greet_one($name) { 				Takes only ONE arg and assigns it to $home
+  	say "Hello, $name!";
+    }	
+
+    sub greet_one($name = 'Bruce') { 			If has default - is optional paramater
+  	say "Hello, $name!";
+    }
+
+    Lots more options - see perldoc perlsub Signatures section
+
+  + subs flatten the args durring the call. Scalar args must come first.
+
+  + remember - @_ aliases the paramaters
+    Changing the @_ value changes the orginal
+
+  + use caller to help report errors
+    my ($package, $file, $line) = caller(); 
+    say "Called from $package in $file:$line";
+
+  + Use caller (or Carp) when validating parameters or preconditions of a function to indicate that whatever
+    called the function did so erroneously.
+    Carp, croak
+
+  + The wantarray built-in returns undef to sig- nify void context, a false value to signify scalar context,
+    and a true value to signify list context. perldoc -f wantarray
+    sub context_sensitive {
+  	my $context = wantarray();
+  	return qw( List context ) if $context; 
+  	say 'Void context' unless defined $context; 
+  	return 'Scalar context' unless $context;
+     }
+
+     CPAN Want and Contextual::Return distributions from the CPAN offer many possibilities for writing
+     powerful context-aware interfaces.
+
+  + Best practice is to not use a & sigel on function and do use ()'s.
+
+  + our in package still gives var lexical scope - but allows access by fully qualafied name outside package.
+
+  + local
+    Can only local global and package vars
+    Use to change a global var for a temporary period. Useful with magic vars.
+
+  + state
+    Can do initialization and keeps persistent value between calls to function
+    If set as a paramater - first time sets - other times odon't change.
+
+  + Can use idiom dispatch tabe to build table of functions and call them.
+
+    + Tell if a function is named or anonymous, whether through caller() or the CPAN module Sub::Identify’s
+      sub_name() function.
+
+  + Closures
+
+    sub make_iterator { my @items = @_;					Returns an anonymous function iterate over 
+  	my $count = 0;							values. values frozen into code.
+  	return sub {
+  	return if $count == @items; return $items[ $count++ ];
+  	} 
+    }
+    
+    my $cousins = make_iterator(qw(					Values persiset
+  	Rick Alex Kaycee Eric Corey Mandy Christine Alex
+    ));
+
+    say $cousins->() for 1 .. 6;
+
+    Can use to make iterator for expensive value and only call when need value.
+
+  + Attribues
+    variables and functions in Perl can have attributes.
+    my $fortress :hidden;
+
+    Looks for a hidden atribute handler when parses the code.
+
+    Still experimental. 
+
+    Use attributes pragma, Core module Attribute::Handlers is much easier to use, and Attribute::Lexical is a
+    newer approach.
+
+    Problem is they can make code very confusing to understand.
+
+  + AUTOLOAD - if used  -called when function not find. Can generate function on the fly.
+
+* Chapter 6 - Regexp 
+
+
+    
 
 
 * Chapter 7 - Objects
