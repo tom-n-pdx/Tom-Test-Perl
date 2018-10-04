@@ -177,7 +177,7 @@ Notes Modern Perl
 	Problem is - perl can't tell difference between creating a new element and a mistake.
 
 	autovivification pragma allows you to disable after code in production.
-
+		
 
 * Chapter 4 - Operators
   + defined-or operator, //, tests the definedness of its operand
@@ -281,14 +281,76 @@ Notes Modern Perl
 
   + AUTOLOAD - if used  -called when function not find. Can generate function on the fly.
 
+
 * Chapter 6 - Regexp 
 
+  + The qr// operator creates first-class regexes you can store in variables
+    my $hat = qr/hat/;
+    say 'Found a hat!' if $name =~ /$hat/;
+
+    my $hat = qr/hat/; 						Combine expressions into complex
+    my $field = qr/field/;
+    say 'Found a hat in a field!' if $name =~ /$hat$field/;
+    
+  + Regexp::English module has good phone number match in module
+
+  + named captures easier to read then numbers
+    if ($contact_info =~ /(?<phone>$phone_number)/) { 
+  	say "Found a number $+{phone}";
+    }
+
+  + Assertions - don't consume any text - Regex anchors such as \A, \b, \B, and \Z
+    my $just_a_cat = qr/cat\b/;					Look for at word boundary
+    my $safe_feline = qr/cat(?!astrophe)/;			Look ahead - match only if not followed by
+    my $middle_cat = qr/(?<!\A)cat/;				negative look-behind assertion
+  								not start of line
+    my $space_cat = qr/(?<=\s)cat/;				zero-width positive look-behind assertion
+    								must occur after space
+  + Modifier
+    /G - parse all parts of string - starts where last search left off
+
+  + Experimental ~~
+    use experimental 'smartmatch';
+    a smart match - either side can be number, string, regexp, 
+    see perldoc perlsyn 
 
     
-
-
 * Chapter 7 - Objects
 
   * Use mouse
+  
+
+* Chapter 8 - Style & Efficacy
+
+  + Writing Maintainable Perl
+    + Remove duplication - bugs lurk when once part gets fixed.
+    + Name entities well
+    + Avoid unnecessary cleverness
+    + Embrace simplicity
+
+  + Writing Idiomatic Perl
+    + Understand community wisdom
+    + Follow community norms
+    + Read code
+  + Writing Effective Perl
+    + Write testable code
+    + Modularize
+    + Follow sensible coding standards
+    + Exploit the CPAN
+  + Exceptions
+    + Throwing Exceptions - A thrown exception will continue up the call stack until something catches it or
+      the program dies.
+    + Catching Exceptions - use block form of eval and catch it. Check the value of $@ and copy it to a local
+      var immediately - somebody else might throw a exception. Be sure to localize $@ before you attempt to
+      catch an exception.
+    + Instead of throwing an exception as a string, you may use a reference—even a blessed reference—with
+      die. This allows you to provide much more information in your exception: line numbers, files, and other
+      debugging information. See CPAN distribution Exception::Class.
+    + The Try::Tiny CPAN distribution improves the safety of exception handling and the syntax.
+  + Pragmas
+    + The constant pragma allows you to create compile-time constant values (but see the CPAN’s Const::Fast
+      for an alternative).
+
+
 
   
