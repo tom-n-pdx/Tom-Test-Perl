@@ -1,8 +1,11 @@
 Notes Modern Perl
 
+Great book on writing maintainable Perl.
+
+Reread Chapter 8 - end after using perl for 3 months.
+
+
 * ToDo
-+ Done install Modren
-+ Done Install Moose
 
 
 * Chapter 1
@@ -321,13 +324,11 @@ Notes Modern Perl
   
 
 * Chapter 8 - Style & Efficacy
-
   + Writing Maintainable Perl
     + Remove duplication - bugs lurk when once part gets fixed.
     + Name entities well
     + Avoid unnecessary cleverness
     + Embrace simplicity
-
   + Writing Idiomatic Perl
     + Understand community wisdom
     + Follow community norms
@@ -352,5 +353,70 @@ Notes Modern Perl
       for an alternative).
 
 
+* Chapter 9 - Managing Real Programs
+  + Testing
+    + Test::More
+    + TAP::Harness
+  + Reread & implement tests
+  + Use Carp
+    + The core Carp module extends Perl’s warning mechanisms. Use Carp when writing modules (Modules on
+      page 192) instead of warn or die.  
+  	use Carp 'carp'; 
+  	$ perl -MCarp=verbose my_prog.pl 		# Verbose Mode
+  + Use warnings
+    + Use no warnings; with an argument list to disable selective warnings within a scope. perldoc perllexwarn
+      lists all of the warnings categorie.
+    + Make all warnings fatal.
+      use warnings FATAL => 'all';
+  + Files & Dits
+    + Path::Class distribution on the CPAN has a nicer interface. Use the dir() function to create an object
+      representing a directory and the file() function to create an object representing a file:
+    + The core File::Copy module provides both copy() and move() functions.
+    + The CPAN module File::chdir makes manipulating the current working directory easier. If you’re a fan of
+      the command line and use pushd and popd, see also File::pushd.
+  + Notes on how to create a CPAN distribution.
+    + How to create, upload a distribution.
+    + Tools to help create one.
+  + UNIVERSIAL
+    + VERSION() method
+    + DOES() Method
+    + can() Method
+    + isa() Method
+  + Generating Code
+    + Force Perl to run code—to generate other code—during compilation by wrapping it in a BEGIN block.
+
+
+      
 
   
+
+* Chapter 10 - Perl Beyond Syntax
+
+* Chapter 11 - What to Avoid
+  + Bare words - use when can.
+    + Keys to hash, etc.
+      + To force a function - use ( )'s for parms to function.
+      + prepend a +
+    + The special named code blocks AUTOLOAD, BEGIN, CHECK, DESTROY, END, INIT, and UNITCHECK are barewords that
+      declare functions without the sub built-in.
+    + Always quote values of a hash
+
+* Chapter 12 - Next Steps with Perl
+  + Look at some CPAN modules
+    * Access a database via SQL, use the DBI module.
+    * Embed a lightweight, single-file database, use the DBD::SQLite module. 
+    * Manage your database schemas, use Sqitch.
+    * Represent database entities as objects, use DBIx::Class.
+    * Perform basic web programming, use Plack.
+    * Use a powerful web framework, use Mojolicious, Dancer, or Catalyst.
+    * Process structured data files, use Text::CSV_XS (or Text::CSV).
+    * Manage module installations for applications, use Carton.
+    * Manipulate numeric data, use PDL.
+    * Manipulate images, use Imager.
+    * Access shared libraries, use FFI::Platypus.
+    * Extract data from XML files, use XML::Rabbit.
+    * Keep your code tidy, use Perl::Tidy.
+    * Watch for problems beyond strictures and warnings, use Perl::Critic.
+
+
+
