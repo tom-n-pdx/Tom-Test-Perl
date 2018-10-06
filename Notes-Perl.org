@@ -1,0 +1,52 @@
+
+* General Goals
+** Improve Programming
+   + Prioritize work, track time to complete
+   + User Stories
+   + Kanban
+   + Better OOP design
+   + Test Driven Development
+   + Clean Coding
+   + Good use Git
+   + Good Perl programming environment
+
+** Learn DB 
+   + Learn how to use database - mysql
+   + Build, use database
+
+** Learn Web Scrape
+   + get better web scrape
+   + Do some web scraping
+
+** GUI
+   + Limited GUI programming
+   + Tcl-tk
+
+
+* Projects
+** Organize ebooks
+
+** Organize academic papers
+** Organize All Picmet papers?
+** Bibliometric Analysis
+** Web Program?
+
+* ToDo
+
+** Windows
+   + Test code windows  -makes sure works
+   + Install CPAN - CPANM
+
+** Mac
+   + Read atributes - file labels, set also - and file creation time
+
+** Emacs
+   + Better edit configuration
+     + auto electric (
+
+** Perl
+   + perl critic
+   + Write and upload CPAN module - fix module
+
+
+

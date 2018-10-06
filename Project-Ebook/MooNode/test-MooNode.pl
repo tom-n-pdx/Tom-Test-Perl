@@ -22,7 +22,7 @@ use Data::Dumper;           # Debug print
 # My Modules
 use lib '.';
 use MooNode;
-use MooFile;
+# use MooFile;
 
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
@@ -31,7 +31,8 @@ $test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Step
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 # $test_file = $ebook_base_dir;
 
-my $test = MooNode->new(filepath => $test_file);
+my $test = MooNode->new($test_file);
+# my $test = MooNode->new;
 
 my $size = $test->size;
 say "File: ", $test->filepath, " size: ", $size;
@@ -39,24 +40,26 @@ say "Stat: ", join(', ',  @{$test->stat});
 
 say "Version: ", $test->VERSION;
 
-# $test->dump_raw;
+$test->dump;
+$test->dump_raw;
 
 # say Dumper($test);
 
 
 my $test_file_dupe = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships (2004,Osprey Publishing Ltd) copy.pdf";
-my $test_dupe = MooNode->new(filepath => $test_file_dupe);
+my $test_dupe = MooNode->new($test_file_dupe);
 
 my @changes;
 
 @changes = $test->isequal($test_dupe);
 print "isequal Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
 
-@changes = $test->isdiskchanged($test);
+# Live check vs file on disk
+@changes = $test->ischanged($test);
 print "isdiskchanged Delta File: ", join(', ', @changes), "\n";
 
 
-die;
+# die;
 
 #
 # OK - try scanning dir & print size of files

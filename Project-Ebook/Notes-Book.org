@@ -45,3 +45,28 @@ Collection
 
 + rewrite check file names,  rename
 
+
+* Things Manually Fixing
+** General
+   + Edition - Ed.
+   + Fix authors with _ in list
+   + Fix %es2 - etc encoding in file name
+   + Replace . with space in file name
+** Publisher
+   + Haravard Business Review - HBR
+   + DK Publishing - DK
+   + American Mathematical Society - AMS
+   + Oxford University Press - Oxford
+   + 
+
+* General Parse File Names
+  
+* Create MooBook Catagory
+  + Ttile, subtitle,
+  + Year
+  + Author list
+  + Series
+  + Publisher
+  + ISBN list
+  + ???
+  + 

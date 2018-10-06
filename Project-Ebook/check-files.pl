@@ -117,7 +117,6 @@ sub check_file_name {
 	    next;
 	}
     
-
 	#
 	# Whitespace checks
 	#

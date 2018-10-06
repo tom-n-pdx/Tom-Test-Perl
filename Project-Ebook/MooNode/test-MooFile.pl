@@ -25,13 +25,14 @@ use MooFile;
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
 #$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
-#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
-#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
-$test_file = "$ebook_base_dir/_Zeppelins_testing/Airship technology_test.gif";   # no read access
-# $test_file = $ebook_base_dir;
+$test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin.jpg";
+#$test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin-BAD.jpg";
+#$test_file = "$ebook_base_dir/_Zeppelins_testing/Airship technology_test.gif";   # no read access
+#$test_file = $ebook_base_dir;
 
-my $test = MooFile->new(filepath => $test_file, 'opt_update_md5' => 1);
-# my $test = MooFile->new($test_file); # Use short version no opts
+#my $test = MooFile->new(filepath => $test_file, 'opt_update_md5' => 1);
+my $test = MooFile->new($test_file); # Use short version no opts
+# my $test = MooFile->new;
 #my $test = MooFile->new('FileName' => $test_file);
 # my $test = MooFile->new;
 
@@ -61,10 +62,10 @@ my $test_file_dupe = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Char
 my $test_dupe = MooFile->new(filepath => $test_file_dupe);
 
 my @changes;
-my  @changes = $test->isequal($test_dupe);
+@changes = $test->isequal($test_dupe);
 print "isequal Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
 
-my  @changes = $test->ischanged($test_dupe);
+@changes = $test->ischanged($test_dupe);
 print "ischanged Delta File self to renamed copy of file: ", join(', ', @changes), "\n";
 
 @changes = $test->isdiskchanged($test);

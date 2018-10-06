@@ -20,16 +20,17 @@ use Data::Dumper;           # Debug print
 
 # My Modules
 use lib '.';
-use MooFile;
+use MooDir;
 
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
-#$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
-#$test_file = $ebook_base_dir;
+# $test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin.jpg";
+# $test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin-BAD.jpg";
+# $test_file = "$ebook_base_dir/_Zeppelins_testing/Airship technology_test.gif";   # no read access
+$test_file = $ebook_base_dir;
 
-my $test = MooFile->new('filepath' => $test_file, 'opt_update_stat'=>1);
+my $test = MooDir->new(filepath => $test_file);
 #my $test = MooFile->new('FileName' => $test_file);
 # my $test = MooFile->new;
 
@@ -37,16 +38,36 @@ my $size = $test->size || "undefined";
 say "File: ", $test->filepath, " size: ", $size;
 
 # Check stats array
-if (defined $test->stats){
-    say "Stats: ", join(', ',  @{$test->stats});
+if (defined $test->stat){
+    say "Stats: ", join(', ',  @{$test->stat});
 }
+
+# Check Dump
+#say "Dump:";
+#$test->dump;
+
+say "Dump:";
+$test->dump_raw;
+
+my @filepaths = $test->list_files;
+#say join("\n", @filepaths);
+
+
+
+# 
+# Check delta dir / change dir
+#
+
+die;
+
+
+
 
 #
 # OK - try scanning dir & print size of files
 #
 
 my $test_dir;
-
 $test_dir = "$ebook_base_dir/_Zeppelins_testing";
 # $test_dir = "$ebook_base_dir";
 
@@ -56,7 +77,7 @@ opendir(my $dh, $test_dir);
 my @filepaths = readdir $dh;
 closedir $dh;
 
-@filepaths = grep(!/^\./, @filepaths);	    # make into absoule path         
+@filepaths = grep(!/^\./, @filepaths);	                    # remove dot files         
 @filepaths = map($test_dir.'/'.$_, @filepaths);	    # make into absoule path         
 
 my @files;
@@ -96,5 +117,28 @@ foreach my $size  (sort keys %hash){
 	}
     }
 }
+
+
+#
+# Check dupe md5
+#
+# Lookup size and push onto array at that size
+undef(%hash);
+
+foreach (@files){
+    push(@{ $hash{$_->md5}}, $_);
+}
+
+# Now  -walk hash  -find which values have a array > 0 length  -those are dupe sizes
+foreach my $md5  (sort keys %hash){
+    my @values = @{ $hash{$md5} };
+    if ($#values > 0){
+	say "Dupe files md5: $md5";
+	foreach (@values) {
+	    say "\t", $_->filename;
+	}
+    }
+}
+
 
 

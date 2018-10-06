@@ -4,16 +4,11 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * rename update stats to stat - make consistent
 # * add buld args check? No extra args
-# * print class of object in dump
-# * enabled new to take a full filepath as first arg
-# * string version mtime, dtime
+#   improve - accept filepath name with opts
+# * string version mtime, dtime  -use duelvalue
 # * consider using atribute triggers to handle storing old and new values so Collection can fix
-# * rewrite buildargs as not around - or see if can use trigger or type to check values
-# * consdier combine some of the code from check values out into  a sub
 #
-
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -26,10 +21,9 @@ use Time::localtime;        # Printing stat values in human readable time
 
 package MooNode v0.1.2;
 use Moose;
-
 use namespace::autoclean;
 
-has 'filepath',			# full name of file including path
+has 'filepath',			         # full name of file including path
     is => 'ro', 
     isa => 'Str',
     writer => '_set_filepath',	# For tetsing only DEBUG - comment out
@@ -55,29 +49,41 @@ has 'isfile',			# not live version
     isa => 'Bool',
     writer => '_set_isfile';
 
-#   
-# Fix up the args to new to allow passing the filename as the only arg
-# If using options, must use longer version
 #
-around BUILDARGS => sub {
-    my $orig  = shift;
-    my $class = shift;
+# generic function to convert a call to new with one operand to a ref oriented paramater set with a filepath
+#
 
-    # if ( @_ == 1 && !ref $_[0] ) {
-    #     return $class->$orig(filepath => $_[0] );
-    # }
-    # else {
-    #     return $class->$orig(@_);
-    # }
+sub _args_helper {
+    my @original = @_;
+    my %args;
+
+    # If ONLY one arg - then assume it's a filepath
+    if (@original == 1 && !ref $original[0]){
+	my $filepath = pop(@original);
+	%args = @original;
+	$args{filepath} = $filepath;
+    } else {
+	%args = @original;
+    }
     
-    my %args = @_;
-    my $filepath =$args{filepath};
+    return %args;
+}
 
-    if (! -e $filepath){
-	die "constructor failed - tried to create Node of non-existent file: $filepath";
+
+
+sub BUILDARGS {
+    my ($class, @original) = @_;
+
+    my %args = _args_helper(@original);
+    my $filepath = $args{filepath};
+
+    # If filepath defined - check is a file of some type
+    if ($filepath && ! -e $filepath){
+	die "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
     }
 
-    return $class->$orig(@_);;
+
+    return \%args;
 };
 
 
@@ -90,7 +96,11 @@ sub BUILD {
     my ($self)=shift( @_);
     # my $args_ref = shift(@_);
 
-    # Always checks stat - assumes file always exists on creation.
+    # if (! $self-> isexist){
+    # 	die "constructor failed - tried to create Node of non-existent file: ".$self->filepath;
+    # }
+
+    # Always checks stat - assumes file always exists live at creation.
     $self->update_stat;
 
     return
@@ -98,7 +108,7 @@ sub BUILD {
 
 #
 # Todo
-# * if already exisists - return a list of what changed
+# * if already exisists - return a list of what changed?
 # * save old values somewhere so can move in the tree?
 #
  
@@ -106,8 +116,7 @@ sub update_stat {
     my ($self)=shift( @_);
 
     my $filepath =  $self->filepath;
-    # die "File Obj Stat Update failed - file does not exist:".$self->filepath if ! $self->isexist;
-
+ 
     # Update the logical values
     $self->_set_isreadable(-r $filepath);
     $self->_set_isdir(-d $filepath);
@@ -115,16 +124,17 @@ sub update_stat {
 
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
     # my @stat = stat(_);	# retruns stat for last file checked with a -x command
-    # $self->_set_stat(\@stat);
-    # Rework as ref to anomous array
-    $self->_set_stat( [ stat(_) ] ); # retruns stat for last file checked with a -x command
+
+    $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
 }
 
+#
+# ToDo
+# * stringify?
+#
 sub size {
     my $self = shift(@_);
     
-    # my @stat = @{$self->stat};
-    # my $size = $stat[7];
     my $size = ${$self->stat}[7];
     return($size);
 }
@@ -132,7 +142,6 @@ sub size {
 sub mtime {
     my $self = shift(@_);
     
-    # my @stat = @{$self->stat};
     my $mtime =  ${$self->stat}[9];
     return($mtime);
 }
@@ -141,6 +150,13 @@ sub mtime_str {
     my $self = shift(@_);
         
     return(Time::localtime::ctime($self->mtime));
+}
+
+sub inode {
+    my $self = shift(@_);
+    
+    my $mtime =  ${$self->stat}[1];
+    return($mtime);
 }
 
 # does live check
@@ -161,7 +177,7 @@ sub isexist {
 #
 #
 
-# Note this one doesn't use a regular expression becuase want name with extension
+# Note this one doesn't use a regular expression for suffix becuase want name with extension
 sub filename {
     my $self = shift(@_);
     my  ($name, $path, $suffix) = File::Basename::fileparse($self->filepath);
@@ -186,6 +202,10 @@ sub basename {
     return($name);
 }
 
+
+#
+# Pretty Print Utility
+#
 sub true {
     return($_[0] ? "True" : "False");
 }
@@ -210,14 +230,14 @@ sub true {
 # md5               Y                   Y                           Y
 #
 
-
+# Names of stat values
 # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
 my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
     
 
 # 
-# Check that two files are the same - maybe different disks, names - but contents same
-# Check: isdir, isfile, size & md5 for files
+# Check that two file objects are the same - maybe different disks, names - but contents same
+# Check: isdir, isfile, size
 # makes no sense for dirs
 #
 
@@ -246,39 +266,39 @@ sub isequal {
 # Calls isqual for some of the checks
 #
 
-sub ischanged {
-    my $self   =shift(@_);
-    my $other = shift(@_);
+# sub ischanged {
+#     my $self   =shift(@_);
+#     my $other = shift(@_);
 
-    # Call isequal for basic checks
-    my @changes = $self->isequal($other);
+#     # Call isequal for basic checks
+#     my @changes = $self->isequal($other);
 
-    push(@changes, "filepath") if ($self->filepath ne $other->filepath);
-    push(@changes, "isreadable") if ($self->isreadable != $other->isreadable);
+#     push(@changes, "filepath") if ($self->filepath ne $other->filepath);
+#     push(@changes, "isreadable") if ($self->isreadable != $other->isreadable);
 
-    # OK need to check stat
-    my @self_stat =  @{$self->stat};
-    my @other_stat = @{$other->stat};
+#     # OK need to check stat
+#     my @self_stat =  @{$self->stat};
+#     my @other_stat = @{$other->stat};
 
-    # Check dev, ino, mtime, ctime
-    # return a string
-    foreach (0..1, 9..10){
-	if ($self_stat[$_] != $other_stat[$_]){
-	    push(@changes, $stat_names[$_]);
-	}
-    }
+#     # Check dev, ino, mtime, ctime
+#     # return a string
+#     foreach (0..1, 9..10){
+# 	if ($self_stat[$_] != $other_stat[$_]){
+# 	    push(@changes, $stat_names[$_]);
+# 	}
+#     }
     
-    return @changes;
-}
+#     return @changes;
+# }
 
 #
 # Check if changed on disk - minimal check
 # Check to see if the version of a file on disk is same as object
-# Check: filepath, isdir, isfile, isreadable, dev, inode, size, mtime, ctime
+# Check: isdir, isfile, isreadable, dev, inode, size, mtime, ctime
 # Might be able to optimize based on ctime / mtime match
 #
 
-sub isdiskchanged {
+sub ischanged {
     my $self   =shift(@_);
     my $filepath = $self->filepath;
 
@@ -289,25 +309,21 @@ sub isdiskchanged {
 	return (@changes);
     }
     
-    #
-    # Do we need to check? If other values change  -we will need to re-stat
-    # Yes - this will help determine what to do...
-    #
     push(@changes, "isreadable") if ($self->isreadable != -r $filepath);
     push(@changes, "isdir") if ($self->isdir != -d $filepath);
     push(@changes, "isfile") if ($self->isfile != -f $filepath);
 
     # stat file - make a few quick checks
-    my @self_stat =  @{$self->stat};
-    my @new_stat = stat(_);
+    my @old_stat =  @{$self->stat};
+    my @new_stat = stat(_);	                            # Uses last stat value 
 
     # Check dev, inode, size, mtime, ctime
     foreach (0..1, 7, 9..10){
-	if ($self_stat[$_] != $new_stat[$_]){
+	if ($old_stat[$_] != $new_stat[$_]){
 	    push(@changes, $stat_names[$_]);
 	}
     }
-
+    
     return @changes;
 }
 
@@ -316,13 +332,14 @@ sub dump {
    my $self = shift(@_);
  
    print "File: ", $self->filename, "\n";
-   print "\tSize: ", $self->size, "\n";
-   print "\tExt:  ", $self->ext, "\n";
-   print "\tPath: ", $self->path, "\n";
-   print "\tDir:  ", true($self->isdir), "\n";
-   print "\tFile: ", true($self->isfile), "\n";
-   print "\tRead: ", true($self->isreadable), "\n";
-   print "\tStat: ", join(', ',  @{$self->stat} ), "\n";
+   print "\tExt:   ", $self->ext, "\n";
+   print "\tPath:  ", $self->path, "\n";
+   print "\tDir:   ", true($self->isdir), "\n";
+   print "\tFile:  ", true($self->isfile), "\n";
+   print "\tRead:  ", true($self->isreadable), "\n";
+   print "\tSize:  ", $self->size, "\n";
+   print "\tInode: ", $self->inode, "\n";
+   print "\tStat:  ", join(', ',  @{$self->stat} ), "\n";
 
    print "\n";
    print "\tAtime: ", Time::localtime::ctime(@{$self->stat}[8]), "\n";
@@ -332,21 +349,21 @@ sub dump {
    
 sub dump_raw {
    my $self = shift(@_);
+   my $class = blessed( $self );
+   # Moose semi unfriendly - uses raw access to class variables... may break in future
+   print "INFO: Dump Raw: File: ", $self->filename, " Class: $class\n";
 
-    # Moose semi unfriendly - uses raw access to class variables... may break in future
-    print "INFO: Dump Raw: File: ", $self->filename, "\n";
+   my %atributes = (isfile => 'Bool', isdir => 'Bool', isreadable => 'Bool', stat =>'ArrayRef');
 
-    my %atributes = (isfile => 'Bool', isdir => 'Bool', isreadable => 'Bool', stat =>'ArrayRef');
-
-    my @keys = sort keys(%$self);
-    foreach (@keys){
-	my $type = $atributes{$_} || "String";
-	my $string = $$self{$_};
-	$string = true($string) if ($type eq "Bool");
-	$string = join(', ',  @{$string}) if ($type eq "ArrayRef");
+   my @keys = sort keys(%$self);
+   foreach (@keys){
+       my $type = $atributes{$_} || "String";
+       my $string = $$self{$_};
+       $string = true($string) if ($type eq "Bool");
+       $string = join(', ',  @{$string}) if ($type eq "ArrayRef");
        
-	printf  "\t%-10s %s\n", $_, $string;
-    }
+       printf  "\t%-10s %s\n", $_, $string;
+   }
 }
 
 __PACKAGE__->meta->make_immutable;
