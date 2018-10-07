@@ -82,6 +82,29 @@ sub check_file_name {
 	}
 
 
+	my %unicode_table = (
+	    '%e2%80%99' => "'",
+	    '%e2%80%93' => "-"); 
+
+	# Check for Unocode encode characters
+	if (/%e2/){
+	    my ($unicode) = /(%e2%\d\d%\d\d)/;
+	    my $ascii = $unicode_table{$unicode};
+
+	    # known Unicode
+	    if ($ascii){
+		$status = 2;
+		$message =  "File has known Unicode: $unicode - Translate to: $ascii";
+		s/$unicode/$ascii/;
+		$filename_new = "$_$ext";
+	    } else {
+		$status = 3;
+		$message =  "File has unknown Unicode: $unicode";
+	    }
+	    
+	    next;
+	}
+
     }
 
     return($status, $message, $filename_new);    

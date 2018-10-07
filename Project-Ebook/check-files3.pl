@@ -4,6 +4,7 @@
 # Using Dir Object
 #
 # ToDo
+# * add command line args for debug, print, fix
 # * add check premissions
 # * make checks do all the mistakes of a type in a name, not just first one
 # * Fix number of files fixed vs number problems remaining
@@ -16,15 +17,15 @@ use List::Util qw(min max);	# Import min()
 
 use lib '.';
 use FileParse qw(check_file_name);
-use MooDir;
+use MooNode::MooDir;
 
 #
 # Open current directory and create a list of files to scan
 #
 my $debug = 0;
 
-my $status_print = 1; # Print message if status >= this number
-my $status_fix = 1;    # rename if status <= this number
+my $status_print = 2; # Print message if status >= this number
+my $status_fix = 0;    # rename if status <= this number
 my $nerror = 0;
 
 
@@ -65,7 +66,7 @@ foreach my $filename (@filenames){
 	last if ($status == 0);
 	
 	if ($status >= $status_print){
-	    say "File: $filename" if ($i == 1);
+	    say "\nFile: $filename" if ($i == 1);
 	    say "    $message Status: $status";
 	    print "\tBefore:$filename\n";
 	    print "\tAfter :$newname\n" if ($status <= 2);
