@@ -1,5 +1,12 @@
 
 
+* ToDo
+** Finish MooFile
+   + Tests
+   + Finish simple apps
+     + Command line args
+   + Scan files - fix-up  (1) copies
+   + Implement tree search
 * Use cases
 ** DONE Find dupe file in a dir 
 ** DONE Find dupe file in multiple dirs online 

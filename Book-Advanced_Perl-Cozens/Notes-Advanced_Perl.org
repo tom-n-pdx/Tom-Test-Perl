@@ -1,0 +1,18 @@
+
+Book - Advanced Perl, 2nd Ed, O'Reilly
+
+* Chapter 1
+  + In general - stuff too complex to ever use.
+  + Globs - symbol table lookup -> glob -> type of variable / name
+    + import uses to make something show up in another name space
+  + AUTOlOAD
+    + Can define functions on fly
+  + CORE
+    + Redefine core functions
+  + Overloading
+
+* Chapter 2 - Parsing
+  + Top Down Parse Parse::RecDescent Grammars
+    + Uses Text::Balanced
+  + 
+

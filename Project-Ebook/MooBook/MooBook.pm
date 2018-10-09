@@ -32,38 +32,28 @@ has 'subtitle',			         # optional subtitle of book
     isa => 'Str',
     required => 0;
 
-# has 'author',			         # do I create fake author, is just access to author list?
-#     is => 'rw', 
-#     isa => 'Str',
-#     required => 0;
-
-has 'author_list',                       # optional subtitle of book
+has 'author_list',                       # array of authors - each author in last, first middle format
     is => 'rw', 
     isa => 'ArrayRef[Str]',
     default => sub { [] },
     required => 0;
 
-has 'publisher',			 # optional subtitle of book
+has 'publisher', 
     is => 'rw', 
     isa => 'Str',
     required => 0;
 
-has 'series',			         # optional subtitle of book
+has 'series',
     is => 'rw', 
     isa => 'Str',
     required => 0;
 
-has 'year',			         # optional year date published - validate makes sense
+has 'year',			         # optional year  published - validate makes sense
     is => 'rw', 
     isa => 'Int',
     required => 0;
 
-# has 'isbn',			         # optional isbn  -do I make a secondary access to isbn list?
-#     is => 'rw', 
-#     isa => 'Str',
-#     required => 0;
-
-has 'isbn_list',			         # optional year date published
+has 'isbn_list',			         # optional list of ISBN strings
     is => 'rw', 
     isa => 'ArrayRef[Str]',
     default => sub { [] },
@@ -76,14 +66,11 @@ has 'isbn_list',			         # optional year date published
 sub _author_last_name {
     my $name = shift(@_);
 
-    my @values = split(/\s/, $name);
+    my @values = split(/,/, $name);
     
 
-    return($values[-1]);
+    return($values[0]);
 }
-
-
-
 
 
 

@@ -4,6 +4,9 @@
 # Using Dir Object
 #
 # ToDo
+# * fix _(1) ->_v11
+# * add check dir to scan exists
+# * move fix file into sub so can run as part of tree search
 # * add command line args for debug, print, fix
 # * add check premissions
 # * make checks do all the mistakes of a type in a name, not just first one
@@ -24,8 +27,8 @@ use MooNode::MooDir;
 #
 my $debug = 0;
 
-my $status_print = 2; # Print message if status >= this number
-my $status_fix = 0;    # rename if status <= this number
+my $status_print = 1; # Print message if status >= this number
+my $status_fix = 2;    # rename if status <= this number
 my $nerror = 0;
 
 

@@ -105,6 +105,13 @@ sub check_file_name {
 	    next;
 	}
 
+	# Check for a trailing (d) for a copy of a file
+	if (/\(1\)$/){
+	    $message =  "File maybe a 2nd copy";
+	    $status = 3;
+	    next;
+	}
+
     }
 
     return($status, $message, $filename_new);    
