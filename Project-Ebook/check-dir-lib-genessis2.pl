@@ -10,7 +10,7 @@
 # * Delete unused code
 # * Move into  a Book Generssis module
 # * Mov  the publisher cleanup
-
+# * what about unicode cleanup? 
 
 
 use Modern::Perl 2016; 		# Implies strict, warnings
@@ -20,8 +20,6 @@ use List::Util qw(min max);	# Import min()
 use File::Basename;
 use Text::Names;                     # Pasre names into last, first name form
 
-
-
 # 
 # ToDo - expand ~ in dir path
 #
@@ -30,7 +28,7 @@ use Text::Names;                     # Pasre names into last, first name form
 # Main
 #
 
-my $debug = 0;
+my $debug =1;
 
 my $dir_check = pop (@ARGV);
 say "Scanning: $dir_check";
@@ -52,7 +50,7 @@ chdir($dir_check);
 
 # for debug only do first N  files
 if ($debug >= 1){
-    my $end = 10;
+    my $end = 5;
     $end = min($end, $#filenames);                                       
     @filenames = @filenames[0..$end];
 }
@@ -74,6 +72,7 @@ exit;
 sub parse_lib_genessis {
     my ($filename) = pop(@_);
     my ($series, @authors, $title, $subtitle, $year, $publisher, $suffix);
+
     my ($date_rest);
     my $status = 0;
     my %values;
@@ -82,101 +81,118 @@ sub parse_lib_genessis {
     $_ = $basename;
 
     #
-    # Check for (date..) - if not - fail
+    # Check for ( * number * ) - if not - fail
     #
-    if ($_ !~ /\(\d+.*\)/){
-	# say "Not Genessis Lib: $filename";
+    if ($_ !~ /\(.*\d+.*\)/){
+	say "Not Genessis Lib: $filename";
+	$status = 0;
 	return $status;
     }
 
-    #
-    # Parse required (date, optional publisher) optional suffix off end
-    # * Parse off suffix!
-    my $year_pub_str;
-    ($_, $year_pub_str) = /(.*)\((.*)\)/;
-    ($year, $publisher) = split(/s*,\s*/, $year_pub_str, 2);                 # Split date, publisher on ,
+    # say "Filename: $filename"; 
 
+
+
+    #
+    # First cleanup and non-stndard lib genesis stuff
+    #
+    # remove leading _
+    s/^[_\s]*//;
+
+    # Extract and remove trailing suffix
+    if (/(.*\))(\w+?)$/){
+	$_ = $1;
+	$suffix = $2;
+	# say "Suffix: $suffix";
+    }
+
+
+    # Extract leading optional series
+    if (/^\s*\[\s*(.*?)\s*\]\s*(.*)\s*/){
+	$series = $1;
+	$_ = $2;
+	# say "Series: $series";
+    }
+
+    # Parse out authors - title - date
+    my $match = (my ($author_text, $title_text, $date_text)) = /^(.*?) - (.*?)\s*\(.*?(\d+.*)\)$/;
+    if (! $match){
+	say "Fail Parse $filename";
+	return 0;
+    }
+
+
+    #
+    # Cleanup authors list
+    #
+    # Issues:
+    # * parseNames also removes author / editor info
+    # * does not handle title - Dr / Prof.
+    # * Does not handle Suffix Jr, III
+    #
+    # If authors seperated by _ need to split into array first
+    if ($author_text =~ /_/){
+    	@authors = split(/_s*/, $author_text);
+	@authors = Text::Names::parseNameList(@authors);    
+    } else {
+    	@authors = Text::Names::parseNames($author_text);
+    }
+    # say "\nFilename:$filename\nAuthor: $author_text - ", join("; ", @authors);
     
+    
+    # 
+    # Cleanup title
+    #
+    # Check if title with . instead of spaces - if so - replace . w/ space
+    my $n_spaces = () = $title_text =~ /\s/g;
+    my $n_period  = () = $title_text =~ /\./g;
+    if ($n_period > $n_spaces){
+    	$title_text =~ tr/./ /;
+    	say "Convert . to white- White: $n_spaces Period: $n_period Rest:$_:";
+    }
+    
+    #
+    # Fixup _ in names
+    #
+    $title_text =~ tr/_/-/;
+    
+    # split into title  -subtitle
+    if ($title_text =~ /^(.*\w)- (.*)/){
+	$title = $1;
+	$subtitle = $2;
+    } else {
+	$title = $title_text;
+	$subtitle = "";
+    }
+    # say "\nFilename:$filename\nTitle: $title Subtitle:$subtitle";
+
+    #
+    # Parse required date & optional publisher
+    #
+    # split into date & publisher
+    ($year, $publisher) = split(/s*,\s*/, $date_text, 2);                 # Split date, publisher on ,
+    $year += 0;
+
     # Clean up year
-    $year = undef if ($year == 0 or $year == 9999);
+    $year = 0 if ($year == 0 or $year == 9999);
     if ($year) {
-	$year += 0;
-	if ($year < 1800 or $year > 2020){
-	    warn "WARN: Year out of range $year file: $filename";
-	    return 0;
-	}
+    	$year += 0;
+    	if ($year < 1800 or $year > 2020){
+    	    warn "WARN: Year out of range $year file: $filename";
+    	    return 0;
+    	}
     }
 
     # Clean up publisher
     if ($publisher){
-	$publisher =~ s/,//;	# remove any commas
-	$publisher = publisher_abrev($publisher);
+    	$publisher =~ s/,//;	# remove any commas
+    	$publisher = publisher_abrev($publisher);
+    } else {
+	$publisher = "";
     }
-    #say "Year:", undef_str($year), " Publisher:", undef_str($publisher), " File: $filename";
+    say "\nFilename:$filename\nDate-Text:$date_text Year:$year Publisher:$publisher\n";
   
-    #
-    # Parse optional series off front of name
-    #
-    if ($basename =~ /^\s*\[\s*(.*?)\s*\]\s*(.*)/){
-	$series = $1;
-	$_ = $2;
-    }
-
-    #
-    # Parse required author list
-    # Mostly Works - some problems with Suffix Dr/Prof. 
-    # Some pronlems with Prefix III
-    # Ocassional weird problems
-    # Doesn't handle company names well
-    #
-    my $author_text;
-    ($author_text, $_) = /^\s*(.*) - (.*)/;
- 
-    # If authors seperated by _ need to split into array first
-    if ($author_text =~ /_/){
-	@authors = split(/_s*/, $author_text);
-	@authors = Text::Names::parseNameList(@authors);
-    } else {
-	@authors = Text::Names::parseNames($author_text);
-    }
-    #say "Author: $author_text - ", join("; ", @authors);
-
-
-    #
-    # Extract Title & Subtitle
-    #
-    # if ($basename =~ /^(.*?)\s*(\(.*)/){
-    # 	$title = $1;
-    # 	$basename = $2;
-
-    # Parse off any trailing whitespace
-    s/\s*$//;
-
-    #
-    # Fixup names with period instead of space
-    # Count . vs white space in title
-    #
-    my $n_spaces = () = $_ =~ /\s/g;
-    my $n_period  = () = $_ =~ /\./g;
-    if ($n_period > $n_spaces){
-	tr/./ /;
-	say "White: $n_spaces Period: $n_period Rest:$_:";
-    }
-
-    #
-    # Fixup _ in names
-    #
-    tr/_/-/;
-
-    # Check Subtitle
-    if (/^\s*(.*)\s*\-+\s*(.*)/){
-	$title = $1;
-	$subtitle = $2;
-    } else {
-	$title = $_;
-    }
-    say "Title: $title Subtitle: ", undef_str($subtitle);
-    
+        
     return;
 }
 

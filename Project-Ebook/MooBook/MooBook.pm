@@ -30,6 +30,13 @@ has 'title',			         # title of book
 has 'subtitle',			         # optional subtitle of book
     is => 'rw', 
     isa => 'Str',
+    default => "",
+    required => 0;
+
+has 'edition',			         # optional edition as string
+    is => 'rw', 
+    isa => 'Str',
+    default => "",
     required => 0;
 
 has 'author_list',                       # array of authors - each author in last, first middle format
@@ -41,16 +48,19 @@ has 'author_list',                       # array of authors - each author in las
 has 'publisher', 
     is => 'rw', 
     isa => 'Str',
+    default => "",
     required => 0;
 
 has 'series',
     is => 'rw', 
     isa => 'Str',
+    default => "",
     required => 0;
 
 has 'year',			         # optional year  published - validate makes sense
     is => 'rw', 
     isa => 'Int',
+    default => 0,
     required => 0;
 
 has 'isbn_list',			         # optional list of ISBN strings
