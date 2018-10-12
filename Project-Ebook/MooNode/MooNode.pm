@@ -5,10 +5,8 @@
 # 
 # ToDo
 # * add buld args check? No extra args
-#   improve - accept filepath name with opts
 # * string version mtime, dtime  -use duelvalue
-# * consider using atribute triggers to handle storing old and new values so Collection can fix
-#
+# * add rename
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -94,11 +92,6 @@ sub BUILDARGS {
 #
 sub BUILD {
     my ($self)=shift( @_);
-    # my $args_ref = shift(@_);
-
-    # if (! $self-> isexist){
-    # 	die "constructor failed - tried to create Node of non-existent file: ".$self->filepath;
-    # }
 
     # Always checks stat - assumes file always exists live at creation.
     $self->update_stat;

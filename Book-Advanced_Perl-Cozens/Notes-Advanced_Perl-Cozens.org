@@ -16,3 +16,6 @@ Book - Advanced Perl, 2nd Ed, O'Reilly
     + Uses Text::Balanced
   + 
 
+* Chapter 3 - Templating
+* Chapter 4 - Objects, Databases, Applications
+

@@ -6,7 +6,16 @@
    + Finish simple apps
      + Command line args
    + Scan files - fix-up  (1) copies
+   + Make check file a single function   
    + Implement tree search
+   + Mac labels
+   + Rename File
+
+* Ideas
+  + Read genessis-lib file
+  + 
+
+
 * Use cases
 ** DONE Find dupe file in a dir 
 ** DONE Find dupe file in multiple dirs online 
