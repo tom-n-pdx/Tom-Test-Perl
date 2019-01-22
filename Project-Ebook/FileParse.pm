@@ -1,12 +1,16 @@
 #!/usr/bin/env perl
 #
 # Apply standard fixe-up regs o check files names
-#
+# * rework unicode
+# * check for unicode characters
+# * check suffix
 #
 
 # Standard uses's
 use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			        # Easier write open  /close code
+
+use Text::Unaccent::PurePerl;
 
 
 use File::Basename;
@@ -52,7 +56,7 @@ sub check_file_name {
 	    next;
 	}
     
-	# Check for multuple spaces in name
+	# Check for multuple spaces in name - loop until all fixed
 	while (/\s{2,}/){
 	    $message =  "File has repeated whitespace";
 	    $status = 1;
@@ -84,15 +88,51 @@ sub check_file_name {
 
 	my %unicode_table = (
 	    '%e2%80%99' => "'",
-	    '%e2%80%93' => "-"); 
+	    '%e2%80%93' => "-",
+	    '%e2%84%a2' => "",	# (TM) - repalce with space
 
-	# Check for Unocode encode characters
-	if (/%e2/){
-	    my ($unicode) = /(%e2%\d\d%\d\d)/;
+	    '%c3%a0'       => "a",
+	    '%c3%a1'       => "a",
+	    '%c3%a3'       => "a",
+	    '%c3%a4'       => "a",
+	    '%c3%a8'       => "e",
+	    '%c3%a9'       => "e",
+	    '%c3%ad'       => "i",
+	    '%c3%b3'       => "a",
+	    '%c3%b6'       => "o",
+	    '%c3%bc'       => "o",
+	    '%c3%a7'       => "c",
+	    '%c3%b8'       => "o",
+
+	    '%c4%87'       => "c",
+
+	    '%c5%81'      => "L",
+	    '%c5%82'       => "l",
+	    '%c5%84'      => "n",
+	    '%c5%87'       => "l",
+	    '%c5%99'       => "r",
+	    '%c5%a1'      => "s",
+	    '%c5%bc'      => "z",
+
+
+	    '%d0%90'      => "s",
+	); 
+
+	if (/(%\p{AHex}{2})/){
+	    my $unicode_start = $1;
+	    my $unicode;
+
+	    if ($unicode_start eq "%e2"){
+		($unicode) = /(%e2%\p{AHex}{2}%\p{AHex}{2})/; # 3 byte string
+	    } else {
+		($unicode) = /(%\p{AHex}{2}%\p{AHex}{2})/; # 2 byte string
+	    }
 	    my $ascii = $unicode_table{$unicode};
+	    
+	    # say "Found Unicode: $unicode";
 
 	    # known Unicode
-	    if ($ascii){
+	    if (defined $ascii){
 		$status = 2;
 		$message =  "File has known Unicode: $unicode - Translate to: $ascii";
 		s/$unicode/$ascii/;
@@ -101,7 +141,40 @@ sub check_file_name {
 		$status = 3;
 		$message =  "File has unknown Unicode: $unicode";
 	    }
-	    
+
+	    next;
+	}
+
+
+	my %convert = (
+	    'é'     => 'e',
+	    'ø'     => 'o',
+	    '–'     => '-',
+	    ' ́'    => '',
+	    "’"    => "'",
+	    "‐"   => "-",
+	    "-"   => "-",
+	    "-"   => "-",
+	);
+
+
+	# Unicode weirdness. A unicode character maybe multuple characters - so have to match multuple ones
+	if (/([^[:ascii:]]+)/){
+	    my $unicode = $1;
+
+	    my $ascii = $convert{$unicode};
+	    if ($ascii){
+		$status = 2;
+		$message =  "File has known Unicode: $unicode Translate to: $ascii";
+		s/$unicode/$ascii/g;
+		$filename_new = "$_$ext";
+	    } else {
+		#my $temp = unac_string($_);
+		#say "Before: $_";
+		#say "After: $temp";
+		$status = 3;
+		$message =  "File has unknown Unicode: $unicode";
+	    }
 	    next;
 	}
 
@@ -111,6 +184,10 @@ sub check_file_name {
 	    $status = 3;
 	    next;
 	}
+
+	# Check suffix
+	
+
 
     }
 

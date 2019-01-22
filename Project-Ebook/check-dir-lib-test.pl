@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #
-# Test Scan for Library Genesis Files
+# Test Scan for other Library Files
 #
 
 #
@@ -33,7 +33,7 @@ use MooBook::MooBook;
 # Main
 #
 
-my $debug =0;
+my $debug = 2;
 my $fix = 1;
 
 my $dir_check = shift(@ARGV);
@@ -49,10 +49,10 @@ chdir($dir_check);
 @filenames = grep($_ !~ /^\./, @filenames);		    # remove . files from last
 @filenames = grep($_ !~ /\(ebook/, @filenames);	    # remove already ebook
 @filenames = grep(!-d $_ , @filenames);		            # remove dirs from last
+@filenames = grep(/\(\d+\)/, @filenames);
 
 # How sort and match MacOS display order?
 #@filenames = sort(@filenames);
-
 
 
 # for debug only do first N  files
@@ -62,16 +62,16 @@ if ($debug >= 1){
     @filenames = @filenames[0..$end];
 }
 
-say "Files: ", join(", ", @filenames) if ($debug >= 2);
+say "Files: ", join("\n", @filenames), "\n\n" if ($debug >= 2);
+
 
 #
 # Scan Files
 #
 foreach my $filename (@filenames){
-    next if $filename =~ /\(ebook/;
     next if $filename =~ /^_/;
 
-    my ($status, $book) = parse_lib_genessis($filename);
+    my ($status, $book) = parse_lib_test($filename);
     if ($status){
 	say "Filename: $filename";
 	$book->dump;
@@ -108,7 +108,7 @@ foreach my $filename (@filenames){
 exit;
 
 
-sub parse_lib_genessis {
+sub parse_lib_test {
     my ($filename) = pop(@_);
     my ($series, @authors, $title, $subtitle, $year, $publisher, $suffix);
 
@@ -131,7 +131,7 @@ sub parse_lib_genessis {
 	return ($status, $book);
     }
 
-    # say "Checking Filename: $filename"; 
+    say "Checking Filename: $filename"; 
 
 
     #
@@ -144,23 +144,25 @@ sub parse_lib_genessis {
     if (/(.*\))(\w+?)$/){
 	$_ = $1;
 	$suffix = $2;
-	# say "Suffix: $suffix";
+	say "Suffix: $suffix";
     }
 
     # Extract leading optional series
-    if (/^\s*\[\s*(.*?)\s*\]\s*(.*)\s*/){
-	$series = $1;
-	$_ = $2;
-	#	say "Series: $series";
-	$book->series($series);
+    if (/^\(\s*(.*?)\s*\)\s*(.*)/){
+    	$series = $1;
+    	$_ = $2;
+    	say "Series: $series";
+    	$book->series($series);
     }
 
     # Parse out authors - title - date
-    my $match = (my ($author_text, $title_text, $date_text)) = /^(.*?) - (.*?)\s*\(\s*(\d+[^\(\)]*)\)$/;
+    my $match = (my ($author_text, $title_text, $date_text)) = /^(.*?)-(.*?)\s*\(\s*(\d+[^\(\)]*)\)$/;
     if (! $match){
 	# say "Fail Parse $filename";
 	return (0, $book);
     }
+    say "Author: $author_text";
+    say "Title: $title_text";
 
     # say "DEBUG: $date_text";
 
@@ -180,8 +182,7 @@ sub parse_lib_genessis {
     	@authors = Text::Names::parseNames($author_text);
     }
     $book->author_list(\@authors);
-    
-    # say "\nFilename:$filename\nAuthor: $author_text - ", join("; ", @authors);
+    say "\nFilename:$filename\nAuthor: $author_text - ", join("; ", @authors);
     
     
     # 
@@ -193,6 +194,13 @@ sub parse_lib_genessis {
     if ($n_period > $n_spaces){
     	$title_text =~ tr/./ /;
     	say "Convert . to white- White: $n_spaces Period: $n_period Rest:$_:";
+    }
+    
+
+    # Extract Publisher from end of title
+    if ($title_text =~ /^(.*)-(.*)/){
+	$publisher = $2;
+	$title_text = $1;
     }
     
     #
@@ -218,7 +226,8 @@ sub parse_lib_genessis {
     # Parse required date & optional publisher
     #
     # split into date & publisher
-    ($year, $publisher) = split(/s*,\s*/, $date_text, 2);                 # Split date, publisher on ,
+    # ($year, $publisher) = split(/s*,\s*/, $date_text, 2);                 # Split date, publisher on ,
+    $year = $date_text;
     $year += 0;
 
     # Clean up year

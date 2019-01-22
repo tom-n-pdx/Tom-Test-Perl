@@ -185,7 +185,10 @@ sub dump {
  
    print "Title:    ", $self->title, "\n";
    print "Subtitle: ", $self->subtitle // "", "\n";
+   print "Author:   ", $self->author // "", "\n";
    print "Year:     ", $self->year // "", "\n";
+   print "Publ:     ", $self->publisher // "", "\n";
+   print "Series:   ", $self->series // "", "\n";
 
 }
 

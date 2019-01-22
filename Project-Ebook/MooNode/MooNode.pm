@@ -24,7 +24,7 @@ use namespace::autoclean;
 has 'filepath',			         # full name of file including path
     is => 'ro', 
     isa => 'Str',
-    writer => '_set_filepath',	# For tetsing only DEBUG - comment out
+    writer => '_set_filepath',
     required => 1;
 
  has 'stat',			# stat array - not live version, last time updated or created
@@ -194,6 +194,45 @@ sub basename {
     my  ($name, $path, $ext) = File::Basename::fileparse($self->filepath, qr/\.[^.]*/);
     return($name);
 }
+
+#
+# File Rename Method
+# * not move to new volume, just rename on current volume
+# * if new file exists, it fails
+# * Pass the fullpath of new file name
+#
+# 1. Check exiisting file writable
+# 2. Check new name does not exist
+# 3. Rename file
+# 4. Update object filepath
+# 5. Restat?
+#
+sub rename {
+    my $self = shift(@_);
+    my $filepath_new = shift(@_);
+
+    # Check current file writable
+    if (! -w $self->filepath){
+	die "Tried to rename unwritable file: $self->filepath";
+    }
+    
+    # Check new file not exist 
+    if (-e $filepath_new){
+	die "Tried to rename but new file exists: $filepath_new";
+    }
+    
+    rename($self->filepath, $filepath_new);
+
+    $self->_set_filepath($filepath_new);
+
+    # Do I need to update stat after rename?
+    # Wil this force a md5 stat?
+    $self->update_stat;
+
+}
+   
+
+
 
 
 #

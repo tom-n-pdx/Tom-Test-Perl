@@ -1,17 +1,13 @@
 #!/usr/bin/env perl
 
 #
-# Test Scan for Library Genesis Files
+# Scan for other lib files and change into lib genesis format
 #
 
 #
 # ToDo
-# * Delete unused code
-# * Move into  a Book Generssis module
-# * move crear filename into another module
-# * Mov  the publisher cleanup
-# * what about unicode cleanup? 
-# * rework debug - only count 10 files to convert - not first 10 in dir?
+# * Use Smart rename
+
 
 
 use Modern::Perl 2016; 		# Implies strict, warnings
@@ -68,40 +64,33 @@ say "Files: ", join(", ", @filenames) if ($debug >= 2);
 # Scan Files
 #
 foreach my $filename (@filenames){
-    next if $filename =~ /\(ebook/;
-    next if $filename =~ /^_/;
+    next if $filename =~ /^_/;	                             # files start with _ 
 
-    my ($status, $book) = parse_lib_genessis($filename);
-    if ($status){
-	say "Filename: $filename";
-	$book->dump;
+    my  ($basename, $path, $ext) = File::Basename::fileparse($filename, qr/\.[^.]*/);
+    $_ = $basename;
+    
 
+    next unless $_ =~ /\(\d{4}\)(_\w+)?$/;              # 4 digit date inside ( ) at end of line
+    say "$filename";
 
-	my  ($basename, $path, $ext) = File::Basename::fileparse($filename, qr/\.[^.]*/);
-	
-	my $basename_new = $book->title;
-	$basename_new .= "- ".$book->subtitle if $book->subtitle;
+    # Fix Leading ( )'s to [ ]'s
+    if (/^\((.*?)\)(.*)/){
+	$_ = "[$1]$2";
+	# say "Fix Series: $_";
+    }
 
-	$basename_new .= " (".$book->series.")" if $book->series;
+    # Move publisher
+    if ( /(.*)\-(\w.+)\s\((\d+)\)/){
+	$_ = "$1 ($3, $2)";
+	# say "Fix Publisher: $_";
+    }
 
-	$basename_new .= " (ebook, ";
-	$basename_new .= ($book->author     || "XXXX") . ", ";
-	$basename_new .= ($book->publisher || "YYYY") . ", ";
-	$basename_new .= ($book->year         || "9999") . ", ";
-	$basename_new .= "Orginal)";
-
-	my $filename_new = $basename_new.$ext;
-	
-       	if ($fix){
-	    my $version = 10;
-	    while (-e $filename_new){
-		++$version;
-		$filename_new = $basename_new."_v".$version.$ext;
-	    }
+    if ($basename ne $)){
+	my $filename_new = $_.$ext;
+	say "Rename: $filename_new";
+	if ($fix){
 	    rename($filename, $filename_new) unless (-e $filename_new);
 	}
-	say "Filename New: $filename_new";
-	say "\n";
     }
 }
 
