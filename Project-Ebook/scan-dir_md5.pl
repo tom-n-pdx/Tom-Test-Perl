@@ -9,13 +9,14 @@ use IO::Handle;
 
 #
 # Todo
-#
-my $debug = 0;
+# * Add sav inode, check inode
+
 
 #
 # Scan dir passed as arg, store md5 of all non dot files in  datafle in dir.
 # If the modified time has not changed, re-use old modified time
 #
+my $debug = 0;
 my $dir_check = shift(@ARGV);
 
 if (!-e $dir_check or !-d $dir_check or !-r $dir_check){
@@ -24,21 +25,23 @@ if (!-e $dir_check or !-d $dir_check or !-r $dir_check){
 say "Scanning $dir_check";
 
 # If db file in dir read in contents
-my $dbfile = "$dir_check/.moo.db";
-my (%md5_old, %mtime_old, %size_old);
+my (%md5_old, %mtime_old, %size_old, %filename_old);
 my $fh;
 
+my $dbfile = "$dir_check/.moo.db";
 if (-e $dbfile){
     say "Reading dbfile";
     open($fh, "<", $dbfile);
 
     while (<$fh>){
 	chomp;
-	my ($md5, $mtime, $size, $filename) = split("\t");
+	my ($md5, $mtime, $size, $inode, $filename) = split("\t");
     
-	$md5_old{$filename}     = $md5;
-	$size_old{$filename}      = $size;
-	$mtime_old {$filename} = $mtime;
+	$md5_old{$inode}     = $md5;
+	$mtime_old {$inode} = $mtime;
+	$size_old{$inode}      = $size;
+	# $inode_old {$inode}  = $inode;
+	$filename_old {$inode}  = $filename;
     }
 
     close($fh);
@@ -62,9 +65,10 @@ if ($debug >= 1){
 
 say "Files: ", join(", ", @filenames) if ($debug >= 2);
 
-my (%md5, %mtime, %size);
+my (%md5, %mtime, %size, %filename);
 
 my $i = 1;
+my $md5_count = 0;
 
 # Work through files.
 foreach my $filename (@filenames){
@@ -73,32 +77,39 @@ foreach my $filename (@filenames){
     # say "Checking: $filename" if ($debug >= 2);;
     my $filepath = "$dir_check/$filename";
 
-    my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($filepath);
+    my ($dev,$inode,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($filepath);
 
-    $mtime{$filename} = $mtime;
-    $size{$filename}     = $size;
+    $mtime{$inode} = $mtime;
+    $size{$inode}     = $size;
+    # $inode{$inode}  = $inode;
+    $filename{$inode}  =  $filename;
 
     if (-r $filepath){
-	if ($mtime_old{$filename} and $mtime_old{$filename} >= $mtime and defined $md5_old{$filename}) {
-	    $digest = $md5_old{$filename};
+	if ($mtime_old{$inode} and $mtime_old{$inode} >= $mtime and defined $md5_old{$inode}) {
+	    $digest = $md5_old{$inode};
 	    print ".";
 	} else {
 	    $digest = Digest::MD5::File::file_md5_hex($filepath);
+	    $md5_count++;
 	    print "+";
 	}
+    } else {
+	print "0";
     }
 
-    $md5{$filename} = $digest;
+    $md5{$inode} = $digest;
     STDOUT->flush();
     print "\n" if $i++ % 40 == 0;
 }
 print "\n" unless $i % 40 == 0;
+say "MD5 Count: $md5_count";
+
 
 # Write md5 values to file
 open($fh, ">", $dbfile);
 
 foreach (sort keys %md5) {
-    print $fh "$md5{$_}\t$mtime{$_}\t$size{$_}\t$_\n";
+    print $fh "$md5{$_}\t$mtime{$_}\t$size{$_}\t$_\t$filename{$_}\n";
 }
 
 close($fh);
