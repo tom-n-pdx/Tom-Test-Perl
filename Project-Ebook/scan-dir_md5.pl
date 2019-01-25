@@ -9,8 +9,11 @@ use IO::Handle;
 
 #
 # Todo
-# * Add sav inode, check inode
-
+# * refactor run on dir into sub
+# * process more then one dir on command line
+# * add options verbose, debug
+# * stop processing after X md5 cals and save
+# * Move md5, file info into a singular complex data structure instead of 4 hash's
 
 #
 # Scan dir passed as arg, store md5 of all non dot files in  datafle in dir.
@@ -24,30 +27,9 @@ if (!-e $dir_check or !-d $dir_check or !-r $dir_check){
 }
 say "Scanning $dir_check";
 
-# If db file in dir read in contents
 my (%md5_old, %mtime_old, %size_old, %filename_old);
-my $fh;
+&load_md5_db($dir_check);    # Modifies global old values
 
-my $dbfile = "$dir_check/.moo.db";
-if (-e $dbfile){
-    say "Reading dbfile";
-    open($fh, "<", $dbfile);
-
-    while (<$fh>){
-	chomp;
-	my ($md5, $mtime, $size, $inode, $filename) = split("\t");
-    
-	$md5_old{$inode}     = $md5;
-	$mtime_old {$inode} = $mtime;
-	$size_old{$inode}      = $size;
-	# $inode_old {$inode}  = $inode;
-	$filename_old {$inode}  = $filename;
-    }
-
-    close($fh);
-
-}
-    
 # Get list of files in dir
 chdir($dir_check);
 opendir(my $dh, ".");
@@ -81,7 +63,6 @@ foreach my $filename (@filenames){
 
     $mtime{$inode} = $mtime;
     $size{$inode}     = $size;
-    # $inode{$inode}  = $inode;
     $filename{$inode}  =  $filename;
 
     if (-r $filepath){
@@ -104,12 +85,57 @@ foreach my $filename (@filenames){
 print "\n" unless $i % 40 == 0;
 say "MD5 Count: $md5_count";
 
+# Write md5 values to db file in dir
+&save_md5_db($dir_check);
 
-# Write md5 values to file
-open($fh, ">", $dbfile);
+exit;
 
-foreach (sort keys %md5) {
-    print $fh "$md5{$_}\t$mtime{$_}\t$size{$_}\t$_\t$filename{$_}\n";
+#
+# Function: Load a md5 datafile
+# Modifis global hash values
+# Make sure hash vars defined in main
+# 
+sub load_md5_db {
+    my $dir_check = shift(@_);
+    my $dbfile = "$dir_check/.moo.db";
+
+    undef %md5_old;
+    undef %mtime_old; 
+    undef %size_old; 
+    undef %filename_old;
+
+    if (-e $dbfile){
+	say "Reading dbfile";
+
+	my $fh;
+	open($fh, "<", $dbfile);
+
+	while (<$fh>){
+	    chomp;
+	    my ($md5, $mtime, $size, $inode, $filename) = split("\t");
+    
+	    $md5_old{$inode}     = $md5;
+	    $mtime_old {$inode} = $mtime;
+	    $size_old{$inode}      = $size;
+	    $filename_old {$inode}  = $filename;
+	}
+
+	close($fh);
+    }
+
+    return;
 }
 
-close($fh);
+sub save_md5_db {
+    my $dir_check = shift(@_);
+    my $dbfile = "$dir_check/.moo.db";
+
+    open(my $fh, ">", $dbfile);
+
+    foreach (sort keys %md5) {
+	print $fh "$md5{$_}\t$mtime{$_}\t$size{$_}\t$_\t$filename{$_}\n";
+    }
+
+    close($fh);
+    return;
+}
