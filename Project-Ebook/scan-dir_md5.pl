@@ -15,14 +15,17 @@ use Cwd;
 # * Save md5 values for "deleted" files to "trash"?
 # * if no data - don't save datafile? erase old datafile?
 # * if no files in dir - skip whole thing?
+# * split into module,
+# * use full path for data, no CD
+# * fast version
 
 #
 # Scan dir passed as arg, store md5 of all non dot files in  datafle in dir.
 # If the modified time has not changed, re-use old modified time
 #
-my $debug = 0;
-my $print_width = 80;
-my $md5_limit = 4 * $print_width;;
+our $debug = 0;
+our $print_width = 80;
+our $md5_limit = 4 * $print_width;;
 # $md5_limit = 10;
 
 my (%md5_old, %mtime_old, %size_old, %filename_old);
@@ -266,7 +269,7 @@ sub scan_dir_md5 {
 	    print "\t";
 	 }
 
-	# print "\n\t" if $i % $print_width == 0;
+	print "\n\t" if $i % $print_width == 0;
 	STDOUT->flush();
     }
     print "\n" unless ($i % $print_width == 0);    # print CR unless just printed one

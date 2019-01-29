@@ -17,7 +17,6 @@
    + Rename File
 
 
-
 ** Existing Annoyances
    + Restructure code - move publisher into separate file
    + Look at smarter parsin filename - maybe use nested regexp lib to fix nested problems?
@@ -26,8 +25,9 @@
    
 
 * Ideas
-  + Read genessis-lib file
-  + 
+  + Read genessis-lib file - part done
+  + Collect md5 files from sub dir and combine
+  + Monitor paste buffer and save
 
 * Use cases
 ** DONE Find dupe file in a dir 
