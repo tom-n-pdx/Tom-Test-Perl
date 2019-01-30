@@ -41,15 +41,21 @@ find(\&wanted,  @ARGV);
 
 sub wanted {
     return unless -d $File::Find::name;
-
     my  $dir_check = $File::Find::name;
-    say "Scanning: $dir_check";
-    my $updates = &scan_dir_md5($fast_scan, $dir_check);
-    
+
+    say "Checking: $dir_check" if ($debug >= 0);
+
+    # Force update of dir
+    &scan_dir_md5(0, $dir_check);
+
+    my $updates = &check_dir_dupe($dir_check);
     $global_updates += $updates;
-    say "Total Update: $global_updates";
+    # say "Total Dupes: $global_updates" if ($debug >= 0);
 
    return;
 }
+
+say " ";
+&report_dupes;
 
 exit;
