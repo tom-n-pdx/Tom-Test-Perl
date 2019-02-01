@@ -29,7 +29,7 @@ use ScanDirMD5;
 our $debug = 0;
 our $print_width = 80;
 our $md5_limit = 4 * $print_width;;
-my $fast_scan = 0;
+my $fast_scan = 1;
 
 
 # our (%md5_old, %mtime_old, %size_old, %filename_old);
@@ -40,7 +40,9 @@ my $global_updates = 0;
 find(\&wanted,  @ARGV);
 
 sub wanted {
-    return unless -d $File::Find::name;
+    return unless -d $File::Find::name && md5_need_update($File::Find::name);
+    return if ($File::Find::name =~ /^\./);
+
 
     my  $dir_check = $File::Find::name;
     say "Scanning: $dir_check";

@@ -8,8 +8,9 @@
 # * write debug pring functions, count lines, etc
 # * add dir info to datafile 
 # * Need a update md5 for one file sub
-# * need hash of array data structure
-# * store full filename? inode? of dupe files
+# * light weight find dupe - only calc MD5 if size matches
+#
+# * Bug - if saved fast values, won't save full values until forced update
 
 use Modern::Perl; 		         # Implies strict, warnings
 use constant MD5_BAD => "x" x 32;
@@ -143,13 +144,11 @@ sub scan_dir_md5 {
 
     &load_md5_db($dir_check);    # Modifies global old values
 
-    # Get list of files in dir
-    opendir(my $dh, $dir_check);
-    my @filenames = readdir $dh;
-    closedir $dh;
-
-    @filenames = grep($_ !~ /^\./, @filenames);		                            # remove . files from last
-    @filenames = grep(-f $dir_check.'/'.$_ , @filenames);		            # remove not normal files from last
+    my @filenames = list_dir_files($dir_check);
+    if (@filenames < 1){
+	&save_md5_db($dir_check);
+	return(1);
+    }
 
     # for debug only do first N  files
     if ($main::debug >= 1){
@@ -372,5 +371,128 @@ sub report_dupes {
 
     return;
 }
+
+#
+# Calc md5 for one file in dir
+# Uses global data values
+# Always recalculates md5 value for requested file
+#
+sub scan_file_md5 {
+    my $filepath = shift(@_);
+
+    if (!-e $filepath or !-f $filepath or !-r $filepath){
+	warn "Bad File: $filepath";
+	return 0;
+    }
+    
+    say "Scanning File $filepath" if ($main::debug >= 1);
+
+    # Clear old values
+    undef %md5;
+    undef %mtime; 
+    undef %size; 
+    undef %filename;
+
+    my ($filename, $dir_check, $suffix) = File::Basename::fileparse($filepath);
+
+    # Load data for dir
+    say "Load db file: $dir_check";
+    &load_md5_db($dir_check);      # Modifies global old values
+
+    # Need to copy old values over to new values
+    foreach my $inode (keys %filename_old){
+	$filename{$inode} = $filename_old{$inode};
+	$size{$inode}         = $size_old{$inode};
+	$mtime{$inode}     = $mtime_old{$inode};    
+	$md5{$inode}        = $md5_old{$inode} if defined $md5_old{$inode};
+    }
+
+    my $count = (my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks)) = stat($filepath);
+    # If count wrong, stat failed. file name changed, unreadable, some type of problem
+    if ($count != 13){
+	warn "ERROR: Bad Stat: $filepath";	    
+	return 0;
+    }
+
+    # Save file values
+    $mtime{$inode}       = $mtime;
+    $size{$inode}           = $size;
+    $filename{$inode}   = $filename;
+
+    # Calc new md5 value
+    my $digest = Digest::MD5::File::file_md5_hex($filepath);
+    # Odd bug  -sometimes a readable file causes an undefined md5 value
+    if (! defined $digest) {
+	warn "ERROR: Bad MD5: $filename";
+	return 0;
+    }
+    $md5{$inode}        = $digest;
+
+    # save data for dir
+    say "Save db file: $dir_check";
+    &save_md5_db($dir_check);
+
+    return 1;
+}
+
+#
+# Return list normal, non -dot files in dir
+# Paramater: dir
+#
+sub list_dir_files {
+    my $dir = shift(@_);
+
+    if (!-d $dir or !-r $dir){
+	die "Bad dir $dir";
+    }
+    
+    # Get list of files in dir
+    opendir(my $dh, $dir);
+    my @filenames = readdir $dh;
+    closedir $dh;
+
+    @filenames = grep($_ !~ /^\./, @filenames);		                    # remove . files from last
+    @filenames = grep( -f "$dir/$_" , @filenames);		            # remove not normal files from last
+
+    return (@filenames);
+}
+
+#
+# Scan a list of files / dirs and return max mtime
+# Paramater: list readable files & dirs
+#
+sub max_mtime {
+    my $dir = shift(@_);
+    my @filenames = @_;
+
+    my @mtimes =  map( (stat("$dir/$_"))[9] // 0, @filenames);
+    my $max_mtime = max(@mtimes, 0);
+
+    return($max_mtime);
+}
+
+#
+# Given a dir, see if the dbfile needs updating
+# Param: dir
+#
+sub md5_need_update {
+    my $dir = shift(@_);
+    my $dbfile = "$dir/.moo.db";
+    my @filenames;
+
+    # If no db file, we need a update
+    return(1) if (!-e $dbfile);
+    my $db_mtime = (stat(_))[9] // 0;
+
+    # If dir mtime > database mtime, need update
+    my $dir_mtime = (stat($dir))[9] // 0;
+    return(1) if ($dir_mtime > $db_mtime);
+
+    $dir_mtime =  max_mtime($dir, list_dir_files($dir));
+    return($dir_mtime > $db_mtime);
+}
+
+
+
 # End Module
 1;
