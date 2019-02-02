@@ -4,11 +4,8 @@
 ** Bug Fix Lib Genesis
    + Handle ( space date, publisher)
    + Rename Microsoft (Azure | Excel | etc)
-   + 
-
 
 ** Parse lib genesis xls file
-
 
 ** Finish MooFile
    + Tests
@@ -22,12 +19,17 @@
    + Look at smarter parsin filename - maybe use nested regexp lib to fix nested problems?
    + More robust date parsing
    + Make general and lib one program
-   
+   + Cleanup the commands, delete old test programs, find way to release   
+   + Fix emacs perl mode  
 
 * Ideas
   + Read genessis-lib file - part done
   + Collect md5 files from sub dir and combine
+    - Dumb - scan whole tree, collect
+    - better fixed string file
+    - Check max length dir, name
   + Monitor paste buffer and save
+  + 
 
 * Use cases
 ** DONE Find dupe file in a dir 

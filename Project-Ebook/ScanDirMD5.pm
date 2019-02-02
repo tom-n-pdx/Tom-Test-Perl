@@ -7,17 +7,30 @@
 # * Move md5, file info into a singular complex data structure instead of 4 hash's
 # * write debug pring functions, count lines, etc
 # * add dir info to datafile 
-# * Need a update md5 for one file sub
 # * light weight find dupe - only calc MD5 if size matches
+# * Save dev? For tree - dir - all on one dev - no... but might need for dir later....
+# * How save dir stats in datafile...
+# * pass debug as function option var
+# * write find dupe code off of reading tree datafile
+# * Export key functsions
+# * make db tree seperate module
+# * handle long filenames, dir names
+# * Check for .unwanted
 #
 # * Bug - if saved fast values, won't save full values until forced update
 
+package ScanDirMD5;
+use Exporter qw(import);
+our @EXPORT_OK = qw(scan_dir_md5 new_dbtree append_dbtree close_dbtree);
+
+
 use Modern::Perl; 		         # Implies strict, warnings
-use constant MD5_BAD => "x" x 32;
 use List::Util qw(min max);	 # Import min()
 use Digest::MD5::File;
 use autodie;
-use File::Basename;         # Manipulate file paths
+use File::Basename;                  # Manipulate file paths
+
+use constant MD5_BAD => "x" x 32;
 
 
 my (%md5,        %mtime,        %size,        %filename);
@@ -27,10 +40,13 @@ my %md5_check;
 my %md5_check_HoA;
 my %size_check;
 
+# my $dbfile;
+
+
+
 #
 # Function: Load a md5 datafile
-# Modifies global hash values
-# Hash vars must be defined in main
+# Modifies global module hash values
 # 
 sub load_md5_db {
     my $dir_check = shift(@_);
@@ -237,8 +253,7 @@ sub scan_dir_md5 {
     if (scalar(@file_inodes) > 0 and !$fast_scan ){
     	# print "\n\tDo MD5 Scan\n\t"; $i = 0;
     	foreach my $inode (@file_inodes) {
-    	    # next if defined $md5{$inode};
-
+ 
     	    my $filename = $filename{$inode};
     	    say "Checking 2: $filename" if ($main::debug >= 2);
 
@@ -279,6 +294,8 @@ sub scan_dir_md5 {
 	print "\n" unless ($i % $main::print_width == 0 && $i > 0);    # print CR unless just printed one
     }
 
+    my $num_files = scalar keys %filename;
+
     # debug code
     # BUG - a undeletedd unreadable file?
     my $deleted_count  = scalar  %filename_old; # And records left in old list must have been deleted 
@@ -296,7 +313,6 @@ sub scan_dir_md5 {
 
     return $changes;
 }
-
 
 sub check_dir_dupe {
     my $dir_check = shift(@_);
@@ -492,6 +508,85 @@ sub md5_need_update {
     return($dir_mtime > $db_mtime);
 }
 
+#
+# Tree Datafile Code
+# * Move to sepearte flle?
+# * Add dev code?
+# * wrte dir info?
+
+# every size one larger then needed so leave human readable spalce
+# data type 4 chars
+# MD5 32 chars
+# 3 x Long Unsigned Ints 10 characters - mtime, size, inode
+# Filename - up to 256 - using 200
+
+my $dbtree_template1 = "A5 A33 A11 A11 A11 A441"; # length 512
+# my $dbtree_template2 = "A5                              A266"; # length 271
+
+my $dbtreefile;   
+my $tmptreefile;
+my $oldtreefile; 
+
+my $fhtree;
+
+sub new_dbtree {
+    my $dir_tree = shift(@_);
+
+    $dbtreefile   = "$dir_tree/.moo.tree.db";
+    $tmptreefile = $dbtreefile.'.tmp';
+    $oldtreefile  = $dbtreefile.'.old';
+
+    open($fhtree, ">", $tmptreefile);
+    print $fhtree "# moo.tree.db version 1.1\n";
+
+    close $fhtree;
+}
+
+
+sub append_dbtree {
+    my $dir_check = shift(@_);
+
+    # Now need to append data to tree datafile
+    open($fhtree, ">>", $tmptreefile);
+
+    # Write dir info
+    my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat($dir_check);
+
+    my $length = length($dir_check);
+    warn "INFO Dir too long $length $dir_check"if ($length > 441);
+    my $str = pack($dbtree_template1, "dir", MD5_BAD,  $mtime,  $size,  $inode,  $dir_check);
+    print $fhtree "$str\n";
+
+    foreach (sort keys %filename) {
+    	my $md5 = $md5{$_} // MD5_BAD;
+	my $filename = $filename{$_};
+
+	my $str = pack($dbtree_template1, "file", $md5,  $mtime{$_},  $size{$_},  $_,  $filename);
+    	print $fhtree "$str\n";
+	
+	$length = length($filename);
+        warn "INFO Fie name too long $length $filename{$_}" if ($length > 441);
+	#$filename = substr(0, 200);
+	# while (length($filename) > 0){
+	#     $str = pack($dbtree_template2, "cont", $filename);
+	#     $filename = substr(0, 266);
+	#     print $fhtree "$str\n";
+	# }
+
+    }
+
+    close $fhtree;
+}
+
+
+sub close_dbtree {
+    my $dir_check = shift(@_);
+
+    if (-e $dbtreefile){
+	rename($dbtreefile, $oldtreefile);
+    }
+    rename($tmptreefile, $dbtreefile);
+}
 
 
 # End Module
