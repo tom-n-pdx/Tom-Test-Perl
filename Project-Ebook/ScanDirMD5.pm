@@ -33,12 +33,12 @@ use File::Basename;                  # Manipulate file paths
 use constant MD5_BAD => "x" x 32;
 
 
-my (%md5,        %mtime,        %size,        %filename);
-my (%md5_old, %mtime_old, %size_old, %filename_old);
+our (%md5,        %mtime,        %size,        %filename);
+our (%md5_old, %mtime_old, %size_old, %filename_old);
 
-my %md5_check;
-my %md5_check_HoA;
-my %size_check;
+# my %md5_check;
+our %md5_check_HoA;
+our %size_check_HoA;
 
 # my $dbfile;
 
@@ -314,79 +314,79 @@ sub scan_dir_md5 {
     return $changes;
 }
 
-sub check_dir_dupe {
-    my $dir_check = shift(@_);
-    my $dupes = 0;
+# sub check_dir_dupe {
+#     my $dir_check = shift(@_);
+#     my $dupes = 0;
 
-    if (!-e $dir_check or !-d $dir_check or !-r $dir_check){
-	warn "Bad Dir: $dir_check";
-	return 0;
-    }
-    say "Checking $dir_check" if $main::debug >= 1;
+#     if (!-e $dir_check or !-d $dir_check or !-r $dir_check){
+# 	warn "Bad Dir: $dir_check";
+# 	return 0;
+#     }
+#     say "Checking $dir_check" if $main::debug >= 1;
 
-    # Load values into old version of vars
-    &load_md5_db($dir_check);    # clears & modifies global old values
+#     # Load values into old version of vars
+#     &load_md5_db($dir_check);    # clears & modifies global old values
 
-    my $count = scalar keys %md5_old;
-    if ($count == 0){
-	say "WARN: No md5 values in db file for dir" if ($main::debug >= 1);
-	return 0;
-    }
+#     my $count = scalar keys %md5_old;
+#     if ($count == 0){
+# 	say "WARN: No md5 values in db file for dir" if ($main::debug >= 1);
+# 	return 0;
+#     }
 
-    # Walk through all files, build index via md5, warn if dupe md5
-    foreach my $inode (keys %md5_old){
-	my $size = $size_old{$inode};
-	my $md5 = $md5_old{$inode};
-	my $filename = $filename{$inode};
-	my $filepath = $dir_check.'/'.$filename;
+#     # Walk through all files, build index via md5, warn if dupe md5
+#     foreach my $inode (keys %md5_old){
+# 	my $size = $size_old{$inode};
+# 	my $md5 = $md5_old{$inode};
+# 	my $filename = $filename{$inode};
+# 	my $filepath = $dir_check.'/'.$filename;
 
-	# if (defined $size_check{$size}){
-	#     say "Dupe Size: $size Count:$size_check{$size}";
-	# }
-	$size_check{$size}++;
+# 	# if (defined $size_check{$size}){
+# 	#     say "Dupe Size: $size Count:$size_check{$size}";
+# 	# }
+# 	#$size_check{$size}++;
 
-	if (defined $md5_check{$md5} && $main::debug >= 1){
-	    say "Dupe files";
-	    say "1: ",$md5_check{$md5};
-	    # say "2: $filename";
-	    say "2: $filepath";
-	    say " ";
-	    $dupes++;
-	} else {
-	    # $md5_check{$md5} = $filename;
-	    $md5_check{$md5} = $filepath;
-	}
+# 	if (defined $md5_check{$md5} && $main::debug >= 1){
+# 	    say "Dupe files";
+# 	    say "1: ",$md5_check{$md5};
+# 	    # say "2: $filename";
+# 	    say "2: $filepath";
+# 	    say " ";
+# 	    $dupes++;
+# 	} else {
+# 	    # $md5_check{$md5} = $filename;
+# 	    $md5_check{$md5} = $filepath;
+# 	}
 
-	# Using HoA Check
-	 # push @{ $md5_check_HoA{$md5} }, $filename;
-	 push @{ $md5_check_HoA{$md5} }, $filepath;
+# 	# Using HoA Check
+# 	 # push @{ $md5_check_HoA{$md5} }, $filename;
+# 	 push @{ $md5_check_HoA{$md5} }, $filepath;
 
-    }
+#     }
 
-    return $dupes;
-}
+#     return $dupes;
+# }
 
-sub report_dupes {
+# sub report_dupes {
 
-    say "New Check";
+#     say "New Check";
 
-    foreach my $md5 (keys %md5_check_HoA){
-	my $length = scalar(@{ $md5_check_HoA{$md5} });
-	next unless $length > 1;
-	say "MD5: $md5 Dupes: $length";
+#     foreach my $md5 (keys %md5_check_HoA){
+# 	my $length = scalar(@{ $md5_check_HoA{$md5} });
+# 	next unless $length > 1;
+# 	say "MD5: $md5 Dupes: $length";
 	
-	my $old_path = "NULL";
-	foreach my $filepath (@{ $md5_check_HoA{$md5} }){
-	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);
-	    say "    Dir: $path" if ($path ne $old_path);
-	    $old_path = $path;;
-	    say "        $name";
-	}
-	say " ";
-    }
+# 	my $old_path = "NULL";
+# 	foreach my $filepath (@{ $md5_check_HoA{$md5} }){
+# 	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);
+# 	    say "    Dir: $path" if ($path ne $old_path);
+# 	    $old_path = $path;;
+# 	    say "        $name";
+# 	}
+# 	say " ";
+#     }
 
-    return;
-}
+#     return;
+# }
 
 #
 # Calc md5 for one file in dir
@@ -520,7 +520,7 @@ sub md5_need_update {
 # 3 x Long Unsigned Ints 10 characters - mtime, size, inode
 # Filename - up to 256 - using 200
 
-my $dbtree_template1 = "A5 A33 A11 A11 A11 A441"; # length 512
+my $dbtree_template1 = "A5 A33 A11 A11 A11 A441";    # length 512
 # my $dbtree_template2 = "A5                              A266"; # length 271
 
 my $dbtreefile;   
@@ -551,33 +551,33 @@ sub append_dbtree {
 
     # Write dir info
     my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat($dir_check);
-
-    my $length = length($dir_check);
-    warn "INFO Dir too long $length $dir_check"if ($length > 441);
-    my $str = pack($dbtree_template1, "dir", MD5_BAD,  $mtime,  $size,  $inode,  $dir_check);
+    my $filename = $dir_check;
+    my $length = length($filename);
+    
+    # For dirs - MD5 field contains dev
+    my $str = pack($dbtree_template1, "dir", $dev,  $mtime,  $size,  $inode,  $dir_check);
     print $fhtree "$str\n";
 
-    foreach (sort keys %filename) {
-    	my $md5 = $md5{$_} // MD5_BAD;
-	my $filename = $filename{$_};
+    warn "INFO Dir too long $length $filename" if ($length > 441);
+    
 
-	my $str = pack($dbtree_template1, "file", $md5,  $mtime{$_},  $size{$_},  $_,  $filename);
+    # For dirs - MD5 field contains dev
+    $str = pack($dbtree_template1, "dir", $dev,  $mtime,  $size,  $inode,  $dir_check);
+    print $fhtree "$str\n";
+
+    foreach my $inode (keys %filename) {
+    	my $md5 = $md5{$inode} // MD5_BAD;
+	my $filename = $filename{$inode};
+
+	my $str = pack($dbtree_template1, "file", $md5,  $mtime{$inode},  $size{$inode},  $inode,  $filename{$inode});
     	print $fhtree "$str\n";
 	
 	$length = length($filename);
-        warn "INFO Fie name too long $length $filename{$_}" if ($length > 441);
-	#$filename = substr(0, 200);
-	# while (length($filename) > 0){
-	#     $str = pack($dbtree_template2, "cont", $filename);
-	#     $filename = substr(0, 266);
-	#     print $fhtree "$str\n";
-	# }
-
+        warn "INFO File name too long $length $filename{$_}" if ($length > 441);
     }
 
     close $fhtree;
 }
-
 
 sub close_dbtree {
     my $dir_check = shift(@_);
@@ -586,6 +586,103 @@ sub close_dbtree {
 	rename($dbtreefile, $oldtreefile);
     }
     rename($tmptreefile, $dbtreefile);
+}
+
+sub load_dbtree {
+    my $dir_tree = shift(@_);
+    my $file_n = 0;
+    my $dir_n = 0;
+
+    $dbtreefile   = "$dir_tree/.moo.tree.db";
+
+    open(my $fhtree, "<", $dbtreefile);
+
+    my $version = <$fhtree>;
+    say "DB Tree Version: $version";
+
+    my ($dir, $dev);
+    while(<$fhtree>){
+	my ($cmd, $md5, $mtime, $size, $inode, $filename) = unpack($dbtree_template1);
+	if ($cmd eq "file"){
+	    $file_n++;
+
+	    my $filepath = "$dir/$filename";
+	    $filename{$inode} = $filepath;
+	    $size{$inode}         = $size;
+	    $mtime{$inode}     = $mtime;
+	    $md5{$inode}        = $md5;
+
+	    push @{ $size_check_HoA{$size} }, $inode;
+	    push @{ $md5_check_HoA{$md5} }, $inode;
+
+	} else {
+	    $dir_n++;
+
+	    $dir = $filename;
+	    $dev = $md5;
+	}
+    }
+    close $fhtree;
+
+    say "Read N File: $file_n Dir: $dir_n";
+    
+    return;
+}
+
+
+
+sub report_dupes {
+
+    # sort by $nd5 then $filename
+    sub sort1 {
+	if ( $md5{$a} eq $md5{$b} ){
+	    return( $filename{$a} cmp $filename{$b} );
+	}
+	$md5{$a} cmp $md5{$b};
+    }
+    
+    say " ";
+    say "Dupe Sizes";
+
+    foreach my $size (sort( {$b <=> $a} keys %size_check_HoA)) {
+	my @inodes = @{$size_check_HoA{$size}};
+	next if (@inodes <= 1);
+
+	say "Size: $size Dupes: ", scalar(@inodes);    
+    
+	my $md5_old = "";
+	my $path_old = "";
+    
+	@inodes = sort( sort1  @inodes);    
+	foreach my $inode (@inodes) {
+	    my $filepath = $filename{$inode};
+	    my $md5      = $md5{$inode};
+
+	    my $dupe = scalar( @{$md5_check_HoA{$md5}});
+	    next if ($md5 ne MD5_BAD && $dupe <= 1);
+
+	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);
+
+	    if ($md5 eq $md5_old){
+		print " " x 32;
+	    } else {
+		print $md5;
+	    }
+	    $md5_old = $md5;
+	    
+
+	    if ($path ne $path_old) {
+		say " $path";
+		say " " x 32, "    $name";
+	    } else {
+		say "    $name";
+	    }
+	    $path_old = $path;	    
+	}
+	
+	say " ";
+    }
+    
 }
 
 
