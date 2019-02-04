@@ -11,8 +11,6 @@ use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			        # Easier write open  /close code
 
 use Text::Unaccent::PurePerl;
-
-
 use File::Basename;
 
 # package FileParse v0.1.2;
@@ -56,6 +54,17 @@ sub check_file_name {
 	    next;
 	}
     
+	# Check leading whitespace in name
+	if (m/^\s+/){
+	    say "DEBUG: Leading whitespace:$_";
+	    $message =  "File has leading whitespace";
+	    $status = 1;
+	    s/\^\s+//;
+	    $filename_new = "$_$ext";
+	    say "DEBUG: Leading whitespace rename:$_";
+	    next;
+	}
+
 	# Check for multuple spaces in name - loop until all fixed
 	while (/\s{2,}/){
 	    $message =  "File has repeated whitespace";
@@ -63,7 +72,7 @@ sub check_file_name {
 	    s/\s{2,}/ /;
 	    $filename_new = "$_$ext";
 	}
-	next if $status;
+	# next if $status;
 
 	# Check trailing whitespace in name
 	if (/\s$/){
@@ -74,16 +83,37 @@ sub check_file_name {
 	    next;
 	}
 
-	# Check leading whitespace in name
-	if (/^\s/){
-	    # say "DEBUG: Leading whitespace:$_";
-	    $message =  "File has leading whitespace";
+	# Check trailing " copy" in name
+	if (/ copy$/){
+	    # say "DEBUG: trailing copy:$_";
+	    $message =  "File has trailing copy";
 	    $status = 1;
-	    s/\^\s//;
+	    s/\ copy$//;
 	    $filename_new = "$_$ext";
-	    # say "DEBUG: Leading whitespace rename:$_";
+	    # say "DEBUG: Trailing copy in name:$_";
 	    next;
 	}
+
+	# Check trailing _v1* in name
+	if (/_v1\d*$/){
+	    say "DEBUG: v1* in name:$_";
+	    $message =  "File has _v";
+	    $status = 1;
+	    s/\_v1\d*$//;
+	    $filename_new = "$_$ext";
+	    # say "DEBUG: Trailing _v in name:$_";
+	    next;
+	}
+
+	# Check for a trailing (d) for a copy of a file
+	# NO - maybe a trailing date (0)
+	# if (/\(\d+\)$/){
+	#     $message =  "File maybe a 2nd copy";
+	#     $status = 3;
+	#     next;
+	# }
+
+	
 
 
 	my %unicode_table = (
@@ -175,13 +205,6 @@ sub check_file_name {
 		$status = 3;
 		$message =  "File has unknown Unicode: $unicode";
 	    }
-	    next;
-	}
-
-	# Check for a trailing (d) for a copy of a file
-	if (/\(1\)$/){
-	    $message =  "File maybe a 2nd copy";
-	    $status = 3;
 	    next;
 	}
 

@@ -415,8 +415,8 @@ sub publisher_abrev {
 	"ITgp",
 	"Brill",
 	"DK",
-	"Course Technology",
-	"Pragmatic Bookshelf",
+
+	"Course Technology",	"Pragmatic Bookshelf",
 	"MIT",
 	
     );

@@ -453,6 +453,7 @@ sub scan_file_md5 {
 
 #
 # Return list normal, non -dot files in dir
+# returns list filenames, not full filepaths
 # Paramater: dir
 #
 sub list_dir_files {

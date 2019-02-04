@@ -1,6 +1,7 @@
 
 
 * ToDo
+** Cleanup file names
 ** Bug Fix Lib Genesis
    + Handle ( space date, publisher)
    + Rename Microsoft (Azure | Excel | etc)
@@ -22,6 +23,8 @@
    + Cleanup the commands, delete old test programs, find way to release   
    + Fix emacs perl mode  
 
+
+
 * Ideas
   + Read genessis-lib file - part done
   + Collect md5 files from sub dir and combine
@@ -30,6 +33,20 @@
     - Check max length dir, name
   + Monitor paste buffer and save
   + 
+
+* Use Cases
+
+** Find Duplicates
+
+** Download Files
+
+*** Download datafile on regular schedule
+
+*** Download requested book
+
+
+
+
 
 * Use cases
 ** DONE Find dupe file in a dir 

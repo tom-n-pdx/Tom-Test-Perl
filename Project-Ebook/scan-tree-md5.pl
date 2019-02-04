@@ -5,7 +5,7 @@
 #
 
 use Modern::Perl; 		         # Implies strict, warnings
-use List::Util qw(min max);	 # Import min()
+# use List::Util qw(min max);	 # Import min()
 # use Digest::MD5::File;
 # use autodie;
 use File::Find;
@@ -28,7 +28,7 @@ use ScanDirMD5 qw(scan_dir_md5 new_dbtree append_dbtree close_dbtree);
 our $debug = 0;
 our $print_width = 80;
 our $md5_limit = 4 * $print_width;;
-my $fast_scan = 1;
+my $fast_scan = 0;
 
 my $dir_tree = shift(@ARGV);
 my $global_updates = 0;
