@@ -69,7 +69,7 @@ sub update_md5 {
     my $digest;
 
     if (!$self->isreadable){
-	warn "WARN: tried to get md6 sig from unredable file file: ".$self->filepath;
+	warn "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
 	return $digest;
     }
 

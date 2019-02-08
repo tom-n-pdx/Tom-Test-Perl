@@ -56,7 +56,7 @@ sub BUILD {
 
 #
 # Calculate last time the dir or any file in dir changed
-# NOTE: assumes live version
+# NOTE: assumes online copy dir
 #
 sub _calc_dtime {
     my $self = shift(@_);
@@ -65,7 +65,7 @@ sub _calc_dtime {
     my $dtime = max(@{ $self->stat }[9, 10]);
 
     # Check files (not subdir, socket, hidden)
-    foreach ($self->list_files){
+    foreach ($self->list_filepaths){
 	if (-f $_){
 	    $dtime = max(  (stat($_) )[9, 10], $dtime);
 	}
@@ -94,7 +94,7 @@ sub update_dtime {
 # it does include un-readable normal files
 # Store a version?
 # 
-sub list_files {
+sub list_filepaths {
     my $self = shift(@_);
 
     # Open dir & Scan Files
@@ -102,7 +102,6 @@ sub list_files {
     my @filepaths = readdir $dh;
     closedir $dh;
 
-    
     @filepaths = grep(!/^\./, @filepaths);	                            # remove dot files
     @filepaths = map($self->filepath.'/'.$_, @filepaths);	    # make into absoule path         
     @filepaths = grep( {-f} @filepaths);                                       # remove none standard files (drop dirs, sockets, etc)  -check absolute path

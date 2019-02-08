@@ -687,5 +687,50 @@ sub report_dupes {
 }
 
 
+
+#
+# HoA subs
+#
+
+sub HoA_push {
+    my $HoA_ref  = shift(@_);
+    my $hash = shift(@_);
+    my $value = shift(@_);
+
+    if (  !defined( $$HoA_ref{$hash}) || !grep( {$_ eq $value} @{ $$HoA_ref{$hash} }) ){
+	push( @{ $$HoA_ref{$hash} }, $value);
+    }
+
+    return( scalar( @{ $$HoA_ref{$hash} }));
+}
+
+
+sub HoA_list {
+    my $HoA_ref  = shift(@_);
+    my $hash = shift(@_);
+    my @list;
+
+    @list = @{ $$HoA_ref{$hash} } if (defined$$HoA_ref{$hash});
+
+    return( @list );
+}
+
+
+sub HoA_pop {
+    my $HoA_ref  = shift(@_);
+    my $hash = shift(@_);
+    my $value;
+
+    if (defined$$HoA_ref{$hash}){
+	$value = pop(@{ $$HoA_ref{$hash} });
+	delete $$HoA_ref{$hash} if ( scalar( @{ $$HoA_ref{$hash} } ) <= 0 );
+    }
+    
+    return($value);
+}
+
+
+
+
 # End Module
 1;

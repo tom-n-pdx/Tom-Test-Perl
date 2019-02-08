@@ -21,13 +21,13 @@ package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
 
-has 'filepath',			         # full name of file including path
+has 'filepath',			# full name of file including path
     is => 'ro', 
     isa => 'Str',
-    writer => '_set_filepath',
-    required => 1;
+    #  required => 1,
+    writer => '_set_filepath';
 
- has 'stat',			# stat array - not live version, last time updated or created
+has 'stat',			# stat array - not live version, last time updated or created
     is => 'ro',
     isa => 'ArrayRef[Int]',
     writer => '_set_stat';
@@ -66,8 +66,6 @@ sub _args_helper {
     
     return %args;
 }
-
-
 
 sub BUILDARGS {
     my ($class, @original) = @_;
@@ -145,11 +143,18 @@ sub mtime_str {
     return(Time::localtime::ctime($self->mtime));
 }
 
+sub dev {
+    my $self = shift(@_);
+    
+    my $dev =  ${$self->stat}[0];
+    return($dev);
+}
+
 sub inode {
     my $self = shift(@_);
     
-    my $mtime =  ${$self->stat}[1];
-    return($mtime);
+    my $inode =  ${$self->stat}[1];
+    return($inode);
 }
 
 # does live check
@@ -231,9 +236,6 @@ sub rename {
 
 }
    
-
-
-
 
 #
 # Pretty Print Utility
