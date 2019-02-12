@@ -47,12 +47,11 @@ closedir $dh;
 chdir($dir_check);
 
 @filenames = grep($_ !~ /^\./, @filenames);		    # remove . files from last
-@filenames = grep($_ !~ /\(ebook/, @filenames);	    # remove already ebook
+@filenames = grep($_ !~ /\(ebook/, @filenames);	            # remove already ebook
 @filenames = grep(!-d $_ , @filenames);		            # remove dirs from last
 
 # How sort and match MacOS display order?
 #@filenames = sort(@filenames);
-
 
 
 # for debug only do first N  files
@@ -61,6 +60,8 @@ if ($debug >= 1){
     $end = min($end, $#filenames);                                       
     @filenames = @filenames[0..$end];
 }
+
+# my @filepaths = dir_list(dir => $dir_check);
 
 say "Files: ", join(", ", @filenames) if ($debug >= 2);
 

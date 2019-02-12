@@ -4,15 +4,14 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * Fix bug with non-existent hash being removed - maybe only after file is restored?
 # * Make remove work on Objects
 # * add make sure insert, delete work both for single or list
-# * find way to pass no md5 or no dtime to create
+# * find way to pass no md5 or no dtime to insert
 # * save / restore
 # * look for dupes in size, md5
-# * usng inode instead of ref in HoA's until solve rcusion depth problem
 # * itterator method to cycle over whole tree
 # * Need update if re-calc MD5 for file gets added, fixup HoA's
+# * add "name"  filepath for tree
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -71,13 +70,11 @@ sub insert {
 	    # Now insert into Size_HoA
 	    my $size = $obj->size;
 	    &HoA_push($self->size_HoA , $size, $hash);
-	    # &HoA_push($self->size_HoA , $size, $obj);
 
 	    # If object is file also insert into MD5 HoA if has a MD5
 	    if ($obj->isfile && defined $obj->md5) {
 	    	my $md5 = $obj->md5;
 	    	&HoA_push($self->md5_HoA , $md5, $hash);
-	    	# &HoA_push($self->md5_HoA , $md5, $obj);
 	    }
 
 	}
@@ -89,40 +86,28 @@ sub insert {
 sub remove {
    my $self   = shift( @_);
    my @hashs = @_;
-   my $deleted;
+   my @deleted;
 
    foreach my $hash (@hashs){
-       #my $type = blessed($hash) // "Not Blessd";
-       #say "Type: $type";
-      #if (! $obj->isa('MooNode')){
-	#   $obj = ${$self->nodes}{$obj};
-       #}
-
-       # Add error messge if try and delete non-existent
        if (!defined ${$self->nodes}{$hash}){
-	   say "Trying to delete non-existent hash from Tree";
+	   carp "Trying to delete hash not in Tree $hash";
 	   next;
        }
        my $obj = ${$self->nodes}{$hash};
-
-       $deleted = delete ${$self->nodes}{$hash};
+       my $deleted = delete ${$self->nodes}{$hash};
+       push(@deleted, $deleted);
 
        # Delete from size_HoA
-       my $size = $obj->size;
-       &HoA_remove($self->size_HoA , $size, $hash);       
-       # &HoA_remove($self->size_HoA , $size, $obj);
-
+       &HoA_remove($self->size_HoA , $obj->size, $hash);       
 
        # If file & has MD5 - remove from MD5_HoA
-       # if ($obj->isfile){
-       # 	   my $md5 = $obj->md5;
-       # 	   &HoA_remove($self->md5_HoA , $md5, $hash) if defined $md5;
-       # 	   # &HoA_remove($self->md5_HoA , $md5, $obj) if defined $md5;
-       # }
+       if ($obj->can('md5') && defined $obj->md5){
+       	   &HoA_remove($self->md5_HoA , $obj->md5, $hash);
+       }
        
    }
    
-   return($deleted);
+   return(@deleted);
 }
 
 sub count {
@@ -144,14 +129,26 @@ sub List {
     return(@Nodes);
 }
 
-# sub pop {
-#    my $self   = shift( @_);
 #
-#    my $hash = (sort keys %{$self->nodes})[0] // 0;
-#    my $obj = $self->remove($hash);
+# Save & restore functions for Tree
+# Need to solve the problems with nesting too deep
+# * Consider deleting HoA before save, rebuild after load
 #
-#    return($obj);
-# }
+
+sub save {
+    my $self = shift(@_);
+    my %opt = @_;
+
+    my $filepath  =  delete $opt{filepath} or croak("Missing 'filepath' param");
+    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+    
+    store($self, "$filepath.tmp");
+    rename($filepath, "$filepath.old")if -e $filepath;
+    rename("$filepath.tmp", $filepath);
+}
+
+
+
 
 #
 # HoA utility subs
@@ -162,25 +159,17 @@ sub HoA_push {
     my $hash = shift(@_);
     my $value = shift(@_);
 
-    if (  !defined( $$HoA_ref{$hash}) || !grep( {$_ eq $value} @{ $$HoA_ref{$hash} }) ){
+    if ( !defined( $$HoA_ref{$hash}) || !grep( {$_ eq $value} @{ $$HoA_ref{$hash} }) ){
 	push( @{ $$HoA_ref{$hash} }, $value);
     }
 
     return( scalar( @{ $$HoA_ref{$hash} }));
 }
 
-# sub HoA_pop {
-#     my $HoA_ref  = shift(@_);
-#     my $hash = shift(@_);
-#     my $value;
-#     # my $value = shift(@_);
 
-#     if (  !defined( $$HoA_ref{$hash}) ) {
-# 	$value = pop( @{ $$HoA_ref{$hash} });
-#     }
-
-#     return($value);
-# }
+#
+# HoA utility functions
+#
 
 sub HoA_list {
     my $HoA_ref  = shift(@_);

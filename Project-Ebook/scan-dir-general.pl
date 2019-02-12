@@ -1,17 +1,11 @@
 #!/usr/bin/env perl
 #
 # Generic check of files in dir for odd things - any type files - not specific to ebooks
-# Using Dir Object
+#
 #
 # ToDo
-# * move fix file into sub so can run as part of tree search
-# * make checks do all the mistakes of a type in a name, not just first one
-# * Fix number of files fixed vs number problems remaining
-# * Use no colide rename!
-# * Better fix of unicode
-# * count number fixes
-# * make fix files more of a 
-
+# * look for slash 00 encoded characters in file names
+# * 
 
 use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
@@ -19,19 +13,25 @@ use autodie;			# Easier write open  /close code
 use List::Util qw(min max);	# Import min()
 use Getopt::Long;
 
+use Unicode::Normalize;
+
+
 use lib '.';
 use FileParse qw(check_file_name);
-use MooNode::MooDir;
+use FileUtility qw (dir_list rename_unique);
+# use MooNode::MooDir;
 use ScanDirMD5;
 
-use utf8;
-use Text::Unidecode;
+
+
+
+# use utf8;
+# use Text::Unidecode;
 
 # try this
 # use Unicode::Normalize;
 # my $decomposed = NFKD( $test );
 # $decomposed =~ s/\p{NonspacingMark}//g;
-
 # Enable utf8 output in print
 # binmode(STDOUT, ":utf8");
 
@@ -40,110 +40,129 @@ use Text::Unidecode;
 # Parse Args
 # * Need to define vars before parse args
 #
-my $debug = 0;
+our $debug = 0;
+our $verbose = 1;
 my $status_print = 1; # Print message if status >= this number
-my $status_fix = 0;    # rename if status <= this number
+my $fix          = 0;    # rename if status <= this number
 
 GetOptions (
     'debug=i' => \$debug,
-    'print=i'   => \$status_print,
-    'fix=i'      => \$status_fix,
+    'verbose=i' => \$verbose,
+    'print=i' => \$status_print,
+    'fix=i'   => \$fix,
 );
 
 say "Debug: $debug";
+say "Verbose: $verbose";
 say "Print: $status_print";
-say "Fix: $status_fix";
+say "Fix: $fix";
 
 
-#
-# Open current directory and create a list of files to scan
-#
+# scan thru args - if file, check - if dir, generate list of files and check
 
-# my $nerror = 0;
 
-# my $dir_check = pop (@ARGV);
 foreach my $dir_check (@ARGV){
     say "Scanning: $dir_check";
 
-    #chdir($dir_check);
-    # opendir(my $dh, ".");
+    my @filepaths = dir_list(dir => $dir_check);
 
-    # opendir(my $dh, $dir_check);
-    # my @filenames = readdir $dh;
-    # closedir $dh;
+    foreach my $filepath (@filepaths){
+	my ($name, $path, $ext) = File::Basename::fileparse($filepath, qr/\.[^.]*/);
 
-    # @filenames = grep($_ !~ /^\./, @filenames);		    # remove . files from last
-    # @filenames = grep(!-d $_ , @filenames);		            # remove dirs from last
+	my($status, $message, $ext_new) = check_file_ext($ext);
+	if ($status > 0 && $status >= $status_print){
+	    say "$name";
+	    say "Fixed Ext Problem ($status) $message";
+	}
 
-    my @filenames = ScanDirMD5::list_dir_files($dir_check);
-    # @filenames = @filenames[0..min(10,$#filenames) ] if ($debug >= 1);
-
-    # for debug only do first N  files
-    # if ($debug >= 1){
-    # 	my $end = 10;
-    # 	$end = min($end, $#filenames);                                       
-    # }
-
-    say "Files: ", join(", ", @filenames) if ($debug >= 2);
-
-    foreach my $filename (@filenames){
-	say "Checking: $filename" if ($debug >= 2);;
-	next if $filename =~ /.part$/;                                  # skip partial downloads
-
-	my $filepath = "$dir_check/$filename";
-
-	# if (! -r -w $filepath){
-	#     say "\nFile: $filename";
-	#     say "    Not RW";
-	#     # last;
-	# }
-
-	#
-	# repeat until fixed - but limit changes
-	#
-	for(my $i = 1; $i <= 4; $i++){
-	    say "Check $i: $filename" if ($debug >= 3);
-	    my($status, $message, $newname) = check_file_name($filename);
-	    last if ($status == 0);
+	my $name_new;
+	($status, $message, $name_new) = check_file_name2($name);
+	if ($status > 0 && $status >= $status_print){
+	    say "$name";
+	    print "Fixed name Problem ($status) $message";
+	}
 	
-	    if ($status >= $status_print) {
-		say "\nFile: $filename" if ($i == 1);
-		say "    $message Status: $status";
-		print "\tBefore:$filename\n";
-		print "\tAfter :$newname\n" if ($status <= 2);
-	    }
-	    if ($status > 0 && $status <= $status_fix) {
-		print "\tDo rename\n" if $status >= $status_print;
-		my$fixname = &rename_unique("$dir_check/$filename", "$dir_check/$newname");
-	    }
+	$name_new = $name_new.$ext_new;
 
-	    last if ($status >= 3);	#  fatal - status = 3, exit loop, can't fix
-	    $filename = $newname;
+	if ("$name$ext" ne $name_new){
+	    if ($status_print <= 1){
+		say "Old :$name$ext ";
+		say "New :$name_new";
+	    }
+	    if ($fix){
+		my $temp = rename_unique($filepath, "$path$name_new");
+		say "renamed to $temp" if ($status_print <= 1);
+	    }
 	}
     }
 }
 
-use File::Copy;
-use File::Basename;                  # Manipulate file paths
 
-sub rename_unique {
-    my $filename_old = shift(@_);
-    my $filename_new = shift(@_);
-    my $version = 9;
-    my ($name, $path, $ext) = File::Basename::fileparse($filename_new, qr/\.[^.]*/);
+sub check_file_ext {
+    my $ext = shift(@_);
+    my $status = 0;
+    my $message = "";
 
-    # say "Unique Rename $filename_old -> $filename_new";
-    if (!-e $filename_old){
-	die "Starting file does not exisit: $filename_old";
+    # Check if ext not lowercase ext
+    if (lc($ext) ne $ext) {
+	$message = "uppercase extension: $ext converted to lc";
+	$status = 1;
+	$ext = lc($ext);
     }
-
-    while (-e $filename_new){
-	$version++;
-	$filename_new = "$path/${name}_v$version$ext";
-    }
-    rename($filename_old, $filename_new) unless (-e $filename_new);
-    # say "New: $filename_new";
-
-    return($filename_new);
+    
+    return($status, $message, $ext);
 }
 
+
+sub check_file_name2 {
+    my $name = shift(@_);
+    my $status = 0;
+    my $message = "";
+
+    # my @match = ('^\s+');
+    # my @sub     = ('');
+    # my @status = (1);
+    # my @message = ("Leading whitespace removed");
+    my (@match, @sub, @status, @message);
+
+    my $data =<<'END_DATA';
+^\s+;;     1; Leading Whitespace removed
+\s+$;;     1; Trailing Whitespace removed
+ copy$;;    1; Trailing copy removed
+_v1\d*$;;  1; Trailing _v removed
+\s{2,}; ;     1; Multuple whitespace reduced 
+END_DATA
+
+    my $i= 0;
+    foreach (split(/\n/, $data)){
+	($match[$i], $sub[$i], $status[$i], $message[$i]) = split(/;/);
+	$status[$i] +=  0;
+	$i++;
+    }
+
+    $i = 0;
+    for ($i = 0; $i <= $#match; $i++){
+	# say "$i $message[$i]";
+	while ($name =~ /$match[$i]/){
+	    $message .= $message[$i]."\n";
+	    $status = $status[$i];
+	    $name =~ s/$match[$i]/$sub[$i]/;
+	}
+    }
+
+    if ($name =~ /([^[:ascii:]])/){
+    	if ($name ne Unicode::Normalize::NFC($name)){
+    	    $message .= "Normalized unicode in name\n";
+    	    $status = 1;
+    	    $name = Unicode::Normalize::NFC($name);
+    	}
+    }
+
+    # Check for unbalanced paerns - can't fix
+    if (! balanced($name)) {
+	$message .= "Unbalanced parens\n";
+	$status = 3;
+    }
+    
+    return($status, $message, $name);
+}

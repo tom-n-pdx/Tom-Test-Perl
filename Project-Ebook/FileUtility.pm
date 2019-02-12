@@ -84,7 +84,7 @@ sub dir_list {
 
 
     # Debug code
-    if ($verbose >= 2){
+    if ($verbose >= 3){
 	say "List of final filenames from dir_list for dir: $dir";
 	foreach my $filepath (@filepaths){
 	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);	
