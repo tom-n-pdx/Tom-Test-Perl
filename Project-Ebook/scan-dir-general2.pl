@@ -2,6 +2,10 @@
 #
 # Generic check of files in dir for odd things - any type files - not specific to ebooks
 #
+#
+# ToDo
+# * look for slash 00 encoded characters in file names
+# * 
 
 use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
@@ -14,6 +18,7 @@ use Unicode::Normalize;
 
 use lib '.';
 use FileParse qw(check_file_name);
+use FileUtility qw (dir_list rename_unique);
 # use MooNode::MooDir;
 use ScanDirMD5;
 
@@ -35,17 +40,20 @@ use ScanDirMD5;
 # Parse Args
 # * Need to define vars before parse args
 #
-my $debug = 0;
+our $debug = 0;
+our $verbose = 1;
 my $status_print = 1; # Print message if status >= this number
-my $fix               = 0;    # rename if status <= this number
+my $fix          = 0;    # rename if status <= this number
 
 GetOptions (
     'debug=i' => \$debug,
-    'print=i'   => \$status_print,
-    'fix=i'      => \$fix,
+    'verbose=i' => \$verbose,
+    'print=i' => \$status_print,
+    'fix=i'   => \$fix,
 );
 
 say "Debug: $debug";
+say "Verbose: $verbose";
 say "Print: $status_print";
 say "Fix: $fix";
 
@@ -55,29 +63,12 @@ say "Fix: $fix";
 
 foreach my $dir_check (@ARGV){
     say "Scanning: $dir_check";
-    my @filenames;
 
-    # if (!-e $dir_check || !-r $dir_check || ! (-d $dir_check || -t $dir_check)){
-    if (!-e $dir_check || !-r $dir_check){
-	warn "Bad Dir/File Arg: $dir_check";
-	next;
-    }
-    if (-d $dir_check){
-	@filenames = ScanDirMD5::list_dir_files($dir_check);
-    } elsif (-f $dir_check){
-	my ($name, $path, $null) = File::Basename::fileparse($dir_check);
-	push(@filenames, $name);
-	$dir_check = $path;
-    } else {
-	warn "Bad Dir/File Arg: $dir_check";
-    }
-    # say "Dir: $dir_check";
-    # say "Files: ", join(", ", @filenames);
+    my @filepaths = dir_list(dir => $dir_check);
 
-    foreach my $filename (@filenames){
-	my ($name, $path, $ext) = File::Basename::fileparse($filename, qr/\.[^.]*/);
+    foreach my $filepath (@filepaths){
+	my ($name, $path, $ext) = File::Basename::fileparse($filepath, qr/\.[^.]*/);
 
-	
 	my($status, $message, $ext_new) = check_file_ext($ext);
 	if ($status > 0 && $status >= $status_print){
 	    say "$name";
@@ -91,16 +82,16 @@ foreach my $dir_check (@ARGV){
 	    print "Fixed name Problem ($status) $message";
 	}
 	
-	my $filename_new = $name_new.$ext_new;
+	$name_new = $name_new.$ext_new;
 
-	if ($filename ne $filename_new){
+	if ("$name$ext" ne $name_new){
 	    if ($status_print <= 1){
-		say "Old :$filename ";
-		say "New :$filename_new";
+		say "Old :$name$ext ";
+		say "New :$name_new";
 	    }
 	    if ($fix){
-		rename_unique("$dir_check/$filename", "$dir_check/$filename_new");
-		say "renamed"  if ($status_print <= 1);
+		my $temp = rename_unique($filepath, "$path$name_new");
+		say "renamed to $temp" if ($status_print <= 1);
 	    }
 	}
     }
@@ -175,31 +166,3 @@ END_DATA
     
     return($status, $message, $name);
 }
-
-
-#
-
-use File::Copy;
-use File::Basename;                  # Manipulate file paths
-
-sub rename_unique {
-    my $filename_old = shift(@_);
-    my $filename_new = shift(@_);
-    my $version = 9;
-    my ($name, $path, $ext) = File::Basename::fileparse($filename_new, qr/\.[^.]*/);
-
-    # say "Unique Rename $filename_old -> $filename_new";
-    if (!-e $filename_old){
-	die "Starting file does not exisit: $filename_old";
-    }
-
-    while (-e $filename_new){
-	$version++;
-	$filename_new = "$path/${name}_v$version$ext";
-    }
-    rename($filename_old, $filename_new) unless (-e $filename_new);
-    # say "New: $filename_new";
-
-    return($filename_new);
-}
-

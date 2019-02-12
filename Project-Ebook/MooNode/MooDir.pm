@@ -16,6 +16,8 @@ package MooDir;
 use Moose;
 use namespace::autoclean;
 use List::Util qw(max);
+use FileUtility qw(dir_list);
+use Carp;
 
 extends 'MooNode';
 
@@ -32,10 +34,10 @@ sub BUILDARGS {
 
     # If filepath defined - check is a file of some type
     if ($filepath && ! -e $filepath){
-    	die "ERROR: constructor failed - tried to create Dir of non-existent file: ".$filepath;
+    	croak "ERROR: constructor failed - tried to create Dir of non-existent file: ".$filepath;
     }
     if ($filepath && ! -d $filepath){
-    	die "ERROR: constructor failed - tried to create Dir of non-Dir file: ".$filepath;
+    	croak "ERROR: constructor failed - tried to create Dir of non-Dir file: ".$filepath;
     }
 
     return \%args;
@@ -48,8 +50,11 @@ sub BUILDARGS {
 sub BUILD {
     my $self=shift( @_);
     my $args_ref = shift(@_);
+    my $opt_update_dtime = $$args_ref{'opt_update_dtime'}  // 1;
 
-    $self->update_dtime;
+    if ($opt_update_dtime){
+	$self->update_dtime;
+    }
 
     return
 }
@@ -65,6 +70,7 @@ sub _calc_dtime {
     my $dtime = max(@{ $self->stat }[9, 10]);
 
     # Check files (not subdir, socket, hidden)
+    # Check dir?
     foreach ($self->list_filepaths){
 	if (-f $_){
 	    $dtime = max(  (stat($_) )[9, 10], $dtime);
@@ -94,19 +100,64 @@ sub update_dtime {
 # it does include un-readable normal files
 # Store a version?
 # 
+# sub list_filepaths {
+#     my $self = shift(@_);
+
+#     # Open dir & Scan Files
+#     opendir(my $dh, $self->filepath);
+#     my @filepaths = readdir $dh;
+#     closedir $dh;
+
+#     @filepaths = grep(!/^\./, @filepaths);                  # remove dot files
+#     @filepaths = map($self->filepath.'/'.$_, @filepaths);   # make into absoule path         
+#     @filepaths = grep( {-f} @filepaths);                    # remove none standard files (drop dirs, sockets, etc)
+    
+
+#     return(@filepaths);
+# }
+
 sub list_filepaths {
     my $self = shift(@_);
+    my %opts  = @_;
 
-    # Open dir & Scan Files
-    opendir(my $dh, $self->filepath);
-    my @filepaths = readdir $dh;
-    closedir $dh;
-
-    @filepaths = grep(!/^\./, @filepaths);	                            # remove dot files
-    @filepaths = map($self->filepath.'/'.$_, @filepaths);	    # make into absoule path         
-    @filepaths = grep( {-f} @filepaths);                                       # remove none standard files (drop dirs, sockets, etc)  -check absolute path
+    my @filepaths = dir_list(dir => $self->filepath, %opts);
 
     return(@filepaths);
+}
+#
+# Dir list obj method
+# Returns a list of file objects
+# Skips ., .. and other hidden files - may need to create option for all files, etc.
+# it does include un-readable normal files
+#
+sub List {
+    my $self = shift(@_);
+    my %opt = @_;
+    my $update_dtime =  delete $opt{update_dtime}  // 0;
+    my $update_md5   =  delete $opt{update_md5}  // 0;
+
+    
+    my @filepaths = dir_list(dir => $self->filepath, %opt);
+
+    my @Files;
+    foreach my$filepath (@filepaths){
+	my $File;
+	if (-d $filepath){
+	    $File =  MooDir->new(filepath => $filepath, opt_update_dtime => $update_dtime);
+	} elsif (-f _) {
+	    $File =  MooFile->new(filepath => $filepath, opt_update_md5 => $update_md5);
+	} else {
+	    # warn("Unknown file type: $filepath");
+	    $File =  MooNode->new(filepath => $filepath);
+	}
+
+	# If hidden file, don't put on list
+	next if ($File->ishidden);
+
+	push(@Files, $File);
+    }
+
+    return(@Files);
 }
 
 #
@@ -122,7 +173,7 @@ sub ischanged {
 
     # If any of the file check items changed -  no need to do the expensive dtimes check
     # this avoids redoing check for file exist or is still dir
-    # Know wil have to rereun list of files and andd see what added / deleted
+    # Know will have to rereun list of files and see what was added / deleted
     #
     return (@changes) if (@changes);
 

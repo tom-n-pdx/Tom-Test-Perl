@@ -456,23 +456,23 @@ sub scan_file_md5 {
 # returns list filenames, not full filepaths
 # Paramater: dir
 #
-sub list_dir_files {
-    my $dir = shift(@_);
+# sub list_dir_files {
+#     my $dir = shift(@_);
 
-    if (!-d $dir or !-r $dir){
-	die "Bad dir $dir";
-    }
+#     if (!-d $dir or !-r $dir){
+# 	die "Bad dir $dir";
+#     }
     
-    # Get list of files in dir
-    opendir(my $dh, $dir);
-    my @filenames = readdir $dh;
-    closedir $dh;
+#     # Get list of files in dir
+#     opendir(my $dh, $dir);
+#     my @filenames = readdir $dh;
+#     closedir $dh;
 
-    @filenames = grep($_ !~ /^\./, @filenames);		                    # remove . files from last
-    @filenames = grep( -f "$dir/$_" , @filenames);		            # remove not normal files from last
+#     @filenames = grep($_ !~ /^\./, @filenames);		                    # remove . files from last
+#     @filenames = grep( -f "$dir/$_" , @filenames);		            # remove not normal files from last
 
-    return (@filenames);
-}
+#     return (@filenames);
+# }
 
 #
 # Scan a list of files / dirs and return max mtime

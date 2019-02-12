@@ -4,12 +4,45 @@
 use Modern::Perl '2016'; 
 use autodie;
 
+use lib 'MooNode';
+use MooNode;
+
+
+my $file;
+$file = "/Users/tshott/Library"; # Has hiddent flag set
+# $file = "/private"; # Has hidden and no modify flag set
+#$file = "/Users/tshott"; # Has no flagz set
+$file = "/Users/tshott/Downloads/_ebook/_test_Zeppelins"; # No flags, has purple label
+
+
+my $File1 = MooNode->new($file);
+
+say "File $file is hidden: ", $File1->ishidden //"No";
+
+# Check if file is hidden
+# -l long d- don't diplay dir 1 - make sure one colume O- show os x flags - add @ for atributes
+# my $cmd = 'ls -1lOd ';
+
+
+# if (!-e $file){
+#     die "File does not exist $file";
+# }
+
+# say "File: $file";
+
+# my $string = `$cmd $file`;
+# chomp($string);
+# say "String: $string";
+# my ($perms, $flags) = (split(/\s+/, $string))[0, 4];
+# my $extended = substr($perms, -1,  1);
+# my $perms    = substr($perms,  0, -1);
+# say "Perms: $perms Extended: $extended Flags: $flags";
+
+
 use File::ExtAttr;
 
-my $file = "Notes-Book.org";
-
 #
- # Need to translate binary label blob to labels
+# Need to translate binary label blob to labels
 #
 
 #
@@ -35,8 +68,8 @@ say "List Attributes for file:$file";
 
 foreach (File::ExtAttr::listfattr($file))
 { 
-    my $value = File::ExtAttr::getfattr($file, $_);
-    say "\t$_\t$value";
+   my $value = File::ExtAttr::getfattr($file, $_);
+   say "\t$_\t$value";
 }
 
 

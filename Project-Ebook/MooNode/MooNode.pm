@@ -6,7 +6,8 @@
 # ToDo
 # * add buld args check? No extra args
 # * string version mtime, dtime  -use duelvalue
-# * add rename
+# * add rename, unique
+# * check exit code from system call in get exttended atributes
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -21,10 +22,12 @@ package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
 
+use Carp;
+
 has 'filepath',			# full name of file including path
     is => 'ro', 
     isa => 'Str',
-    #  required => 1,
+    required => 1,
     writer => '_set_filepath';
 
 has 'stat',			# stat array - not live version, last time updated or created
@@ -46,6 +49,13 @@ has 'isfile',			# not live version
     is => 'ro',
     isa => 'Bool',
     writer => '_set_isfile';
+
+# Extended attributes OS X
+
+has 'ishidden',			# not live version
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_set_ishidden';
 
 #
 # generic function to convert a call to new with one operand to a ref oriented paramater set with a filepath
@@ -75,7 +85,7 @@ sub BUILDARGS {
 
     # If filepath defined - check is a file of some type
     if ($filepath && ! -e $filepath){
-	die "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
+	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
     }
 
 
@@ -110,14 +120,55 @@ sub update_stat {
  
     # Update the logical values
     $self->_set_isreadable(-r $filepath);
-    $self->_set_isdir(-d $filepath);
-    $self->_set_isfile(-f $filepath);
+    $self->_set_isdir(-d _);
+    $self->_set_isfile(-f _);
 
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-    # my @stat = stat(_);	# retruns stat for last file checked with a -x command
-
     $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
+    
+    # OS X Extended Atributes
+    my ($flags, $label) = _check_extended($filepath);
+    $self->_set_ishidden(1) if ($flags =~ /hidden/);
+    
 }
+
+
+sub _check_extended {
+    my $filepath = shift(@_);
+
+    # On MacOS - ls command can check for extended atributes
+    # -l long -d don't diplay dir -1 make sure one colume -O show os x flags
+    my $cmd = 'ls -1lOd';
+    my $label = 0;
+    my $flags = "";
+    my $perms;
+
+    my $string = `$cmd "$filepath"`;
+    if ($? != 0){
+	warn("Error executing ls on $filepath");
+	return($flags, $label);
+    }
+
+    chomp($string);
+    ($perms, $flags) = (split(/\s+/, $string))[0, 4];
+
+    # my $extended = substr($perms, -1,  1);
+    # $perms    = substr($perms,  0, -1);
+    # say "Perms: $perms Extended: $extended Flags: $flags";
+
+    # $cmd = 'mdls -name kMDItemFSLabel -raw ';
+
+    # If has extended data - need to see what it is
+    # if ($extended eq "@"){
+    # 	$label = `$cmd "$filepath"`;
+    # 	# $label = $label + 0;
+    # 	say "Label: $label $filepath";
+    # }
+
+    return($flags, $label);
+}
+
+
 
 #
 # ToDo
@@ -155,6 +206,13 @@ sub inode {
     
     my $inode =  ${$self->stat}[1];
     return($inode);
+}
+
+sub hash {
+    my $self = shift(@_);
+    
+    my $hash = $self->inode;
+    return($hash);
 }
 
 # does live check
@@ -218,12 +276,12 @@ sub rename {
 
     # Check current file writable
     if (! -w $self->filepath){
-	die "Tried to rename unwritable file: $self->filepath";
+	croak "Tried to rename unwritable file: $self->filepath";
     }
     
     # Check new file not exist 
     if (-e $filepath_new){
-	die "Tried to rename but new file exists: $filepath_new";
+	croak "Tried to rename but new file exists: $filepath_new";
     }
     
     rename($self->filepath, $filepath_new);
@@ -280,15 +338,15 @@ sub isequal {
     my $other = shift(@_);
 
     if (!$other->isa('MooNode')){
-	die "Tried to use isequal on non MooNode object";
+	croak "Tried to use isequal on non MooNode object";
     }
 
     # Collect a list of what attributes changed
     my @changes;
 
-    push(@changes, "isdir") if ($self->isdir != $other->isdir);
-    push(@changes, "isfile") if ($self->isfile != $other->isfile);
-    push(@changes, "size") if ($self->size != $other->size);
+    push(@changes, "isdir")     if ($self->isdir != $other->isdir);
+    push(@changes, "isfile")    if ($self->isfile != $other->isfile);
+    push(@changes, "size")      if ($self->size != $other->size);
         
     return @changes;
 }
@@ -332,6 +390,9 @@ sub isequal {
 # Might be able to optimize based on ctime / mtime match
 #
 
+#
+# Simpler ischanged - just if it has or not
+# - Live check, no update to stats
 sub ischanged {
     my $self   =shift(@_);
     my $filepath = $self->filepath;
@@ -343,9 +404,9 @@ sub ischanged {
 	return (@changes);
     }
     
-    push(@changes, "isreadable") if ($self->isreadable != -r $filepath);
-    push(@changes, "isdir") if ($self->isdir != -d $filepath);
-    push(@changes, "isfile") if ($self->isfile != -f $filepath);
+    #push(@changes, "isreadable") if ($self->isreadable != -r $filepath);
+    #push(@changes, "isdir") if ($self->isdir != -d $filepath);
+    #push(@changes, "isfile") if ($self->isfile != -f $filepath);
 
     # stat file - make a few quick checks
     my @old_stat =  @{$self->stat};

@@ -5,6 +5,7 @@
 # ToDo
 # * add rename file method
 # * change clalc md5 to update md5
+# * Add live ischanged?
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -17,6 +18,7 @@ use Digest::MD5::File;
 package MooFile;
 use Moose;
 use namespace::autoclean;
+use Carp;
 
 extends 'MooNode';
 
@@ -34,10 +36,10 @@ sub BUILDARGS {
 
     # If filepath defined - check is a file of some type
     if ($filepath && ! -e $filepath){
-    	die "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
+    	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
     }
     if ($filepath && ! -f $filepath){
-    	die "ERROR: constructor failed - tried to create Node of non-file file: ".$filepath;
+    	croak "ERROR: constructor failed - tried to create Node of non-file file: ".$filepath;
     }
 
     return \%args;
@@ -69,7 +71,7 @@ sub update_md5 {
     my $digest;
 
     if (!$self->isreadable){
-	warn "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
+	carp "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
 	return $digest;
     }
 

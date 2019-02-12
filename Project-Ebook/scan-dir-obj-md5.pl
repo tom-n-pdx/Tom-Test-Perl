@@ -7,6 +7,8 @@ use Getopt::Long;
 
 use lib '.';
 use ScanDirMD5;
+use NodeTree;
+
 use lib 'MooNode';
 use MooDir;
 use MooFile;
