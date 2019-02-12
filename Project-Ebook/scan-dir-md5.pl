@@ -19,11 +19,9 @@ use Scalar::Util qw(blessed);
 #
 # Todo
 # * add --help option
-# * Fix bug - deleting non existent values - masked if verbose < 2
 # * Load dupes on start - make a Nodetree item?
-# * function generate db file name -> move to a NodeTree save and restore command
 # * Fix hash function, record dev to mount name somewhere.
-# * return umber of changes for dir update - total changes
+# * return number of changes for dir update - total changes
 # * detect hidden, invisable, dot files and skip in tree scan
 #   ls -ldO@ /private
 #   set hidden - sudo chflags hidden /private
@@ -32,7 +30,7 @@ use Scalar::Util qw(blessed);
 
 my %size_count;
 
-my ($files_new, $files_rename, $files_delete, $files_change) = (0, 0, 0, 0);
+my ($files_new, $files_rename, $files_delete, $files_change, $files_md5) = (0, 0, 0, 0, 0);
 
 
 our $debug = 0;
@@ -123,38 +121,34 @@ sub update_dir {
     say "Scanning $dir" if ($verbose >= 2);
 
     my $Dir = MooDir->new(filepath => $dir);
-    my ($Tree_old, $db_mtime) = load_dir_db(dir => $dir);
+    my ($Tree_old, $db_mtime) = NodeTree->load(dir => $dir);
 
     if ($fast_dir && $db_mtime >= $Dir->dtime){
       	say "\tNo Files chaged, skip update" if ($verbose >= 2);
       	return( () );
     }
 
-    my $Tree = NodeTree->new();	# Store new files in Tree
+    my $Tree = NodeTree->new();	             # Store new files in Tree
     
-    # Scan through for all files in dir
+    # Scan through for all files in dir and the Dir obj
     my @Nodes = $Dir->List;
+    push(@Nodes, $Dir);
 
     foreach my $Node (@Nodes) {
-	next if $Node->isdir;
-	say "\tChecking: ", $Node->filename if ($verbose >= 2);
-
-	update_file(file=>$Node, Files_old_ref =>$Tree_old, fast_scan=>$fast_scan);
+	update_file(file => $Node, Files_old_ref => $Tree_old, fast_scan=>$fast_scan);
 	$Tree->insert($Node);
 
 	# Save every so often
-	if ($files_change > 0 && $files_change % 100 == 0){
-	    save_dir_db(dir => $dir, Files_ref => $Tree);
-	    say "\tCheckpoint Save File Changes: New: $files_new Rename: $files_rename Changed: $files_change Deleted: $files_delete";
+	if ($files_md5 > 0 && $files_md5 % 100 == 0){
+	    # save_dir_db(dir => $dir, Files_ref => $Tree);
+	    $Tree -> save(dir => $dir);
+
+	    say "\tCheckpoint Save File Changes: New: $files_new Rename: $files_rename Changed: $files_change MD5: $files_md5 Deleted: $files_delete";
 	}
     }
 
-    # Insert Dir into list of new files & remove from old list
-    $Tree->insert($Dir);
-    $Tree_old->remove($Dir->hash) if defined ${$Tree_old->nodes}{$Dir->hash};
-    
 
-    # Now Check if any old values left - file must have been deleted
+    # Now Check if any old values left - file must have been deleted, or moved to new dir
     my @Files = $Tree_old->List;
     $files_delete += scalar(@Files);
     if (@Files >= 1 && $verbose >= 1){
@@ -164,12 +158,13 @@ sub update_dir {
 	}
     }
 
-    my $total_change = $files_new + $files_rename + $files_delete + $files_change;
+    my $total_change = $files_new + $files_rename + $files_delete + $files_change + $files_md5;
     if ( $total_change > 0){
-	save_dir_db(dir => $dir, Files_ref => $Tree);
+	# save_dir_db(dir => $dir, Files_ref => $Tree);
+	$Tree -> save(dir => $dir);
 
 	print "Dir: $dir " if ($verbose <= 1);
-	say "\tFile Changes: New: $files_new Rename: $files_rename Changed: $files_change Deleted: $files_delete";
+	say "\tFile Changes: New: $files_new Rename: $files_rename Changed: $files_change MD5: $files_md5 Deleted: $files_delete";
     }
 
     return ($Tree->List);
@@ -189,102 +184,53 @@ sub update_file {
     my $fast_scan   = delete $opt{fast_scan} // 0;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
+    say "\tChecking: ", $File->filename if ($verbose >= 3);
+
     my $hash = $File->hash;
     my $File_old = ${$Tree_old->nodes}{$hash};
 
     if (! defined $File_old) {
-	# Assume if no old file with inode, must be new file
+	# If no old file with inode, must be new file (could be new file with same name, and diff inode)
 	say "\t\tNew File: ", $File->filename if ($verbose >= 2);
 	$files_new++;
     } else {
-	# If old file newer or same age, transfer md5
-	if (defined $File_old->md5 && $File->size == $File_old->size && $File->mtime <= $File_old->mtime) {
-	    $File->_set_md5($File_old->md5);
-	    say "\t\tExisting: ", $File->filename if ($verbose >= 2);
-	}
-	# Check if name changed
-	if ($File->filename ne $File_old->filename) {
-	    say "\t\tRename: ", $File_old->filename, " to ", $File->filename if ($verbose >= 1);
-	    $files_rename++;
-	}
-    }
-    $Tree_old->remove($hash);
 
+	# If old file is same size and same modified date
+	if ( ($File->size == $File_old->size) && ($File->ctime == $File_old->ctime) ) {
+	    say "\t\tExisitng Unchanged: ", $File->filename if ($verbose >= 3);
+	    if ($File->can('md5') && defined $File_old->md5){
+		$File->_set_md5($File_old->md5);
+	    }
+	} else {
+	    $files_change++;
+	    say "\t\tExisitng Changed: ",$File->filename if ($verbose >= 2);
+	    my @changes = $File->delta($File_old);
+	    say "\t\t\tDelta: ", join(", ", @changes)if ($verbose >= 2);
+	}
+
+	# Check if name changed
+	# if ($File->filename ne $File_old->filename) {
+	#     say "\t\tRename: ", $File_old->filename, " to ", $File->filename if ($verbose >= 1);
+	#     $files_rename++;
+	# }
+	
+	$Tree_old->remove($hash);
+    }
     $size_count{$File->size}++;
 
-    # If md5 not set then recalc if matches a size with dupes or not doing fast scan
-    if (!defined($File->md5) ){
+    # obj supports md5 and it's not set and object readable calc md5
+    if ($File->can('md5') && !defined($File->md5) && $File->isreadable){
 	my $count = $size_count{$File->size};
 	if ( !$fast_scan or $count >= 2) {	    
-	    print "\t\tDupe Count: $count- " if ($count >=2);
 	    say "\t\tCalc md5: ", $File->filename if ($verbose >= 2 or $count >= 2);
+	    say "\t\t\tPossible Dupe # $count" if ($count >=2);
 
-	    if ($File->isreadable){
-		$File->update_md5;
-		$files_change++;
-	    }
+	    $File->update_md5;
+	    $files_md5++;
+
 	}
     }
     return ($File);
-}
-
-#
-# Function: Load a md5 oop datafile
-# 
-use Storable;
-
-sub save_dir_db {
-    my %opt = @_;
-
-    my $dir =  delete $opt{dir} or die "Missing param 'dir' to save_dir_db";
-    my $Tree = delete $opt{Files_ref} or die "Missing param 'Files_ref' to save_dir_md5";
-    die "Unknown params:", join ", ", keys %opt if %opt;
-
-    my $dbfile      = "$dir/.moo.db";
-    my $dbfile_temp = "$dbfile.tmp";
-
-    # Save into temp and rotate files
-
-    store($Tree, $dbfile_temp);
-    rename($dbfile, "$dbfile.old")if -e $dbfile;
-    rename($dbfile_temp, $dbfile);
-
-    my $count = $Tree->count;
-    say "\tSaved $count records" if ($verbose >= 2);
-
-    return;
-}
-
-
-sub load_dir_db {
-    my %opt = @_;
-
-    my $dir =  delete $opt{dir} or die "Missing param 'dir' to load_dir_db";
-    die "Unknown params:", join ", ", keys %opt if %opt;
-
-    my $Tree = NodeTree->new();
-
-    my $dbfile_mtime = 0;
-    my $dbfile = "$dir/.moo.db";
-
-    if (-e $dbfile) {
-
-	# Need to test for exceptions if have old incompatable file
-	eval { $Tree = retrieve($dbfile)} ;
-
-	if (blessed($Tree)){ 
-	    my $count = $Tree->count;
-	    # say "\tLoaded $count records" if ($verbose >= 2);
-	    say "\tLoaded $count records" if ($verbose >= 1);
-	} else {
-	    # clear data if not load blessed object, rename file since no good
-	    warn "File Not Blessed $dir";
-	    rename($dbfile, "$dbfile.old");
-	    $Tree = NodeTree->new();
-	}
-	$dbfile_mtime = (stat(_))[9];
-    }
-    return ($Tree, $dbfile_mtime);
 }
 
 

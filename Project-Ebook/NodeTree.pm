@@ -21,6 +21,7 @@ use autodie;			# Easier write open  /close code
 package NodeTree;
 use Moose;
 use namespace::autoclean;
+use Data::Dumper qw(Dumper);           # Debug print
 
 use Carp;
 
@@ -135,17 +136,73 @@ sub List {
 # * Consider deleting HoA before save, rebuild after load
 #
 
+use Storable;
+
+#
+# Save Obj to file. Use Perl Storable format 
+# Do not use rotate file since it will change mtime for the dir.
+#
 sub save {
     my $self = shift(@_);
-    my %opt = @_;
-
-    my $filepath  =  delete $opt{filepath} or croak("Missing 'filepath' param");
+ 
+    my %opt = @_;   
+    my $dir   =  delete $opt{dir} or croak("Missing 'dir' param");
+    my $name  =  ".moo.db";
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
-    store($self, "$filepath.tmp");
-    rename($filepath, "$filepath.old")if -e $filepath;
-    rename("$filepath.tmp", $filepath);
+    my $filepath = $dir.'/'.$name;
+
+    # save into temp and then rotate files
+    store($self, $filepath);
+    # rename($filepath, "$filepath.old")if -e $filepath;
+    # rename("$filepath.tmp", $filepath);
+
+    my $count = $self->count;
+    say "Saved $count records" if ($main::verbose >= 2);
+
 }
+
+#
+#
+#
+sub load {
+    my $self = shift(@_);
+
+    my %opt = @_;
+    my $dir     =  delete $opt{dir} or croak "Missing param 'dir' ";
+    my $name    =  ".moo.db";
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+    my $dbfile_mtime = 0;
+    my $filepath = $dir.'/'.$name;
+
+    if (-e $filepath) {
+
+	# Need to test for exceptions if have old incompatable file
+	eval { $self = retrieve($filepath)} ;
+
+	if (blessed($self)){ 
+	    my $count = $self->count;
+	    # say "\tLoaded $count records" if ($verbose >= 2);
+	    say "\tLoaded $count records" if ($main::verbose >= 2);
+	} else {
+	    # clear data if not load blessed object, rename file since no good
+	    carp "File Not Blessed $filepath";
+	    rename($filepath, "$filepath.old");
+	    $self = NodeTree->new();
+	}
+	$dbfile_mtime = (stat(_))[9];
+    } else {
+	$self = NodeTree->new();
+    }
+
+    # say Dumper($self);
+    return ($self, $dbfile_mtime);
+}
+
+
+
+
 
 
 

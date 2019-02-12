@@ -5,7 +5,7 @@
 # ToDo
 # * consider refactor the calc dtime code into a sub
 # * list files return list file objects?
-#
+# * check times, all times seem to chage ven if not write dir
 
 
 # Standard uses's
@@ -152,7 +152,7 @@ sub List {
 	}
 
 	# If hidden file, don't put on list
-	next if ($File->ishidden);
+	# next if ($File->ishidden);
 
 	push(@Files, $File);
     }
@@ -183,7 +183,6 @@ sub ischanged {
 
    return @changes;
 }
-
 
 
 #

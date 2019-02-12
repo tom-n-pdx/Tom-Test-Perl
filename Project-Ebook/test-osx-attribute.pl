@@ -22,7 +22,8 @@ say "File $file is hidden: ", $File1->ishidden //"No";
 # Check if file is hidden
 # -l long d- don't diplay dir 1 - make sure one colume O- show os x flags - add @ for atributes
 # my $cmd = 'ls -1lOd ';
-
+# chflags to change flags on file
+# * does not change the dir mtime
 
 # if (!-e $file){
 #     die "File does not exist $file";

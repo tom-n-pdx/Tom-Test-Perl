@@ -6,17 +6,18 @@
 # ToDo
 # * add buld args check? No extra args
 # * string version mtime, dtime  -use duelvalue
-# * add rename, unique
 # * check exit code from system call in get exttended atributes
+# * convert isread, isfile to use stat values and not store seperate
+
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
 
-use File::Basename;         # Manipulate file paths
-use Time::localtime;        # Printing stat values in human readable time
-# use Data::Dumper qw(Dumper);           # Debug print
+use File::Basename;             # Manipulate file paths
+use Time::localtime;            # Printing stat values in human readable time
+# use Data::Dumper qw(Dumper);  # Debug print
 
 package MooNode v0.1.2;
 use Moose;
@@ -40,6 +41,8 @@ has 'isreadable',		# not live version
     isa => 'Bool',
     writer => '_set_isreadable';
 
+use Fcntl qw(:mode);			# Get fields to parse stat bits
+
 has 'isdir',			# not live version
     is => 'ro',
     isa => 'Bool',
@@ -52,10 +55,10 @@ has 'isfile',			# not live version
 
 # Extended attributes OS X
 
-has 'ishidden',			# not live version
+has 'flags',			# not live version
     is => 'ro',
-    isa => 'Bool',
-    writer => '_set_ishidden';
+#    isa => 'Bool',
+    writer => '_set_flags';
 
 #
 # generic function to convert a call to new with one operand to a ref oriented paramater set with a filepath
@@ -119,16 +122,16 @@ sub update_stat {
     my $filepath =  $self->filepath;
  
     # Update the logical values
-    $self->_set_isreadable(-r $filepath);
-    $self->_set_isdir(-d _);
-    $self->_set_isfile(-f _);
+    $self->_set_isreadable( -r $filepath ? 1 : 0);
+    $self->_set_isdir(-d _  ? 1 : 0);
+    $self->_set_isfile(-f _ ? 1 : 0);
 
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
     $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
     
     # OS X Extended Atributes
-    my ($flags, $label) = _check_extended($filepath);
-    $self->_set_ishidden(1) if ($flags =~ /hidden/);
+    my $flags = _check_extended($filepath);
+    $self->_set_flags($flags);
     
 }
 
@@ -152,6 +155,7 @@ sub _check_extended {
     chomp($string);
     ($perms, $flags) = (split(/\s+/, $string))[0, 4];
 
+    
     # my $extended = substr($perms, -1,  1);
     # $perms    = substr($perms,  0, -1);
     # say "Perms: $perms Extended: $extended Flags: $flags";
@@ -165,7 +169,7 @@ sub _check_extended {
     # 	say "Label: $label $filepath";
     # }
 
-    return($flags, $label);
+    return($flags);
 }
 
 
@@ -194,6 +198,13 @@ sub mtime_str {
     return(Time::localtime::ctime($self->mtime));
 }
 
+sub ctime {
+    my $self = shift(@_);
+    
+    my $mtime =  ${$self->stat}[10];
+    return($mtime);
+}
+
 sub dev {
     my $self = shift(@_);
     
@@ -211,7 +222,7 @@ sub inode {
 sub hash {
     my $self = shift(@_);
     
-    my $hash = $self->inode;
+    my $hash = $self->dev.'-'.$self->inode;
     return($hash);
 }
 
@@ -344,12 +355,50 @@ sub isequal {
     # Collect a list of what attributes changed
     my @changes;
 
-    push(@changes, "isdir")     if ($self->isdir != $other->isdir);
+    push(@changes, "isdir")     if ($self->isdir  != $other->isdir);
     push(@changes, "isfile")    if ($self->isfile != $other->isfile);
-    push(@changes, "size")      if ($self->size != $other->size);
-        
+    push(@changes, "size")      if ($self->size   != $other->size);
+            
     return @changes;
 }
+
+# 
+# Check that two file objects are the same - maybe different disks, names - but contents same
+# Check: isdir, isfile, size
+# makes no sense for dirs
+#
+
+sub delta {
+    my $self    = shift(@_);
+    my $other   = shift(@_);
+
+    if (!$other->isa('MooNode')){
+	croak "Tried to use isequal on non MooNode object";
+    }
+
+    # Collect a list of what attributes changed
+    my @changes;
+
+    # say "Delta: Self  ", $self->filepath;
+    # say "Delta: Other ", $other->filepath;
+    push(@changes, "filepath")   if ($self->filepath ne $other->filepath);
+    
+    # OK need to check stats
+    my @self_stat =  @{$self->stat};
+    my @other_stat = @{$other->stat};
+
+    # Check all except atime
+    foreach (0..7, 9..12){
+ 	if ($self_stat[$_] != $other_stat[$_]){
+	    # if ( ($self->stat)[$_] != ($other->stat)[$_]){
+      	    push(@changes, $stat_names[$_]);
+      	}
+    }
+
+    push(@changes, "flags") if ($self->flags ne $other->flags);
+    return @changes;
+}
+
 
 #
 # is changed
@@ -424,22 +473,23 @@ sub ischanged {
 
 
 sub dump {
-   my $self = shift(@_);
+    my $self = shift(@_);
  
-   print "File: ", $self->filename, "\n";
-   print "\tExt:   ", $self->ext, "\n";
-   print "\tPath:  ", $self->path, "\n";
-   print "\tDir:   ", true($self->isdir), "\n";
-   print "\tFile:  ", true($self->isfile), "\n";
-   print "\tRead:  ", true($self->isreadable), "\n";
-   print "\tSize:  ", $self->size, "\n";
-   print "\tInode: ", $self->inode, "\n";
-   print "\tStat:  ", join(', ',  @{$self->stat} ), "\n";
+    print "File: ", $self->filename, "\n";
+    print "\tPath:  ", $self->path, "\n";
+    print "\tExt:   ", $self->ext, "\n";
+    print "\tDir:   ", $self->isdir, "\n";
+    print "\tFile:  ", $self->isfile, "\n";
+    print "\tRead:  ", $self->isreadable, "\n";
+    print "\tSize:  ", $self->size, "\n";
+    print "\tInode: ", $self->inode, "\n";
+    print "\tFlags: ", $self->flags, "\n";
+    print "\tStat:  ", join(', ',  @{$self->stat} ), "\n";
 
-   print "\n";
-   print "\tAtime: ", Time::localtime::ctime(@{$self->stat}[8]), "\n";
-   print "\tMtime: ", Time::localtime::ctime(@{$self->stat}[9]), "\n";
-   print "\tCtime: ", Time::localtime::ctime(@{$self->stat}[10]), "\n";
+    print "\n";
+    print "\tAtime: ", Time::localtime::ctime(@{$self->stat}[8]), "\n";
+    print "\tMtime: ", Time::localtime::ctime(@{$self->stat}[9]), "\n";
+    print "\tCtime: ", Time::localtime::ctime(@{$self->stat}[10]), "\n";
 }
    
 sub dump_raw {

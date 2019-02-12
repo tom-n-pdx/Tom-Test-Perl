@@ -64,7 +64,13 @@ if ($debug or $verbose >= 2){
 
 my $Tree = NodeTree->new();
 
-my $Dir1   = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_temp");
+my $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_temp");
+
+say "Dir Size: ", $Dir1->size;
+
+exit;
+
+
 my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal).pdf");
 my $File1_Copy  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal).pdf");
 my $File2  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/War in space- the science and technology behind our next theater of conflict (Springer-Praxis books in space exploration.) (ebook, Dawson, Springer, 2019, Orginal).pdf");
