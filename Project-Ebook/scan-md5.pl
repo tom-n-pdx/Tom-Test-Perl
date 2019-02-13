@@ -22,6 +22,12 @@ use MooFile;
 # * return number of changes for dir update - total changes
 # * detect hidden, invisable, dot files and skip in tree scan
 #
+my %size_count;
+
+my ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
+
+my $db_name =  ".moo.db";
+
 our $debug = 0;
 our $verbose = 1;
 our $fast_scan = 0;
@@ -49,10 +55,6 @@ if ($debug or $verbose >= 2){
     say " ";
 }
 
-my %size_count;
-my ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
-my $db_name =  ".moo.db";
-
 # If existing file of dupe sizes, load
 &load_dupes(dupes => \%size_count);
 
@@ -66,7 +68,7 @@ foreach my $dir (@ARGV){
 	find(\&wanted,  $dir);
     } else {
 	say "Scanning Dir: $dir" if ($verbose >=0 ); 
-	scan_dir_md5(dir=>$dir, fast_scan=> $fast_scan, fast_dir => $fast_dir);
+	update_dir(dir=>$dir, fast_scan=> $fast_scan, fast_dir => $fast_dir);
     }
 }
 
@@ -97,7 +99,7 @@ sub wanted {
     my  $dir = $File::Find::name;
     return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - skip dot files
 
-    scan_dir_md5(dir=>$dir, fast_scan=>$fast_scan, fast_dir=>$fast_dir);
+    update_dir(dir=>$dir, fast_scan=>$fast_scan, fast_dir=>$fast_dir);
 
     return;
 }
@@ -106,7 +108,7 @@ sub wanted {
 #
 # Scan a dir and calc md5 values. As part of scan will check if dir is valid, and load and save a md5 db file
 #
-sub scan_dir_md5 {
+sub update_dir {
     my %opt = @_;
     my $fast_scan =  delete $opt{fast_scan} // 0;
     my $fast_dir  =  delete $opt{fast_dir}  // 0;
@@ -158,7 +160,7 @@ sub scan_dir_md5 {
     # Done scanning new files, check if any old values left - file must have been deleted, or moved to new dir
     my @Files = $Tree_old->List;
     $files_delete += scalar(@Files);
-    if (@Files >= 1 && $verbose >= 2){
+    if (@Files >= 1 && $verbose >= 1){
 	say "\tDeleted files:";
 	foreach my $File (@Files){
 	    say "\t\t", $File->filename;

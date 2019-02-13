@@ -1,27 +1,67 @@
 
+Notes on ideas for ebook tracking software. Has evolved into file tracking software.
+
+* Bugs
+** TODO [#A] When saving large data structure it fails
+** TODO [#B] Sometime md5 fails on a file.
+** TODO [#C] Getting OSX attributes on a file sometimes fails - maybe fixed.
+
+* Refactor
+** Split Book and file code
+** Make md5 file names, dirs, defined in md5 module
+** Move md5 functions into shared module. Move all MD5 code into a subdir including tests
+** Cleanup files - delete old test files, organize, make names consistent.
+** Release process for apps & lib into bin & released Lib
+** Better - smarter - save dupes, load - not repeat counts
+** Rework code in MooNode for is readable, other values from stats - parse stats directly
+** Enable NodeTree insert to insert a whole tree for a Tree merge
 
 * ToDo
-** Cleanup file names
-** Bug Fix Lib Genesis
-   + Handle ( space date, publisher)
-   + Rename Microsoft (Azure | Excel | etc)
 
-** Parse lib genesis xls file
-
+** Give collection a attached dir on new
+** Implement save to packed file
+** Fix / Test Collect Tree
+   + Scan tree
+   + Warn if Dir out of date, don't fix
+   + Save file at root of tree
+   + Save copy of tree on data dir
+     * Naming method for a tree in dir?
+   + Rotate old copy of tree
+   + Save a list of all trees scanned in data dir? Build from datafiles in dir?
+   + Delete any old subtree files found? In Tree or data dir?
+   + Make sense to have a one dir version?
+   + Create 
 ** Finish MooFile
    + Tests
    + Implement tree search
    + Mac labels
    + Rename File
 
+** Better find
+   + Make prune work right
+   + Don't check unreadable dirs
+** Swift version of scan Dir
+   + Need to use a different version of datafile
+   + Swift version scan tree
+   + Swift version collect tree files
+   + Run a daemon on regular schedule?
+   + Hook into file events
+   + Initially use from perl to run on dirs, run on tree
 
-** Existing Annoyances
+
+
+** Existing Annoyances Lib Genesis
    + Restructure code - move publisher into separate file
    + Look at smarter parsin filename - maybe use nested regexp lib to fix nested problems?
    + More robust date parsing
    + Make general and lib one program
-   + Cleanup the commands, delete old test programs, find way to release   
    + Fix emacs perl mode  
+
+** Parse lib genesis xls file
+
+** Bug Fix Lib Genesis
+   + Handle ( space date, publisher)
+   + Rename Microsoft (Azure | Excel | etc)
 
 
 

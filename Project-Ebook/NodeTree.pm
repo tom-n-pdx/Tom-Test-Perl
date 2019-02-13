@@ -7,11 +7,16 @@
 # * Make remove work on Objects
 # * add make sure insert, delete work both for single or list
 # * find way to pass no md5 or no dtime to insert
-# * save / restore
 # * look for dupes in size, md5
 # * itterator method to cycle over whole tree
 # * Need update if re-calc MD5 for file gets added, fixup HoA's
-# * add "name"  filepath for tree
+# * add "name" filepath for tree  -so know wheer save by default?
+# * write pack / unpack save & restore
+# * index by filename
+# * Move HoA to seperate utility file
+# * add search methods. by size, md5, name, mtime, 
+# * lock save / rstore file?
+
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -21,13 +26,10 @@ use autodie;			# Easier write open  /close code
 package NodeTree;
 use Moose;
 use namespace::autoclean;
-use Data::Dumper qw(Dumper);           # Debug print
-
 use Carp;
 
-# use Data::Dumper qw(Dumper);           # Debug print
-# use Storable qw(nstore_fd nstore retrieve);
-# use Fcntl qw(:DEFAULT :flock);
+
+use Data::Dumper qw(Dumper);           # Debug print
 
 # A list of the files in collection. Hashed by hash method of object. 
 # Will work on any datatype that can generate a hash and has a size
@@ -51,7 +53,6 @@ has 'md5_HoA',
     isa => 'HashRef',
     default => sub { { } };
     
-
 #
 # Insert Node Obj(s) into tree
 #
@@ -137,7 +138,6 @@ sub List {
 #
 
 use Storable;
-
 #
 # Save Obj to file. Use Perl Storable format 
 # Do not use rotate file since it will change mtime for the dir.
@@ -147,7 +147,7 @@ sub save {
  
     my %opt = @_;   
     my $dir   =  delete $opt{dir} or croak("Missing 'dir' param");
-    my $name  =  ".moo.db";
+    my $name  =  delete $opt{name} // ".moo.db";
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
     my $filepath = $dir.'/'.$name;
@@ -170,7 +170,8 @@ sub load {
 
     my %opt = @_;
     my $dir     =  delete $opt{dir} or croak "Missing param 'dir' ";
-    my $name    =  ".moo.db";
+    # my $name    =  ".moo.db";
+    my $name  =  delete $opt{name} // ".moo.db";
     die "Unknown params:", join ", ", keys %opt if %opt;
 
     my $dbfile_mtime = 0;
@@ -197,14 +198,9 @@ sub load {
     }
 
     # say Dumper($self);
-    return ($self, $dbfile_mtime);
+    # return ($self, $dbfile_mtime);
+    return ($self);
 }
-
-
-
-
-
-
 
 
 #

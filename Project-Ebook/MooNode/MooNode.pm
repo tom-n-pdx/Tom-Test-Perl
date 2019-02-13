@@ -8,6 +8,14 @@
 # * string version mtime, dtime  -use duelvalue
 # * check exit code from system call in get exttended atributes
 # * convert isread, isfile to use stat values and not store seperate
+# * add set flags method - extend to "mac Node?"
+# * read labels / set
+
+#   ls -ldO@ /private
+#   set hidden - sudo chflags hidden /private
+#                flags: hidden
+
+
 
 
 # Standard uses's
@@ -175,9 +183,21 @@ sub _check_extended {
 
 
 #
-# ToDo
-# * stringify?
+# Values derived from stat values
 #
+use Fcntl qw(:mode);			# Get fields to parse stat bits
+
+has 'isdir',			# not live version
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_set_isdir';
+
+has 'isfile',			# not live version
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_set_isfile';
+
+
 sub size {
     my $self = shift(@_);
     
@@ -191,6 +211,7 @@ sub mtime {
     my $mtime =  ${$self->stat}[9];
     return($mtime);
 }
+
 
 sub mtime_str {
     my $self = shift(@_);
@@ -219,6 +240,11 @@ sub inode {
     return($inode);
 }
 
+
+#
+# Derived unique value for hashing file
+# inode unique to filesystem, but need value unique across file systems so use dev & inode
+#
 sub hash {
     my $self = shift(@_);
     
@@ -226,7 +252,10 @@ sub hash {
     return($hash);
 }
 
-# does live check
+#
+# Live checks - given object exists & filsystem mounted - check if things about file have changed
+#
+
 sub isexist {
     my $self = shift(@_);
 
@@ -235,12 +264,15 @@ sub isexist {
 
 
 #
-# All the darn names of a file
-# * filepath - full absolue name of file (Created by Moose)
-# * path - just directory minus trailing /
-# * filename - name of file including ext minus path
-# * ext - file etension - NOT including the .
-# * basename - minus extension - minus path
+# All the darn names of a file.
+# 
+# NOTE: None of these are writeable
+#
+# * filepath    - full absolue name of file (Created by Moose)
+# * path        - just directory minus trailing /
+# * filename    - name of file including ext minus path
+# * ext         - file etension - NOT including the .
+# * basename    - minus extension - minus path
 #
 #
 
@@ -307,13 +339,6 @@ sub rename {
    
 
 #
-# Pretty Print Utility
-#
-sub true {
-    return($_[0] ? "True" : "False");
-}
-
-#
 # Check if two objects are equal
 #
 # 1. second object must be same class (subclsses will test true for member base class)
@@ -344,28 +369,26 @@ my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksi
 # makes no sense for dirs
 #
 
-sub isequal {
-    my $self   =shift(@_);
-    my $other = shift(@_);
+# sub isequal {
+#     my $self   =shift(@_);
+#     my $other = shift(@_);
 
-    if (!$other->isa('MooNode')){
-	croak "Tried to use isequal on non MooNode object";
-    }
+#     if (!$other->isa('MooNode')){
+# 	croak "Tried to use isequal on non MooNode object";
+#     }
 
-    # Collect a list of what attributes changed
-    my @changes;
+#     # Collect a list of what attributes changed
+#     my @changes;
 
-    push(@changes, "isdir")     if ($self->isdir  != $other->isdir);
-    push(@changes, "isfile")    if ($self->isfile != $other->isfile);
-    push(@changes, "size")      if ($self->size   != $other->size);
+#     push(@changes, "isdir")     if ($self->isdir  != $other->isdir);
+#     push(@changes, "isfile")    if ($self->isfile != $other->isfile);
+#     push(@changes, "size")      if ($self->size   != $other->size);
             
-    return @changes;
-}
+#     return @changes;
+# }
 
 # 
-# Check that two file objects are the same - maybe different disks, names - but contents same
-# Check: isdir, isfile, size
-# makes no sense for dirs
+# Check differences between objects - maybe different disks, names - but contents same
 #
 
 sub delta {
@@ -379,8 +402,6 @@ sub delta {
     # Collect a list of what attributes changed
     my @changes;
 
-    # say "Delta: Self  ", $self->filepath;
-    # say "Delta: Other ", $other->filepath;
     push(@changes, "filepath")   if ($self->filepath ne $other->filepath);
     
     # OK need to check stats
@@ -396,41 +417,20 @@ sub delta {
     }
 
     push(@changes, "flags") if ($self->flags ne $other->flags);
+
+    # If Can both do md5 and have value, check
+    # Maybe impossble for two object for one to do md5 and other not to be equal
+    # If one has md5 and one does not - it passes...
+    if ($self->can('md5')   && defined $self->md5 && 
+        $other->can('md5')  && defined $other->md5){
+	push(@changes, "md5") if ($self->md5 ne $other->md5);
+    }
+    # filetype is included in stats
+
+
     return @changes;
 }
 
-
-#
-# is changed
-# Check to see if the new version of a file on disk is same as old version
-# Check: filepath, isdir, isfile, isreadable, dev, inode, size, mtime, ctime
-# Calls isqual for some of the checks
-#
-
-# sub ischanged {
-#     my $self   =shift(@_);
-#     my $other = shift(@_);
-
-#     # Call isequal for basic checks
-#     my @changes = $self->isequal($other);
-
-#     push(@changes, "filepath") if ($self->filepath ne $other->filepath);
-#     push(@changes, "isreadable") if ($self->isreadable != $other->isreadable);
-
-#     # OK need to check stat
-#     my @self_stat =  @{$self->stat};
-#     my @other_stat = @{$other->stat};
-
-#     # Check dev, ino, mtime, ctime
-#     # return a string
-#     foreach (0..1, 9..10){
-# 	if ($self_stat[$_] != $other_stat[$_]){
-# 	    push(@changes, $stat_names[$_]);
-# 	}
-#     }
-    
-#     return @changes;
-# }
 
 #
 # Check if changed on disk - minimal check
@@ -444,6 +444,10 @@ sub delta {
 # - Live check, no update to stats
 sub ischanged {
     my $self   =shift(@_);
+
+
+
+
     my $filepath = $self->filepath;
 
     my @changes;
@@ -453,12 +457,8 @@ sub ischanged {
 	return (@changes);
     }
     
-    #push(@changes, "isreadable") if ($self->isreadable != -r $filepath);
-    #push(@changes, "isdir") if ($self->isdir != -d $filepath);
-    #push(@changes, "isfile") if ($self->isfile != -f $filepath);
-
     # stat file - make a few quick checks
-    my @old_stat =  @{$self->stat};
+    my @old_stat = @{$self->stat};
     my @new_stat = stat(_);	                            # Uses last stat value 
 
     # Check dev, inode, size, mtime, ctime
@@ -471,6 +471,13 @@ sub ischanged {
     return @changes;
 }
 
+
+#
+# Pretty Print Utility
+#
+sub true {
+    return($_[0] ? "True" : "False");
+}
 
 sub dump {
     my $self = shift(@_);

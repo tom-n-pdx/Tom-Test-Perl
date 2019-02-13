@@ -6,6 +6,7 @@
 # * consider refactor the calc dtime code into a sub
 # * list files return list file objects?
 # * check times, all times seem to chage ven if not write dir
+# * skip system files in list - .DS_store
 
 
 # Standard uses's
