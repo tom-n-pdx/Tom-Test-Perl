@@ -21,22 +21,21 @@
 
 package ScanDirMD5;
 use Exporter qw(import);
-our @EXPORT_OK = qw(scan_dir_md5 new_dbtree append_dbtree close_dbtree);
+our @EXPORT = qw(scan_dir_md5 load_dupes save_dupes);
 
-
-use Modern::Perl; 		         # Implies strict, warnings
-use List::Util qw(min max);	 # Import min()
+use Modern::Perl; 		        # Implies strict, warnings
+use List::Util qw(min max);	        # Import min()
 use Digest::MD5::File;
 use autodie;
-use File::Basename;                  # Manipulate file paths
+use File::Basename;                     # Manipulate file paths
 
 use constant MD5_BAD => "x" x 32;
 
 
 our (%md5,        %mtime,        %size,        %filename);
-our (%md5_old, %mtime_old, %size_old, %filename_old);
+our (%md5_old,    %mtime_old,    %size_old,    %filename_old);
 
-# my %md5_check;
+my %md5_check;
 our %md5_check_HoA;
 our %size_check_HoA;
 
@@ -145,7 +144,6 @@ sub md5_need_update {
 # MD5 32 chars
 # 3 x Long Unsigned Ints 10 characters - mtime, size, inode
 # Filename - up to 256 - using 200
-
 my $dbtree_template1 = "A5 A33 A11 A11 A11 A441";    # length 512
 # my $dbtree_template2 = "A5                              A266"; # length 271
 
@@ -155,105 +153,46 @@ my $oldtreefile;
 
 my $fhtree;
 
-sub new_dbtree {
-    my $dir_tree = shift(@_);
+# sub load_dbtree {
+#     my $dir_tree = shift(@_);
+#     my $file_n = 0;
+#     my $dir_n = 0;
 
-    $dbtreefile   = "$dir_tree/.moo.tree.db";
-    $tmptreefile = $dbtreefile.'.tmp';
-    $oldtreefile  = $dbtreefile.'.old';
+#     $dbtreefile   = "$dir_tree/.moo.tree.db";
 
-    open($fhtree, ">", $tmptreefile);
-    print $fhtree "# moo.tree.db version 1.1\n";
+#     open(my $fhtree, "<", $dbtreefile);
 
-    close $fhtree;
-}
+#     my $version = <$fhtree>;
+#     say "DB Tree Version: $version";
 
+#     my ($dir, $dev);
+#     while(<$fhtree>){
+# 	my ($cmd, $md5, $mtime, $size, $inode, $filename) = unpack($dbtree_template1);
+# 	if ($cmd eq "file"){
+# 	    $file_n++;
 
-sub append_dbtree {
-    my $dir_check = shift(@_);
+# 	    my $filepath = "$dir/$filename";
+# 	    $filename{$inode} = $filepath;
+# 	    $size{$inode}         = $size;
+# 	    $mtime{$inode}     = $mtime;
+# 	    $md5{$inode}        = $md5;
 
-    # Now need to append data to tree datafile
-    open($fhtree, ">>", $tmptreefile);
+# 	    push @{ $size_check_HoA{$size} }, $inode;
+# 	    push @{ $md5_check_HoA{$md5} }, $inode;
 
-    # Write dir info
-    my ($dev, $inode, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat($dir_check);
-    my $filename = $dir_check;
-    my $length = length($filename);
+# 	} else {
+# 	    $dir_n++;
+
+# 	    $dir = $filename;
+# 	    $dev = $md5;
+# 	}
+#     }
+#     close $fhtree;
+
+#     say "Read N File: $file_n Dir: $dir_n";
     
-    # For dirs - MD5 field contains dev
-    my $str = pack($dbtree_template1, "dir", $dev,  $mtime,  $size,  $inode,  $dir_check);
-    print $fhtree "$str\n";
-
-    warn "INFO Dir too long $length $filename" if ($length > 441);
-    
-
-    # For dirs - MD5 field contains dev
-    $str = pack($dbtree_template1, "dir", $dev,  $mtime,  $size,  $inode,  $dir_check);
-    print $fhtree "$str\n";
-
-    foreach my $inode (keys %filename) {
-    	my $md5 = $md5{$inode} // MD5_BAD;
-	my $filename = $filename{$inode};
-
-	my $str = pack($dbtree_template1, "file", $md5,  $mtime{$inode},  $size{$inode},  $inode,  $filename{$inode});
-    	print $fhtree "$str\n";
-	
-	$length = length($filename);
-        warn "INFO File name too long $length $filename{$_}" if ($length > 441);
-    }
-
-    close $fhtree;
-}
-
-sub close_dbtree {
-    my $dir_check = shift(@_);
-
-    if (-e $dbtreefile){
-	rename($dbtreefile, $oldtreefile);
-    }
-    rename($tmptreefile, $dbtreefile);
-}
-
-sub load_dbtree {
-    my $dir_tree = shift(@_);
-    my $file_n = 0;
-    my $dir_n = 0;
-
-    $dbtreefile   = "$dir_tree/.moo.tree.db";
-
-    open(my $fhtree, "<", $dbtreefile);
-
-    my $version = <$fhtree>;
-    say "DB Tree Version: $version";
-
-    my ($dir, $dev);
-    while(<$fhtree>){
-	my ($cmd, $md5, $mtime, $size, $inode, $filename) = unpack($dbtree_template1);
-	if ($cmd eq "file"){
-	    $file_n++;
-
-	    my $filepath = "$dir/$filename";
-	    $filename{$inode} = $filepath;
-	    $size{$inode}         = $size;
-	    $mtime{$inode}     = $mtime;
-	    $md5{$inode}        = $md5;
-
-	    push @{ $size_check_HoA{$size} }, $inode;
-	    push @{ $md5_check_HoA{$md5} }, $inode;
-
-	} else {
-	    $dir_n++;
-
-	    $dir = $filename;
-	    $dev = $md5;
-	}
-    }
-    close $fhtree;
-
-    say "Read N File: $file_n Dir: $dir_n";
-    
-    return;
-}
+#     return;
+# }
 
 
 
@@ -310,6 +249,87 @@ sub report_dupes {
     }
     
 }
+#
+#
+# Functions to save & load a dupes file
+#
+#
+
+#
+# Save dupes file
+# Save a list of all sizes with more then one file already
+# 
+sub save_dupes {
+    my %opt = @_;
+    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
+    my $name      =  delete $opt{fast_scan} // "dupes.db";
+    my $verbose   =  delete $opt{verbose} // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+    
+    my @dupes = keys %{$dupes_ref};
+    @dupes = grep ( {$$dupes_ref{$_} >= 2} @dupes);
+
+    if ($verbose >= 3){
+	say " ";
+	say "Saving Dupe Szes:";
+	foreach my $size (sort {$a <=> $b} @dupes){
+	    # next if $$dupes_ref{$size} <= 1;
+	    say "\t$size $$dupes_ref{$size}"
+	}
+    }
+
+    # save to temp file and rotate files
+    open(my $fd, ">", "$dir/$name.tmp");
+    foreach my $size (sort {$a <=> $b} @dupes){
+	print $fd "$size\n";
+    }
+    close($fd);
+    rename("$dir/$name",      "$dir/$name.old") if -e "$dir/$name";
+    rename("$dir/$name.tmp",  "$dir/$name");
+
+    return;
+}
+
+#
+# Load dupes file
+# If dupe file exists, loads and sets up hash 
+# 
+sub load_dupes {
+    my %opt = @_;
+    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
+    my $name      =  delete $opt{fast_scan} // "dupes.db";
+    my $verbose   =  delete $opt{verbose} // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+    
+    if (!-e "$dir/$name"){
+	warn "Dupes data file not found: $dir/$name";
+	return;
+    }
+
+    open(my $fd, "<", "$dir/$name");
+    while(my $value = <$fd>){
+	chomp($value);
+	$value = $value + 0;
+	$$dupes_ref{$value} = 100;
+    }
+    close($fd);
+
+
+    say " ";
+    say "Loaded Dupe Values: ", scalar(keys %{$dupes_ref}) if ($verbose >= 2);
+
+    if ($verbose >= 3){
+	say "Values:";
+	foreach my $size (keys %{$dupes_ref} ){
+	    say "\t$size $$dupes_ref{$size}";
+	}
+    }
+
+
+    return;
+}
 
 
 
@@ -353,8 +373,6 @@ sub HoA_pop {
     
     return($value);
 }
-
-
 
 
 # End Module

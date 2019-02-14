@@ -135,7 +135,10 @@ sub update_stat {
     $self->_set_isfile(-f _ ? 1 : 0);
 
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-    $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
+    # $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
+
+    # Do NOT follow sym link
+    $self->_set_stat( [ lstat($filepath) ] );            # retruns stat for last file checked with a -x command
     
     # OS X Extended Atributes
     my $flags = _check_extended($filepath);
@@ -277,18 +280,21 @@ sub isexist {
 #
 
 # Note this one doesn't use a regular expression for suffix becuase want name with extension
+# If path, does not include trailing /
 sub filename {
     my $self = shift(@_);
     my  ($name, $path, $suffix) = File::Basename::fileparse($self->filepath);
     return($name);
 }
 
+# Includes trailing /
 sub path {
     my $self = shift(@_);
     my  ($name, $path, $suffix) = File::Basename::fileparse($self->filepath, qr/\.[^.]*/);
     return($path);
 }
 
+# Includes leading .
 sub ext {
     my $self = shift(@_);
     my  ($name, $path, $suffix) = File::Basename::fileparse($self->filepath, qr/\.[^.]*/);

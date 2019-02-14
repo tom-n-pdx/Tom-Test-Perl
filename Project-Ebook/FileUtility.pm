@@ -27,7 +27,8 @@ use File::Basename;             # Manipulate file paths
 #           Default
 # inc_dir   0
 # inc_file  1
-# inc_dot   0    Include dot files, but exclude . and ..
+# inc_dot   0    Include dot files, but exclude . and ... Also covers os x hidden files
+# inc_sym   0
 #
 # ToDO
 # * add check hidden
@@ -39,6 +40,7 @@ sub dir_list {
     my $inc_dir   =  delete $opt{inc_dir}  // 0;
     my $inc_file  =  delete $opt{inc_file} // 1;
     my $inc_dot   =  delete $opt{inc_dot}  // 0;
+    my $inc_sym   =  delete $opt{inc_sym}  // 0;
     my $verbose   =  delete $opt{verbose}  // $main::verbose;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
 
@@ -71,6 +73,7 @@ sub dir_list {
     # Now, narrow list based upon options
     @filepaths = grep(!-d, @filepaths)      if (!$inc_dir);                  # remove dirs unless $inc_dir
     @filepaths = grep(!-f, @filepaths)      if (!$inc_file);                 # remove files unless $inc_file
+    @filepaths = grep(!-l, @filepaths)      if (!$inc_sym);		     # remove sym links unless $inc_sym
 
 
     my @temps = @filepaths;
@@ -79,6 +82,11 @@ sub dir_list {
 	my ($name, $path, $suffix) = File::Basename::fileparse($_);	
 	next if ($name eq '.' or $name eq '..');                             # remove . and .. 
 	next if (!$inc_dot && $name =~ /^\./); 
+	
+	my @flags = FileUtility::osx_check_flags($_);
+	next if (!$inc_dot && grep(/hidden/, @flags));                      # remove hidden files if unless $inc_dot
+
+
 	push(@filepaths, $_);
     }
 
@@ -126,6 +134,31 @@ sub rename_unique {
     return($filename_new);
 }
 
+#
+# OS X Specific utility
+#
+
+sub osx_check_flags {
+    my $filepath = shift(@_);
+
+    # On MacOS - ls command can check for extended atributes
+    # -l long -d don't diplay dir -1 make sure one colume -O show os x flags
+    my $cmd = 'ls -1lOd';
+
+    my @flags;
+
+    my $string = `$cmd "$filepath"`;
+    if ($? != 0){
+	warn("Error executing ls on $filepath");
+	return(@flags);
+    }
+
+    chomp($string);
+    my $flags = (split(/\s+/, $string))[0, 4];
+    @flags = sort(split(/,/, $flags));
+
+    return(@flags);
+}
 
 
 

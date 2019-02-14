@@ -35,7 +35,6 @@ use Scalar::Util qw(blessed);
 # * Skip system directories
 
 
-
 our $debug = 0;
 our $verbose = 1;
 
@@ -113,9 +112,7 @@ sub wanted {
     return;
 }
 
-
 sub dir_collect_md5 {
-
      my $dir  = shift(@_);
      my $Tree_dir = NodeTree->new;
 
@@ -128,7 +125,6 @@ sub dir_collect_md5 {
 	 if ($db_mtime < $Dir->dtime){
 	     warn "May need re-scan, db_file older then dir changes Dir: $dir";
 	 }
-
 
 	 $Tree_dir = NodeTree->load(dir => $dir, name => $db_name);
 
@@ -148,70 +144,3 @@ sub dir_collect_md5 {
 }
 
 
-
-
-
-
-# #
-# # Function: Load a md5 oop datafile
-# # 
-# # Add rename old one after store
-# #
-# use Storable;
-
-# #
-# # Move into module - share with scan dirs
-# #
-# sub save_tree_db {
-#     my %opt = @_;
-
-#     my $dir =  delete $opt{dir} or die "Missing param 'dir' to save_dir_db";
-#     my $Tree = delete $opt{Files_ref} or die "Missing param 'Files_ref' to save_dir_md5";
-#     die "Unknown params:", join ", ", keys %opt if %opt;
-
-#     my $dbfile      = "$dir/.moo.tree.db";
-#     my $dbfile_temp = "$dbfile.tmp";
-
-#     # Save into remp and rotate files
-#     store($Tree, $dbfile_temp);
-#     rename($dbfile, "$dbfile.old") if -e $dbfile;
-#     rename($dbfile_temp, $dbfile);
-
-#     my $count = $Tree->count;
-#     say "Saved $count records" if ($verbose >= 2);
-
-#     return;
-# }
-
-# #
-# # Common - move into module
-# #
-# sub load_dir_db {
-#     my %opt = @_;
-
-#     my $dir =  delete $opt{dir} or die "Missing param 'dir' to load_dir_db";
-#     die "Unknown params:", join ", ", keys %opt if %opt;
-
-#     my $Tree = NodeTree->new();
-
-#     my $dbfile_mtime = 0;
-#     my $dbfile = "$dir/.moo.db";
-
-#     if (-e $dbfile) {
-# 	# Need to test for exceptions if have old incompatable file
-# 	eval { $Tree = retrieve($dbfile)} ;
-# 	# $Tree = retrieve($dbfile) ;
-# 	if (blessed($Tree) && $Tree->count >= 1){ 
-# 	    my $count = $Tree->count;
-# 	    say "Loaded $count records" if ($verbose >= 2);
-# 	} else {
-# 	    # clear data if not load blessed object
-# 	    warn "Tree not blessed $dir";
-# 	    $Tree = NodeTree->new();
-# 	}
-# 	$dbfile_mtime = (stat(_))[9];
-#     } else {
-# 	warn "No dbfile";
-#     }
-#     return ($Tree, $dbfile_mtime);
-# }

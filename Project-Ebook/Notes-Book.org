@@ -2,22 +2,26 @@
 Notes on ideas for ebook tracking software. Has evolved into file tracking software.
 
 * Bugs
+** STARTED [#A] Bug scanning ~/Torrent, constructor failed
+** STARTED [#C] Getting OSX attributes on a file sometimes fails - maybe fixed.
 ** TODO [#A] When saving large data structure it fails
 ** TODO [#B] Sometime md5 fails on a file.
-** TODO [#C] Getting OSX attributes on a file sometimes fails - maybe fixed.
+
+** Make is readable operands use stats - not store. Include flags for un modify 
+
 
 * Refactor
-** Split Book and file code
 ** Make md5 file names, dirs, defined in md5 module
 ** Move md5 functions into shared module. Move all MD5 code into a subdir including tests
 ** Cleanup files - delete old test files, organize, make names consistent.
 ** Release process for apps & lib into bin & released Lib
-** Better - smarter - save dupes, load - not repeat counts
 ** Rework code in MooNode for is readable, other values from stats - parse stats directly
 ** Enable NodeTree insert to insert a whole tree for a Tree merge
+** Split Book and file code
+
 
 * ToDo
-
+** Better - smarter - save dupes, load - not repeat counts. Make sure it considers flags.
 ** Give collection a attached dir on new
 ** Implement save to packed file
 ** Fix / Test Collect Tree
@@ -48,6 +52,10 @@ Notes on ideas for ebook tracking software. Has evolved into file tracking softw
    + Hook into file events
    + Initially use from perl to run on dirs, run on tree
 
+** How do we handle dirs that are not writeable? For now skipping
+** Think a lot more about how handle sym links - for now we do not follow
+     
+** Use log module, even if not print message, what happened to files will be stord in log
 
 
 ** Existing Annoyances Lib Genesis

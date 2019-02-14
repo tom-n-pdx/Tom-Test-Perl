@@ -10,12 +10,12 @@
 # * look for dupes in size, md5
 # * itterator method to cycle over whole tree
 # * Need update if re-calc MD5 for file gets added, fixup HoA's
-# * add "name" filepath for tree  -so know wheer save by default?
 # * write pack / unpack save & restore
-# * index by filename
+# * add index by filename
 # * Move HoA to seperate utility file
 # * add search methods. by size, md5, name, mtime, 
 # * lock save / rstore file?
+# * add a dump method for debug
 
 
 # Standard uses's
@@ -30,6 +30,18 @@ use Carp;
 
 
 use Data::Dumper qw(Dumper);           # Debug print
+
+# Default save file name
+our $db_name        =  ".moo.db";
+our $db_name_packed =  ".moo.pdb";
+use constant MD5_BAD => "x" x 32;
+
+#
+# Has optional Dir name
+#
+has 'name',
+    is  => 'rw',
+    isa => 'Str';
 
 # A list of the files in collection. Hashed by hash method of object. 
 # Will work on any datatype that can generate a hash and has a size
@@ -135,7 +147,7 @@ sub List {
 # Save & restore functions for Tree
 # Need to solve the problems with nesting too deep
 # * Consider deleting HoA before save, rebuild after load
-#
+# * Consider using text based save
 
 use Storable;
 #
@@ -146,16 +158,16 @@ sub save {
     my $self = shift(@_);
  
     my %opt = @_;   
-    my $dir   =  delete $opt{dir} or croak("Missing 'dir' param");
-    my $name  =  delete $opt{name} // ".moo.db";
+    # my $dir   =  delete $opt{dir} or croak("Missing 'dir' param nor does Tree have name");
+    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $name    =  delete $opt{name} // $db_name;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
-    my $filepath = $dir.'/'.$name;
 
-    # save into temp and then rotate files
+    my $filepath = $dir.'/'.$name;
+    say("Debug: Store Tree Name: ", $filepath) if ($main::verbose >= 3);
+
     store($self, $filepath);
-    # rename($filepath, "$filepath.old")if -e $filepath;
-    # rename("$filepath.tmp", $filepath);
 
     my $count = $self->count;
     say "Saved $count records" if ($main::verbose >= 2);
@@ -163,44 +175,170 @@ sub save {
 }
 
 #
+# Save method using packed fixed record data
+# * Must add flags
+# * Consider moving create the str to the individual object methods
 #
+
+# every size one larger then needed so leave human readable spalce
+# 4    data type 4 chars
+# 2    extended  1 chars
+# 33   MD5 32 chars
+# 143  13 x Long Unsigned Ints 10 characters - stats
+# ===
+# 183
+# 
+# 329  Filename - 329
+# ===
+# 512
+# Filename - up to 256 - using 200
+my $dbtree_template1 = "A4 A2 A33 (A11)13 A441";         # length 512
+
+# my $dbtree_template2 = "A5                              A266"; # length 271
+
+#
+# For debug, do not rotate files - but for debug  -rotate
+
+sub save_packed {
+    my $self = shift(@_);
+ 
+    my %opt = @_;   
+    my $dir     =  delete $opt{dir}  // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $name    =  delete $opt{name} // $db_name_packed;
+    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+    
+    my $filepath = $dir.'/'.$name;
+    say("Debug: Store Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
+
+    # store($self, $filepath);
+
+    rename($filepath, "$filepath.old") if (-e $filepath);
+    open(my $fh, ">", $filepath);
+    print $fh "# moo.tree.pdb version 1.2\n";
+    # print "# moo.tree.pdb version 1.2\n";
+
+    my $str;
+    my @Nodes = $self->List;
+    my $old_path = "";
+    foreach my $Node (@Nodes) {
+
+	# If this record is different path from the current path - need to write an extra cwd dir to change
+	# assumed dir. Unless this IS a dir record. Means we'll print two lines on this itteration of loop.
+	# If we are lucky and Nodes ordered in right order - we will never issue a cwd record
+	#
+	if (! $Node->isa('MooDir') && $Node->path ne $old_path){
+	    $str = _packed_cwd_str($Node);
+	    print $fh "$str\n";
+	    $old_path = $Node->path;
+	}
+
+	if ($Node->isa('MooDir')){
+	    $str = _packed_dir_str($Node);
+	    $old_path = $Node->filepath.'/';
+	} else {
+	    if ($Node->path ne $old_path){
+		warn "Changed dir with no Dir node! Old: $old_path New: ", $Node->path;
+		$old_path = $Node->path;
+	    }
+	    $str = _packed_file_str($Node);
+	}
+
+    	print $fh "$str\n";
+    }
+
+    close($fh);
+    return;
+}
+
+sub _packed_file_str {
+    my $Node = shift(@_);
+    
+    my $type    = "File";
+    my $extend  = " ";
+    my $md5     = $Node->md5 // MD5_BAD;
+    my @stats   = @{$Node->stat};
+    my $name    = $Node->basename;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
+
+    return($str);
+}
+
+sub _packed_cwd_str {
+    my $Node = shift(@_);
+    
+    my $type    = "Cwd";
+    my $extend  = " ";
+    my $md5     = MD5_BAD;
+    my @stats   = @{$Node->stat};
+    my $name    = $Node->path;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
+
+    return($str);
+}
+sub _packed_dir_str {
+    my $Node = shift(@_);
+    
+    my $type    = "Dir";
+    my $extend  = " ";
+    my $md5     = MD5_BAD;
+    my @stats   = @{$Node->stat};
+    my $name    = $Node->filepath;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
+
+    return($str);
+}
+
+
+
+#
+# ToDo
+# * If named when enter method  -should have same name after load?
 #
 sub load {
     my $self = shift(@_);
 
     my %opt = @_;
-    my $dir     =  delete $opt{dir} or croak "Missing param 'dir' ";
-    # my $name    =  ".moo.db";
-    my $name  =  delete $opt{name} // ".moo.db";
+    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $name    =  delete $opt{name} // $db_name;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-    my $dbfile_mtime = 0;
+    # my $dbfile_mtime = 0;
     my $filepath = $dir.'/'.$name;
 
     if (-e $filepath) {
-
-	# Need to test for exceptions if have old incompatable file
+	# Need to use eval becuase read errors are fatal
 	eval { $self = retrieve($filepath)} ;
 
-	if (blessed($self)){ 
-	    my $count = $self->count;
-	    # say "\tLoaded $count records" if ($verbose >= 2);
-	    say "\tLoaded $count records" if ($main::verbose >= 2);
-	} else {
-	    # clear data if not load blessed object, rename file since no good
-	    carp "File Not Blessed $filepath";
-	    rename($filepath, "$filepath.old");
-	    $self = NodeTree->new();
+	# If error not because of bad file, die
+	if ($@ && $@ !~ /Magic number checking/){
+	    die "Error on load Tree retrieve failed. $@ File: $filepath";
 	}
-	$dbfile_mtime = (stat(_))[9];
+
+	if ($@ or !blessed($self)){
+	    carp "Bad db_file File: $filepath";
+	    rename($filepath, "$filepath.old");
+	    
+	    $self = NodeTree->new();
+	    return($self);
+	}
+
+	my $count = $self->count;
+	say "\tLoaded $count records" if ($main::verbose >= 2);
+
+	# $dbfile_mtime = (stat(_))[9];
     } else {
 	$self = NodeTree->new();
     }
 
-    # say Dumper($self);
-    # return ($self, $dbfile_mtime);
     return ($self);
 }
+
 
 
 #
