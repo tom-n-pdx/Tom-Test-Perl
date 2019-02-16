@@ -235,10 +235,11 @@ sub filename {
     return($name);
 }
 
-# Includes trailing /
+# CHanged to remove trailing /
 sub path {
     my $self = shift(@_);
     my  ($name, $path, $suffix) = File::Basename::fileparse($self->filepath, qr/\.[^.]*/);
+    $path =~ s!/$!!;
     return($path);
 }
 

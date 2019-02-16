@@ -66,17 +66,16 @@ my $Tree = NodeTree->new();
 
 my $Dir1;
 $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
-$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
-$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
+# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
+# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
 
 # say $Dir1;
 # say $Dir1->dump;
 
 
 my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship ( technology )_test1.gif", opt_update_md5 => 0);
-# my $File1_Copy  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal).pdf");
 my $File2  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship technology )_test2.gif");
-# my $File3  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal) copy.pdf");
+my $File3  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/Ultimate Origami for Beginners (ebook, LaFosse, Tuttle Publishing, 2014, Orginal).pdf");
 
 
 # say $File1->filename;
@@ -85,16 +84,31 @@ $Tree -> insert($Dir1);
 $Tree -> insert($File1);
 $Tree -> insert($File2);
 
-
 say "Count in Tree after 3 insert: ", $Tree->count;
 
-my @Nodes;
-# my @Nodes = $Tree->Search(hash => $Dir1->hash, verbose => 3);
-my @Nodes = $Tree->Search(dir => 1, verbose => 3);
-say "Found Dirs: ", scalar(@Nodes);
+say "Files in Tree: ", join(" , ", map($_->filepath, $Tree->List));
+say "Paths in Tree: ", join(" , ", map($_->path,     $Tree->List));
 
-my @Nodes = $Tree->Search(file => 1, verbose => 3);
-say "Found Files: ", scalar(@Nodes);
+
+my @Nodes;
+# @Nodes = $Tree->Search(path => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
+@Nodes = $Tree->Search(path => "/Users/tshott");
+# @Nodes = $Tree->Search(dir => 1, file => 1);
+say "Found Match Path: ", scalar(@Nodes);
+
+my @Nodes;
+say "Dir: ", $Dir1->filepath;
+say "Files in Dir: ";
+@Nodes = $Tree->Search(path => $Dir1->filepath);
+say "Found Match Path: ", join(" , ", map($_->filepath, @Nodes));
+
+
+# my @Nodes = $Tree->Search(hash => $Dir1->hash, verbose => 3);
+# my @Nodes = $Tree->Search(dir => 1, verbose => 3);
+# say "Found Dirs: ", scalar(@Nodes);
+
+# my @Nodes = $Tree->Search(file => 1, verbose => 3);
+# say "Found Files: ", scalar(@Nodes);
 
 # Check error in search options
 # my @Nodes = $Tree->Search(verbose => 3);
@@ -102,30 +116,30 @@ say "Found Files: ", scalar(@Nodes);
 
 
 
-@Nodes = $Tree->Search(hash => 17, verbose => 3);
-say "Found: ", scalar(@Nodes);
+# @Nodes = $Tree->Search(hash => 17, verbose => 3);
+# say "Found: ", scalar(@Nodes);
 
-@Nodes = $Tree->Search(file => 1, verbose => 3);
-say "Found: ", scalar(@Nodes);
+# @Nodes = $Tree->Search(file => 1, verbose => 3);
+# say "Found: ", scalar(@Nodes);
 
-@Nodes = $Tree->Delete(@Nodes);
-say "Deleted: ", scalar(@Nodes);
-
-
-# $Tree -> Delete($File1->hash);
-say "Count in Tree after delete files: ", $Tree->count;
+# @Nodes = $Tree->Delete(@Nodes);
+# say "Deleted: ", scalar(@Nodes);
 
 
+# # $Tree -> Delete($File1->hash);
+# say "Count in Tree after delete files: ", $Tree->count;
 
-exit;
 
-$Tree -> Delete(17);
-
-$Tree -> Delete($File2);
-
-say "Count in Tree after 2 delete: ", $Tree->count;
 
 exit;
+
+# $Tree -> Delete(17);
+
+# $Tree -> Delete($File2);
+
+# say "Count in Tree after 2 delete: ", $Tree->count;
+
+# exit;
 
 
 # use Fcntl qw(:mode);
@@ -172,7 +186,7 @@ exit;
 
 
 
-exit;
+# exit;
 
 
 #$Tree->insert($Dir1);

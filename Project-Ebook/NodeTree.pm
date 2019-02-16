@@ -157,11 +157,12 @@ sub Search {
     my $search_hash = delete $opt{hash}    // 0;
     my $search_dir  = delete $opt{dir}     // 0;
     my $search_file = delete $opt{file}    // 0;
+    my $search_path = delete $opt{path}    // 0;
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
-    if ( ! $search_hash && ! $search_dir && ! $search_file ){
-	croak ("Illegal set search options: By_Hash: $search_hash Dir: $search_dir File: $search_file");
+    if ( ! $search_hash && ! $search_dir && ! $search_file && ! $search_path){
+	croak ("Illegal set of search options: By_Hash: $search_hash Dir: $search_dir File: $search_file Path: $search_path");
     }
 
     my @Nodes;
@@ -178,11 +179,16 @@ sub Search {
     # Search By File
     say ("DEBUG: Searching by file value = ", $search_file) if ($verbose >= 3 && $search_file);
     
+    # Search By Path
+    say ("DEBUG: Searching by path value = ", $search_path) if ($verbose >= 3 && $search_path);
 
     my @keys = sort keys %{$self->nodes};
     foreach my $key (@keys){
 	my $Node =  ${$self->nodes}{$key};
 	next if ($search_hash && $Node->hash ne $search_hash);
+	next if ($search_path && $Node->path ne $search_path);
+
+	# Bug
 	next if ($search_dir  && ! $Node->isdir);
 	next if ($search_file && ! $Node->isfile);
 	
