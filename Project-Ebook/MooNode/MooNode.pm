@@ -6,16 +6,9 @@
 # ToDo
 # * add buld args check? No extra args
 # * string version mtime, dtime  -use duelvalue
-# * check exit code from system call in get exttended atributes
-# * convert isread, isfile to use stat values and not store seperate
-# * add set flags method - extend to "mac Node?"
+# !! convert isread, isfile to use stat values and not store seperate
 # * read labels / set
-
-#   ls -ldO@ /private
-#   set hidden - sudo chflags hidden /private
-#                flags: hidden
-
-
+# * add a save packed method
 
 
 # Standard uses's
@@ -25,6 +18,8 @@ use autodie;			# Easier write open  /close code
 
 use File::Basename;             # Manipulate file paths
 use Time::localtime;            # Printing stat values in human readable time
+use FileUtility;
+
 # use Data::Dumper qw(Dumper);  # Debug print
 
 package MooNode v0.1.2;
@@ -34,10 +29,10 @@ use namespace::autoclean;
 use Carp;
 
 has 'filepath',			# full name of file including path
-    is => 'ro', 
+    is => 'rw', 
     isa => 'Str',
-    required => 1,
-    writer => '_set_filepath';
+    required => 1;
+
 
 has 'stat',			# stat array - not live version, last time updated or created
     is => 'ro',
@@ -49,7 +44,12 @@ has 'isreadable',		# not live version
     isa => 'Bool',
     writer => '_set_isreadable';
 
-use Fcntl qw(:mode);			# Get fields to parse stat bits
+has 'iswriteable',		# not live version
+    is => 'ro',
+    isa => 'Bool',
+    writer => '_set_iswriteable';
+
+# use Fcntl qw(:mode);		# Get fields to parse stat bits
 
 has 'isdir',			# not live version
     is => 'ro',
@@ -65,7 +65,7 @@ has 'isfile',			# not live version
 
 has 'flags',			# not live version
     is => 'ro',
-#    isa => 'Bool',
+    isa => 'Str',
     writer => '_set_flags';
 
 #
@@ -126,81 +126,29 @@ sub BUILD {
  
 sub update_stat {
     my ($self)=shift( @_);
-
     my $filepath =  $self->filepath;
  
-    # Update the logical values
-    $self->_set_isreadable( -r $filepath ? 1 : 0);
-    $self->_set_isdir(-d _  ? 1 : 0);
-    $self->_set_isfile(-f _ ? 1 : 0);
-
     # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-    # $self->_set_stat( [ stat(_) ] );            # retruns stat for last file checked with a -x command
 
     # Do NOT follow sym link
-    $self->_set_stat( [ lstat($filepath) ] );            # retruns stat for last file checked with a -x command
-    
-    # OS X Extended Atributes
-    my $flags = _check_extended($filepath);
-    $self->_set_flags($flags);
-    
+    $self->_set_stat( [ lstat($filepath) ] );
+
+    # Get OS X Extended Atributes before check premissions since premessions depend upon flags
+    my @flags = FileUtility::osx_check_flags($filepath);
+    $self->_set_flags(join('; ', @flags));
+
+    # Update the logical values - humm - checks file or sym link pointing to?
+    $self->_set_isreadable( -r $filepath ? 1 : 0);
+    $self->_set_iswriteable( -w _ ? 1 : 0);
+    $self->_set_isdir(-d _  ? 1 : 0);
+    $self->_set_isfile(-f _ ? 1 : 0);
+        
 }
 
-
-sub _check_extended {
-    my $filepath = shift(@_);
-
-    # On MacOS - ls command can check for extended atributes
-    # -l long -d don't diplay dir -1 make sure one colume -O show os x flags
-    my $cmd = 'ls -1lOd';
-    my $label = 0;
-    my $flags = "";
-    my $perms;
-
-    my $string = `$cmd "$filepath"`;
-    if ($? != 0){
-	warn("Error executing ls on $filepath");
-	return($flags, $label);
-    }
-
-    chomp($string);
-    ($perms, $flags) = (split(/\s+/, $string))[0, 4];
-
     
-    # my $extended = substr($perms, -1,  1);
-    # $perms    = substr($perms,  0, -1);
-    # say "Perms: $perms Extended: $extended Flags: $flags";
-
-    # $cmd = 'mdls -name kMDItemFSLabel -raw ';
-
-    # If has extended data - need to see what it is
-    # if ($extended eq "@"){
-    # 	$label = `$cmd "$filepath"`;
-    # 	# $label = $label + 0;
-    # 	say "Label: $label $filepath";
-    # }
-
-    return($flags);
-}
-
-
-
 #
 # Values derived from stat values
 #
-use Fcntl qw(:mode);			# Get fields to parse stat bits
-
-has 'isdir',			# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_isdir';
-
-has 'isfile',			# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_isfile';
-
-
 sub size {
     my $self = shift(@_);
     
@@ -333,7 +281,7 @@ sub rename {
 	croak "Tried to rename but new file exists: $filepath_new";
     }
     
-    rename($self->filepath, $filepath_new);
+    rename($self->filepath , $filepath_new);
 
     $self->_set_filepath($filepath_new);
 
@@ -444,37 +392,70 @@ sub delta {
 # Check: isdir, isfile, isreadable, dev, inode, size, mtime, ctime
 # Might be able to optimize based on ctime / mtime match
 #
+# Need to check flags
 
 #
 # Simpler ischanged - just if it has or not
 # - Live check, no update to stats
+# sub ischanged {
+#     my $self   =shift(@_);
+
+#     my $filepath = $self->filepath;
+
+#     my @changes;
+
+#     # if (! -e $filepath){
+#     #	push(@changes, "deleted");
+#     #	return (@changes);
+#     #}
+
+# #     if (! $self->isexist){
+# 	push(@changes, "deleted");
+# 	return (@changes);
+#     }
+    
+#     say "DEBUG: Name: ", $self->filename if ($main::verbose >= 2);
+
+
+
+#     # stat file - make a few quick checks
+#     my @old_stat = @{$self->stat};
+#     my @new_stat = lstat($filepath);	                            # Uses last stat value 
+
+#     say "Old Stats: ", join(", ", @old_stat) if ($main::verbose >= 2);
+#     say "New Stats: ", join(", ", @new_stat) if ($main::verbose >= 2);
+
+#     # Check dev, inode, size, mtime, ctime
+#     foreach (0..1, 7, 9..10){
+# 	if ($old_stat[$_] != $new_stat[$_]){
+# 	    push(@changes, $stat_names[$_]);
+# 	}
+#     }
+    
+    
+#     return @changes;
+# }
+
+#
+# Simpler ischanged - just if it has or not
+# even simpler live check - use delta function to make compare
 sub ischanged {
-    my $self   =shift(@_);
-
-
-
+    my $self = shift(@_);
 
     my $filepath = $self->filepath;
 
     my @changes;
 
     if (! $self->isexist){
-	push(@changes, "deleted");
-	return (@changes);
+    	push(@changes, "deleted");
+    	return (@changes);
     }
     
-    # stat file - make a few quick checks
-    my @old_stat = @{$self->stat};
-    my @new_stat = stat(_);	                            # Uses last stat value 
+    my $Temp = MooNode->new($filepath);
+    @changes = $self->delta($Temp);
+    
 
-    # Check dev, inode, size, mtime, ctime
-    foreach (0..1, 7, 9..10){
-	if ($old_stat[$_] != $new_stat[$_]){
-	    push(@changes, $stat_names[$_]);
-	}
-    }
-    
-    return @changes;
+    return (@changes);
 }
 
 

@@ -4,7 +4,8 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * Make remove work on Objects
+# * Add search
+# !! Make remove work on Objects
 # * add make sure insert, delete work both for single or list
 # * find way to pass no md5 or no dtime to insert
 # * look for dupes in size, md5
@@ -16,6 +17,7 @@
 # * add search methods. by size, md5, name, mtime, 
 # * lock save / rstore file?
 # * add a dump method for debug
+# * add a pop / shift method.
 
 
 # Standard uses's
@@ -86,10 +88,10 @@ sub insert {
 	    &HoA_push($self->size_HoA , $size, $hash);
 
 	    # If object is file also insert into MD5 HoA if has a MD5
-	    if ($obj->isfile && defined $obj->md5) {
-	    	my $md5 = $obj->md5;
-	    	&HoA_push($self->md5_HoA , $md5, $hash);
-	    }
+	    # if ($obj->isfile && defined $obj->md5) {
+	    #	my $md5 = $obj->md5;
+	    #	&HoA_push($self->md5_HoA , $md5, $hash);
+	    # }
 
 	}
     }
@@ -97,31 +99,32 @@ sub insert {
 }
 
 # Uses inodes - fix to use objects
-sub remove {
+sub Delete {
    my $self   = shift( @_);
    my @hashs = @_;
-   my @deleted;
+   my @Deleted;
 
    foreach my $hash (@hashs){
-       if (!defined ${$self->nodes}{$hash}){
-	   carp "Trying to delete hash not in Tree $hash";
+       my $hash_value = $hash->isa('MooNode') ?  $hash = $hash->hash : $hash;
+       my $obj = delete ${$self->nodes}{$hash_value};
+
+       if (! defined $obj){
+	   carp "Trying to delete value not in Tree Hash: $hash Value: $hash-value"  if ($main::verbose >= 2);
 	   next;
        }
-       my $obj = ${$self->nodes}{$hash};
-       my $deleted = delete ${$self->nodes}{$hash};
-       push(@deleted, $deleted);
+       push(@Deleted, $obj);
 
        # Delete from size_HoA
-       &HoA_remove($self->size_HoA , $obj->size, $hash);       
+       &HoA_remove($self->size_HoA , $obj->size, $hash) if defined $obj->size;       
 
-       # If file & has MD5 - remove from MD5_HoA
-       if ($obj->can('md5') && defined $obj->md5){
-       	   &HoA_remove($self->md5_HoA , $obj->md5, $hash);
-       }
+       # If obj has MD5 value - remove from MD5_HoA
+       # if ($obj->can('md5') && defined $obj->md5){
+       #	   &HoA_remove($self->md5_HoA , $obj->md5, $hash);
+       # }
        
    }
    
-   return(@deleted);
+   return(@Deleted);
 }
 
 sub count {
@@ -141,6 +144,80 @@ sub List {
     }
 
     return(@Nodes);
+}
+
+#
+# Generic seach - implement default which is by hash
+# * By hash - pass a hash value in
+#
+sub Search {
+    my $self   = shift(@_);
+    my %opt = @_;
+
+    my $search_hash = delete $opt{hash}    // 0;
+    my $search_dir  = delete $opt{dir}     // 0;
+    my $search_file = delete $opt{file}    // 0;
+    my $verbose     = delete $opt{verbose} // $main::verbose;
+    croak "Unknown params:", join ", ", keys %opt if %opt;
+
+    if ( ! $search_hash && ! $search_dir && ! $search_file ){
+	croak ("Illegal set search options: By_Hash: $search_hash Dir: $search_dir File: $search_file");
+    }
+
+    my @Nodes;
+
+    # Search By Hash
+    if ( $search_hash->isa('MooNode') ){
+	$search_hash = $search_hash->hash;
+    }
+    say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
+    
+    # Search By Dir
+    say ("DEBUG: Searching by dir value = ", $search_dir) if ($verbose >= 3 && $search_dir);
+    
+    # Search By File
+    say ("DEBUG: Searching by file value = ", $search_file) if ($verbose >= 3 && $search_file);
+    
+
+    my @keys = sort keys %{$self->nodes};
+    foreach my $key (@keys){
+	my $Node =  ${$self->nodes}{$key};
+	next if ($search_hash && $Node->hash ne $search_hash);
+	next if ($search_dir  && ! $Node->isdir);
+	next if ($search_file && ! $Node->isfile);
+	
+	push(@Nodes, $Node);
+    }
+
+    say ("DEBUG: Searching matched ", scalar(@Nodes), " keys") if ($verbose >= 3);
+
+    return(@Nodes);
+}
+
+
+#
+# Need a check and summary function to detect errors
+#
+sub summerize {
+    my $self   = shift(@_);
+
+
+    # first - just count how many items in hash
+    my $count = $self->count;
+    my @List = $self->List;
+    say "DEBUG Summerize: $count records and List has ", scalar(@List), " records";
+
+    foreach my $hash (sort keys %{$self->nodes}){
+	my $obj = ${$self->nodes}{$hash};
+
+	if ($obj->hash ne $hash){
+	    say "Node hash not equal to stored in %nodes ", $obj->hash, " != ", $hash;
+	}
+	# Check if in size
+	
+
+    }
+
 }
 
 #
@@ -194,11 +271,9 @@ sub save {
 # Filename - up to 256 - using 200
 my $dbtree_template1 = "A4 A2 A33 (A11)13 A441";         # length 512
 
-# my $dbtree_template2 = "A5                              A266"; # length 271
-
 #
-# For debug, do not rotate files - but for debug  -rotate
-
+# Do not rotate files - but for debug  -rotate
+# If we saved on a per dir bases as we loaded dir files, then we'd generate less cwd records for tree
 sub save_packed {
     my $self = shift(@_);
  
@@ -215,13 +290,17 @@ sub save_packed {
     rename($filepath, "$filepath.old") if (-e $filepath);
     open(my $fh, ">", $filepath);
     print $fh "# moo.tree.pdb version 1.2\n";
-    # print "# moo.tree.pdb version 1.2\n";
 
     my $str;
     my @Nodes = $self->List;
     my $old_path = "";
-    foreach my $Node (@Nodes) {
 
+    # Need to sort @Nodes by Dir to minimize the number of cwd records wrote. Will work fine without
+    # Need better sort - this one is wrong
+    # @Nodes = sort({$a->path cmp $b->path} @Nodes);
+
+
+    foreach my $Node (@Nodes) {
 	# If this record is different path from the current path - need to write an extra cwd dir to change
 	# assumed dir. Unless this IS a dir record. Means we'll print two lines on this itteration of loop.
 	# If we are lucky and Nodes ordered in right order - we will never issue a cwd record
@@ -232,14 +311,11 @@ sub save_packed {
 	    $old_path = $Node->path;
 	}
 
+
 	if ($Node->isa('MooDir')){
 	    $str = _packed_dir_str($Node);
 	    $old_path = $Node->filepath.'/';
 	} else {
-	    if ($Node->path ne $old_path){
-		warn "Changed dir with no Dir node! Old: $old_path New: ", $Node->path;
-		$old_path = $Node->path;
-	    }
 	    $str = _packed_file_str($Node);
 	}
 
@@ -257,7 +333,7 @@ sub _packed_file_str {
     my $extend  = " ";
     my $md5     = $Node->md5 // MD5_BAD;
     my @stats   = @{$Node->stat};
-    my $name    = $Node->basename;
+    my $name    = $Node->filename;
     warn("Name > space 329 $name") if (length($name) > 329);
 
     my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
@@ -286,7 +362,7 @@ sub _packed_dir_str {
     my $extend  = " ";
     my $md5     = MD5_BAD;
     my @stats   = @{$Node->stat};
-    my $name    = $Node->filepath;
+    my $name    = $Node->filepath.'/';
     warn("Name > space 329 $name") if (length($name) > 329);
 
     my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
@@ -386,7 +462,7 @@ sub HoA_remove {
 	delete $$HoA_ref{$hash} if (scalar( @{ $$HoA_ref{$hash} }) == 0);
 
     } else {
-	carp "Tried to remove non-existent value hash: $hash value: $value";
+	carp "HOA_remove Tried to remove non-existent value hash: $hash value: $value";
     }
 
     return;

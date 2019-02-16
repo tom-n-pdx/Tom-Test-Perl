@@ -27,7 +27,7 @@ use File::Basename;             # Manipulate file paths
 #           Default
 # inc_dir   0
 # inc_file  1
-# inc_dot   0    Include dot files, but exclude . and ... Also covers os x hidden files
+# inc_dot   0    Include dot files, but exclude . and ... Also excludes os x hidden files
 # inc_sym   0
 #
 # ToDO
@@ -86,7 +86,6 @@ sub dir_list {
 	my @flags = FileUtility::osx_check_flags($_);
 	next if (!$inc_dot && grep(/hidden/, @flags));                      # remove hidden files if unless $inc_dot
 
-
 	push(@filepaths, $_);
     }
 
@@ -138,6 +137,25 @@ sub rename_unique {
 # OS X Specific utility
 #
 
+# Known Flags:
+# uchg        ro user immutable /Users/tshott/Torrent/_Archive/_Move_Backup/Copy_Bootcamp/AppData/Local/Microsoft/Windows/Burn/Burn
+# schg        ro system immutable
+# hidden                        /Users/tshott/Torrent/TV/Icon
+# compressed                    /Users/tshott/Library/Application Scripts/com.apple.iChat/Auto Accept.applescript
+# restricted  ro                /System
+# sunlnk      ro System Integrity /private
+
+# Doc & hex values https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemDetails/FileSystemDetails.html#//apple_ref/doc/uid/TP40010672-CH8-SW8
+
+# Ugly - Older flags docs don't cover new flags and this is too many bits
+# mapping
+# blank      0x01   <- -
+# uchg       0x01   <- uchg, schg, restricted, sunlnk
+# hidden     0x02   <- hidden
+# compressed 0x04   <- compressed
+
+my %osx_flags = (uchg => 0x1, hidden => 0x2,  compressed => 0x4, schg => 0, restricted => 0, sunlnk => 0);
+
 sub osx_check_flags {
     my $filepath = shift(@_);
 
@@ -147,15 +165,26 @@ sub osx_check_flags {
 
     my @flags;
 
-    my $string = `$cmd "$filepath"`;
+    my $text = $filepath;
+    $text =~ s/'/'"'"'/g;              # Escape ' in filename
+    my $string = `$cmd '$text' `;
+
     if ($? != 0){
 	warn("Error executing ls on $filepath");
 	return(@flags);
     }
 
     chomp($string);
-    my $flags = (split(/\s+/, $string))[0, 4];
+    my $flags = (split(/\s+/, $string))[4];      # flags are 4th field in ls output
+    
+    return(@flags) if ($flags eq "-");
+
     @flags = sort(split(/,/, $flags));
+ 
+    my @new = grep(! defined $osx_flags{$_}, @flags);
+    if (@new){
+	warn "Unknown flags: ".join(", ", @new);
+    }
 
     return(@flags);
 }

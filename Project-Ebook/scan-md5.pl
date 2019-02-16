@@ -20,7 +20,7 @@ use MooFile;
 # Todo
 # * add --help option
 # * return number of changes for dir update - total changes
-#
+# * Cleanup debug prints & add a write to log?
 my %size_count;
 
 my ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
@@ -31,7 +31,7 @@ our $debug = 0;
 our $verbose = 1;
 our $fast_scan = 0;
 our $fast_dir  = 0;
-our $tree=0;
+our $tree = 0;
 our $md5_save_limit = 100;
 
 GetOptions (
@@ -89,6 +89,7 @@ sub wanted {
     
     # say "Check Flags $_ ", join(', ', @flags);
 
+    # Skip hidden or protected dirs
     if (grep(/hidden/, @flags) or grep(/uchg/, @flags)){
 	return;
     }
@@ -117,7 +118,6 @@ sub update_dir_md5 {
     say "Scanning $dir" if ($verbose >= 2);
 
     my $Tree_old = NodeTree->new(name => $dir);
-    # my $Tree_old = NodeTree->new;
     my $Dir = MooDir->new(filepath => $dir);
 
     # Check if exiisting datafile
@@ -130,21 +130,20 @@ sub update_dir_md5 {
 	}
 
 	$Tree_old = NodeTree->load(dir => $dir, name => $db_name);
-	# $Tree_old = NodeTree->load(name => $db_name);
     } else {
-	# trick, need to create empty datafile at start of check, so Dir change date includes the new file
+	# trick, need to create empty datafile at start of check, so Dir change mtime includes the new file
 	say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
 	`touch "$dir/$db_name"`;
 	$Dir = MooDir->new(filepath => $dir);
     }
 
     my $Tree = NodeTree->new(name => $dir);      # Store new files in Tree
-    # my $Tree = NodeTree->new;      # Store new files in Tree
     
     # Scan through all files in dir and the Dir obj. Can process Dir just like any other object
     # By default, Dir->List returns only normal files, not sym links, dirs, invisable or dot files
     my @Nodes = $Dir->List;
     push(@Nodes, $Dir);
+
 
     foreach my $Node (@Nodes) {
 	update_file(file => $Node, Files_old_ref => $Tree_old, fast_scan=>$fast_scan);
@@ -159,6 +158,7 @@ sub update_dir_md5 {
 
 
     # Done scanning new files, check if any old values left - file must have been deleted, or moved to new dir
+    # Renamed file we would have caught becuase same inode
     my @Files = $Tree_old->List;
     $files_delete += scalar(@Files);
     if (@Files >= 1 && $verbose >= 1){
@@ -170,10 +170,7 @@ sub update_dir_md5 {
 
     my $total_change = $files_new + $files_delete + $files_change + $files_md5 + $files_rename;
     if ( $total_change > 0){
-	# $Tree -> save(dir => $dir, name => $db_name);
 	$Tree -> save(name => $db_name);
-
-	# print "Dir: $dir " if ($verbose <= 1);
 	say "\tFile Changes: New: $files_new Changed: $files_change MD5: $files_md5 Deleted: $files_delete Rename: $files_rename";
     }
 
@@ -198,19 +195,26 @@ sub update_file {
 
     say "\tChecking: ", $File->filename if ($verbose >= 3);
 
-    my $hash = $File->hash;
-    my $File_old = ${$Tree_old->nodes}{$hash};
+    my ($File_old) = $Tree_old->Search(hash => $File);
 
+    # 
+    # rework how check changes - this is a hack
+    #
     if (! defined $File_old) {
 	# If no old file with inode, must be new file (could be new file with same name, and diff inode)
 	say "\t\tNew File: ", $File->filename if ($verbose >= 2);
 	$files_new++;
     } else {
 	my @changes = $File->delta($File_old);
+
 	if (@changes > 0 && $verbose >= 2){
 	    say "\t\tDelta: ", join(", ", @changes);
 	}
 	
+	if (@changes > 0){
+	    $files_change++;
+	}
+
 	# If old file is same size and same modified date - update any expensive values, such as md5
         # Use mtime - don't care if name changed - care that contents changed
 	if ( ($File->size == $File_old->size) && ($File->mtime == $File_old->mtime) ) {
@@ -219,7 +223,7 @@ sub update_file {
 		$File->_set_md5($File_old->md5);
 	    }
 	} else {
-	    $files_change++;
+	    # $files_change++;
 	    say "\t\tExisitng Changed: ",$File->filename if ($verbose >= 2);
 	    say "\t\t\tDelta: ", join(", ", @changes)if ($verbose >= 2);
 	}
@@ -231,11 +235,11 @@ sub update_file {
 		"\n\t\t     To: ", $File->filename if ($verbose >= 2);
 	}
 
-	$Tree_old->remove($hash);
+	$Tree_old->Delete($File);
     }
     $size_count{$File->size}++;
 
-    # obj supports md5 and it's not set and object is readable then calc md5 (only files today)
+    # if obj supports md5 and it's not set and object is readable then calc md5 (only files today)
     if ($File->can('md5') && !defined($File->md5) && $File->isreadable){
 	my $count = $size_count{$File->size};
 

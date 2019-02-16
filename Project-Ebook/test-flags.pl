@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 #
+# Scan a big tree and extract os x flags from evey file
+#
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
@@ -12,17 +14,6 @@ use NodeTree;
 use lib 'MooNode';
 use MooDir;
 use MooFile;
-
-# For Debug
-# use Data::Dumper qw(Dumper);           # Debug print
-# use Scalar::Util qw(blessed);
-#
-# Todo
-# * add --help option
-# * return number of changes for dir update - total changes
-# * detect hidden, invisable, dot files and skip in tree scan
-#
-
 
 
 our $debug = 0;
@@ -90,7 +81,11 @@ sub wanted {
     #say "Check Flags $_ ", join(', ', @flags);
     foreach (@flags) {
 	$flags{$_}++;
+	if ( $flags{$_} == 1) {
+	    say "Flag: $_ File: $File::Find::name";
+	}
     }
+
 
     return;
 }

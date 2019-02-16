@@ -39,7 +39,7 @@ my ($files_new, $files_rename, $files_delete, $files_change) = (0, 0, 0, 0);
 
 
 our $debug = 0;
-our $verbose = 1;
+our $verbose = 2;
 our $fast_scan = 0;
 our $tree=0;
 
@@ -65,41 +65,86 @@ if ($debug or $verbose >= 2){
 my $Tree = NodeTree->new();
 
 my $Dir1;
-$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_temp");
-#$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
-# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
+$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
+$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
+$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
 
 # say $Dir1;
 # say $Dir1->dump;
 
-# exit;
 
-
-my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Money 5,000 Years of Debt and Power (ebook, Aglietta, Verso Books, 2018, Orginal).epub", opt_update_md5 => 0);
+my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship ( technology )_test1.gif", opt_update_md5 => 0);
 # my $File1_Copy  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal).pdf");
-# my $File2  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/War in space- the science and technology behind our next theater of conflict (Springer-Praxis books in space exploration.) (ebook, Dawson, Springer, 2019, Orginal).pdf");
+my $File2  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship technology )_test2.gif");
 # my $File3  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_temp/Yoga Fitness for Men- Build Strength, Improve Performance, Increase Flexibility (ebook, Pohlman, DK, 2018, Orginal) copy.pdf");
 
 
-say $File1->filename;
+# say $File1->filename;
 
-use Fcntl qw(:mode);
-
-my @ftypes;
-$ftypes[S_IFDIR] = "dir";
-$ftypes[S_IFCHR] = "c";
-$ftypes[S_IFBLK] = "b";
-$ftypes[S_IFREG] = "file";
-$ftypes[S_IFIFO] = "p";
-$ftypes[S_IFLNK] = "l";
-$ftypes[S_IFSOCK] = "s";
-
-say "S_IFDIR = ", S_IFDIR;
-my $filetype = S_IFMT( @{$File1->stat}[2] );
-my $ftype = $ftypes[$filetype];
+$Tree -> insert($Dir1);
+$Tree -> insert($File1);
+$Tree -> insert($File2);
 
 
-say "Filetype: $ftype ($filetype)";
+say "Count in Tree after 3 insert: ", $Tree->count;
+
+my @Nodes;
+# my @Nodes = $Tree->Search(hash => $Dir1->hash, verbose => 3);
+my @Nodes = $Tree->Search(dir => 1, verbose => 3);
+say "Found Dirs: ", scalar(@Nodes);
+
+my @Nodes = $Tree->Search(file => 1, verbose => 3);
+say "Found Files: ", scalar(@Nodes);
+
+# Check error in search options
+# my @Nodes = $Tree->Search(verbose => 3);
+# say "Found Error: ", scalar(@Nodes);
+
+
+
+@Nodes = $Tree->Search(hash => 17, verbose => 3);
+say "Found: ", scalar(@Nodes);
+
+@Nodes = $Tree->Search(file => 1, verbose => 3);
+say "Found: ", scalar(@Nodes);
+
+@Nodes = $Tree->Delete(@Nodes);
+say "Deleted: ", scalar(@Nodes);
+
+
+# $Tree -> Delete($File1->hash);
+say "Count in Tree after delete files: ", $Tree->count;
+
+
+
+exit;
+
+$Tree -> Delete(17);
+
+$Tree -> Delete($File2);
+
+say "Count in Tree after 2 delete: ", $Tree->count;
+
+exit;
+
+
+# use Fcntl qw(:mode);
+
+# my @ftypes;
+# $ftypes[S_IFDIR] = "dir";
+# $ftypes[S_IFCHR] = "c";
+# $ftypes[S_IFBLK] = "b";
+# $ftypes[S_IFREG] = "file";
+# $ftypes[S_IFIFO] = "p";
+# $ftypes[S_IFLNK] = "l";
+# $ftypes[S_IFSOCK] = "s";
+
+# say "S_IFDIR = ", S_IFDIR;
+# my $filetype = S_IFMT( @{$File1->stat}[2] );
+# my $ftype = $ftypes[$filetype];
+
+
+# say "Filetype: $ftype ($filetype)";
 
 
 
@@ -121,7 +166,7 @@ say "Filetype: $ftype ($filetype)";
 # S_IFIFO    0010000   fifo
 # printf "Permissions are %04o\n", $mode & 07777;
 
-say $File1->dump;
+# say $File1->dump;
 
 
 

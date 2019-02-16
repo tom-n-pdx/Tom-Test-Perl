@@ -11,30 +11,16 @@ Notes on ideas for ebook tracking software. Has evolved into file tracking softw
 
 
 * Refactor
-** Make md5 file names, dirs, defined in md5 module
-** Move md5 functions into shared module. Move all MD5 code into a subdir including tests
+**  A Enable NodeTree insert to insert a whole tree for a Tree merge
 ** Cleanup files - delete old test files, organize, make names consistent.
 ** Release process for apps & lib into bin & released Lib
 ** Rework code in MooNode for is readable, other values from stats - parse stats directly
-** Enable NodeTree insert to insert a whole tree for a Tree merge
 ** Split Book and file code
 
 
 * ToDo
 ** Better - smarter - save dupes, load - not repeat counts. Make sure it considers flags.
-** Give collection a attached dir on new
 ** Implement save to packed file
-** Fix / Test Collect Tree
-   + Scan tree
-   + Warn if Dir out of date, don't fix
-   + Save file at root of tree
-   + Save copy of tree on data dir
-     * Naming method for a tree in dir?
-   + Rotate old copy of tree
-   + Save a list of all trees scanned in data dir? Build from datafiles in dir?
-   + Delete any old subtree files found? In Tree or data dir?
-   + Make sense to have a one dir version?
-   + Create 
 ** Finish MooFile
    + Tests
    + Implement tree search

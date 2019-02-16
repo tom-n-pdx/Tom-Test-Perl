@@ -62,7 +62,7 @@ sub BUILD {
 
 #
 # Calculate last time the dir or any file in dir changed
-# NOTE: assumes online copy dir
+# NOTE: assumes online copy of dir. Note that by default it does not look for changes in any dot files
 #
 sub _calc_dtime {
     my $self = shift(@_);
@@ -128,7 +128,7 @@ sub list_filepaths {
 #
 # Dir list obj method
 # Returns a list of file objects
-# Skips ., .. and other hidden files - may need to create option for all files, etc.
+# Skips ., .. and other hidden files by default
 # it does include un-readable normal files
 #
 sub List {
@@ -136,6 +136,7 @@ sub List {
     my %opt = @_;
     my $update_dtime =  delete $opt{update_dtime}  // 0;
     my $update_md5   =  delete $opt{update_md5}  // 0;
+    # No check for unused opts - they are passed to dir_list
 
     
     my @filepaths = dir_list(dir => $self->filepath, %opt);
@@ -168,6 +169,9 @@ sub List {
 #
 sub ischanged {
     my $self = shift(@_);
+
+    my %opt = @_;
+    my $check_dtime =  delete $opt{check_dtime}  // 1;
  
     # First call ischanged for the dir file itself
     my @changes = $self->SUPER::ischanged;
@@ -178,7 +182,7 @@ sub ischanged {
     #
     return (@changes) if (@changes);
 
-    if ($self->dtime && $self->dtime != $self->_calc_dtime){
+    if ($check_dtime && $self->dtime && $self->dtime != $self->_calc_dtime){
 	push(@changes, "dtime");
     }
 

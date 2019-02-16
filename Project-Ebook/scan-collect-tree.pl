@@ -82,6 +82,9 @@ foreach my $dir (@ARGV){
     # say "data dir name: $name";
 
     $Tree -> save(dir => $data_dir, name => $name);
+    
+    # DEBUG
+    # $Tree -> save_packed(dir => $dir);
 }
 
 
