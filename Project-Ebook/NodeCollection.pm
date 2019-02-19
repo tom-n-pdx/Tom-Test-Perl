@@ -105,7 +105,6 @@ sub insert {
     insert_hash($self->size_hash, $size, $obj); 
 
     # Should never have dup inode
-    # my $inode =  ${$obj->stat}[0]."-".${$obj->stat}[1];
     my $inode =  ${$obj->stat}[1];
     insert_hash($self->inode_hash, $inode, $obj); 
 

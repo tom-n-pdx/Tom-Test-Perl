@@ -33,7 +33,7 @@ my $fast_scan = 0;
 
 
 # our (%md5_old, %mtime_old, %size_old, %filename_old);
-# our (%md5,        %mtime,        %size,        %filename);
+# our (%md5,        %mtime,      %size,     %filename);
 
 my $global_updates = 0;
 
@@ -43,7 +43,7 @@ sub wanted {
     return unless -d $File::Find::name;
     my  $dir_check = $File::Find::name;
 
-    say "Checking: $dir_check" if ($debug >= 0);
+    say "Checking: $dir_check" if ($verbose >= 2);
 
     # Force update of dir
     &scan_dir_md5(0, $dir_check);

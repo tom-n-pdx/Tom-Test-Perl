@@ -1,33 +1,3 @@
 
-Find
-* rewrite - dir, tree - use 
-* use Dir, Node, Collection to build tree
-* check file names, check duplicates
 
-Collection
-* better sore, delete
-* write cold load & update
-* index by node, size, md5.
-
-* Scan and score tree’s
-
-* uses
-+ Find dupes
-+ Search against other files
-+ rename files
-+ Update data = isbn, etc
-
-* dup Files
-  + dupe sig
-  + where  to scan
-  + which file takes priority
-  + store ok matches
-  + handle off lined files
-  + fuzzy search
-  + store what to check
-
-* Catalog
-  + 
-
-+ rewrite check file names,  rename
 

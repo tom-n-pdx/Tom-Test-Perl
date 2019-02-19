@@ -9,6 +9,7 @@ use Getopt::Long;
 
 use lib '.';
 use ScanDirMD5;
+use FileUtility;
 use NodeTree;
 
 use lib 'MooNode';
@@ -45,6 +46,23 @@ if ($debug or $verbose >= 2){
 
     say " ";
 }
+
+
+my $filepath;
+
+$filepath = "/Users/tshott/Torrent/_Archive/_Move_Backup/Copy_Bootcamp/AppData/Local/Microsoft/Windows/Burn/Burn";
+# $filepath = "/Users/tshott/Downloads/_ebook/_test_Zeppelins/ [AIAA Education] Grant E. Carichner, Leland M. Nicolai, Bernd Chudoba - Fundamentals of Aircraft and Airship Design, Volume 2 – Airship Design and Case Studies 2(2013, Amer Inst of Aeronautics)_v10.pdf";
+# $filepath = "/System";
+
+my $flags = FileUtility::osx_check_flags_binary($filepath);
+my $string = FileUtility::osx_flags_binary_string($flags);
+
+printf "Flags: %04o\n", $flags;
+say "String: $string";
+
+exit;
+
+
 
 
 #

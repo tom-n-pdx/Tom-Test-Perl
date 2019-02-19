@@ -6,6 +6,7 @@
 # ToDo
 # * Add search
 # !! Make remove work on Objects
+# * add a insert tree for inserting into tree
 # * add make sure insert, delete work both for single or list
 # * find way to pass no md5 or no dtime to insert
 # * look for dupes in size, md5
@@ -397,9 +398,9 @@ sub load {
 
 	# If error not because of bad file, die
 	# perl storable
-	# if ($@ && $@ !~ /Magic number checking/){
-	#     die "Error on load Tree retrieve failed. $@ File: $filepath";
-	# }
+	if ($@ && $@ !~ /Magic number checking/){
+	    die "Error on load Tree retrieve failed. $@ File: $filepath";
+	}
 
 	if ($@ or !blessed($self)){
 	    carp "Bad db_file File: $filepath";

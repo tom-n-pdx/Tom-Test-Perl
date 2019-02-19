@@ -91,25 +91,19 @@ foreach my $dir (@ARGV){
 exit;
 
 
-
-#
-# ToDo
-# 
-#
-# sub wanted {
-#     return unless ($_ eq $db_name);
-
-#     my $dir = $File::Find::dir;
-#     dir_collect_md5($dir);
-
-#     return;
-# }
-
 sub wanted {
     return unless (-d $File::Find::name);   # if not dir, skip
     return unless (-r $File::Find::name);   # if not unreadable skip
+    return unless (-w $File::Find::name);   # if not unreadable skip
 
     my $dir = $File::Find::name;
+    return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
+
+    my $flags = FileUtility::osx_check_flags_binary($dir);
+    if ($flags & ($FileUtility::osx_flags{"hidden"} | $FileUtility::osx_flags{uchg}) ){
+	return;
+    }
+
     dir_collect_md5($dir);
 
     return;
@@ -145,5 +139,4 @@ sub dir_collect_md5 {
 
      return ($Tree_dir);
 }
-
 

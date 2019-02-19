@@ -8,6 +8,8 @@
 # * string version mtime, dtime  -use duelvalue
 # * read labels / set
 # * add a save packed method
+# * use vec for decode perms
+# * change _set_stats to just r/w stats
 
 
 # Standard uses's
@@ -34,19 +36,23 @@ has 'filepath',			# full name of file including path
     isa => 'Str',
     required => 1;
 
-
 has 'stat',			# stat array - not live version, last time updated or created
-    is => 'ro',
-    isa => 'ArrayRef[Int]',
-    writer => '_set_stat';
+    is => 'rw',
+    isa => 'ArrayRef[Int]';
+
 
 
 # Extended attributes OS X
 
+# has 'flags',			# not live version
+#     is => 'ro',
+#     isa => 'Str',
+#     writer => '_set_flags';
+
 has 'flags',			# not live version
-    is => 'ro',
-    isa => 'Str',
-    writer => '_set_flags';
+    is => 'rw',
+    isa => 'Int';
+
 
 #
 # generic function to convert a call to new with one operand to a ref oriented paramater set with a filepath
@@ -92,12 +98,22 @@ sub BUILDARGS {
 sub BUILD {
     my ($self)=shift( @_);
     my $args_ref = shift(@_);
-    my $update_stat = $$args_ref{'update_stat'}  // 1; # default is do stat on file on creation
+    my $update_stat   = $$args_ref{'update_stat'}   // 1; # default is do stat on file on creation
+    my $update_flags  = $$args_ref{'update_flags'}  // 1; # default is expensive get flags on creation
 
-    if ($update_stat){
+
+    # Check if the build not set
+    if (! defined $self->stat && $update_stat){
 	$self->update_stat;
     }
 
+    if (! defined $self->flags){
+	if ($update_flags){
+	    $self->update_flags;
+	} else {
+	    $self->flags(0x00);
+	}
+    }
     return
 }
 
@@ -111,21 +127,20 @@ sub update_stat {
     my ($self)=shift( @_);
     my $filepath =  $self->filepath;
  
-    # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-
     # Do NOT follow sym link
-    $self->_set_stat( [ lstat($filepath) ] );
+    $self->stat( [ lstat($filepath) ] );
 
+}
+
+    
+sub update_flags {
+    my ($self)=shift( @_);
+    my $filepath =  $self->filepath;
+ 
     # Get OS X Extended Atributes before check premissions since premessions depend upon flags
-    my @flags = FileUtility::osx_check_flags($filepath);
-    $self->_set_flags(join('; ', @flags));
-
-    # Update the logical values - humm - checks file or sym link pointing to?
-    # $self->_set_isreadable( -r $filepath ? 1 : 0);
-    # $self->_set_iswriteable( -w _ ? 1 : 0);
-    # $self->_set_isdir(-d _  ? 1 : 0);
-    # $self->_set_isfile(-f _ ? 1 : 0);
-        
+    # my @flags = FileUtility::osx_check_flags($filepath);
+    my $flags = FileUtility::osx_check_flags_binary($filepath);
+    $self->flags($flags);
 }
 
     
@@ -319,14 +334,12 @@ sub rename {
 # Should it check inode, dev? Amd I check if these files are the same? Or if the file has changed?
 # Check             Same             Rename                Equal
 # Path                Y                   Y                          N
-# Name              Y                   N                          ?
-# isdir                Y                   Y                          Y
-# isfile               Y                   Y                          Y
-# isreadable       Y                   Y                          N
-# dev-ino          Y                   Y                          N
-# Size                Y                   Y                          Y
-# mtime            Y                   N                          N
-# md5               Y                   Y                           Y
+# Name                Y                   N                          ?
+# perms               Y
+# size                Y                   Y                          Y
+# mtime               Y                   N                          N
+# ctime
+# md5                 Y                   Y                           Y
 #
 
 # Names of stat values
@@ -335,32 +348,8 @@ my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksi
     
 
 # 
-# Check that two file objects are the same - maybe different disks, names - but contents same
-# Check: isdir, isfile, size
-# makes no sense for dirs
-#
-
-# sub isequal {
-#     my $self   =shift(@_);
-#     my $other = shift(@_);
-
-#     if (!$other->isa('MooNode')){
-# 	croak "Tried to use isequal on non MooNode object";
-#     }
-
-#     # Collect a list of what attributes changed
-#     my @changes;
-
-#     push(@changes, "isdir")     if ($self->isdir  != $other->isdir);
-#     push(@changes, "isfile")    if ($self->isfile != $other->isfile);
-#     push(@changes, "size")      if ($self->size   != $other->size);
-            
-#     return @changes;
-# }
-
-# 
 # Check differences between objects - maybe different disks, names - but contents same
-#
+#  ToDo - make work on stats or object
 
 sub delta {
     my $self    = shift(@_);
@@ -395,8 +384,6 @@ sub delta {
         $other->can('md5')  && defined $other->md5){
 	push(@changes, "md5") if ($self->md5 ne $other->md5);
     }
-    # filetype is included in stats
-
 
     return @changes;
 }

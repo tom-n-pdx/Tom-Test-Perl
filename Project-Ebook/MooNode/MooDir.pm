@@ -70,7 +70,7 @@ sub _calc_dtime {
     # Start with latest of mtime, ctime
     my $dtime = max(@{ $self->stat }[9, 10]);
 
-    # Check files (not subdir, socket, hidden)
+    # Check files (not subdir, socket, hidden, symlink)
     # Check dir?
     foreach ($self->list_filepaths){
 	if (-f $_){
@@ -145,9 +145,9 @@ sub List {
     foreach my$filepath (@filepaths){
 	my $File;
 	if (-d $filepath){
-	    $File =  MooDir->new(filepath => $filepath, opt_update_dtime => $update_dtime);
+	    $File =  MooDir->new(filepath => $filepath,  opt_update_dtime => $update_dtime, %opt);
 	} elsif (-f _) {
-	    $File =  MooFile->new(filepath => $filepath, opt_update_md5 => $update_md5);
+	    $File =  MooFile->new(filepath => $filepath, opt_update_md5 => $update_md5, %opt);
 	} else {
 	    # warn("Unknown file type: $filepath");
 	    $File =  MooNode->new(filepath => $filepath);

@@ -13,6 +13,7 @@ use NodeTree;
 use lib 'MooNode';
 use MooDir;
 use MooFile;
+use FileUtility;
 
 # For Debug
 # use Data::Dumper qw(Dumper);           # Debug print
@@ -25,7 +26,6 @@ use MooFile;
 # * Move capture dupes, check dupes, save dupes to module
 # * Make scan dir smarter - check and move to new list
 # * Function, check if dir need scan?
-# * Delta stats function
 # * update based upon what's changed.
 
 my %size_count;
@@ -90,18 +90,14 @@ sub wanted {
     return unless (-d $File::Find::name);   # if not dir, skip
     return unless (-r $File::Find::name);   # if not readable skip
     return unless (-w $File::Find::name);   # if not writeable skip
+    my $dir = $File::Find::name;
+    return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
 
-    # Need to check flags on OSX 
-    my @flags = FileUtility::osx_check_flags($File::Find::name);
-    
- 
-    # Skip hidden or protected dirs
-    if (grep(/hidden/, @flags) or grep(/uchg/, @flags)){
+    # Skip hidden or write protected dirs
+    my $flags = FileUtility::osx_check_flags_binary($dir);
+    if ($flags & ($FileUtility::osx_flags{"hidden"} | $FileUtility::osx_flags{uchg}) ){
 	return;
     }
-
-    my  $dir = $File::Find::name;
-    return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
 
     update_dir_md5(dir=>$dir, fast_scan=>$fast_scan, fast_dir=>$fast_dir);
 
@@ -125,6 +121,12 @@ sub update_dir_md5 {
 
     my $Tree_old = NodeTree->new(name => $dir);
     my $Dir = MooDir->new(filepath => $dir);
+    my $Tree = NodeTree->new(name => $dir);      # Store new files in Tree
+
+    if (!-w $dir){
+	warn "Dir not writable Dir: $dir";
+	return ($Tree);
+    }
 
     # Check if exiisting datafile
     if (-e "$dir/$db_name"){
@@ -143,11 +145,11 @@ sub update_dir_md5 {
 	$Dir = MooDir->new(filepath => $dir);
     }
 
-    my $Tree = NodeTree->new(name => $dir);      # Store new files in Tree
     
     # Scan through all files in dir and the Dir obj. Can process Dir just like any other object
     # By default, Dir->List returns only normal files, not sym links, dirs, invisable or dot files
-    my @Nodes = $Dir->List;
+    # Include no path updae
+    my @Nodes = $Dir->List(update_flags => 0);
     push(@Nodes, $Dir);
 
 
@@ -162,9 +164,8 @@ sub update_dir_md5 {
 	}
     }
 
-
     # Done scanning new files, check if any old values left - file must have been deleted, or moved to new dir
-    # Renamed file we would have caught becuase same inode
+    # Renamed file we would have caught becuase of same inode
     my @Files = $Tree_old->List;
     $files_delete += scalar(@Files);
     if (@Files >= 1 && $verbose >= 1){
@@ -201,41 +202,67 @@ sub update_file {
 
     say "\tChecking: ", $File->filename if ($verbose >= 3);
 
-    my ($File_old) = $Tree_old->Search(hash => $File);
 
     # 
-    # rework how check changes - this is a hack
-    #
+    # This checks for changes and determines what needs to be updated.
+    # 
+    my ($File_old) = $Tree_old->Search(hash => $File);
     if (! defined $File_old) {
 	# If no old file with inode, must be new file (could be new file with same name, and diff inode)
 	say "\t\tNew File: ", $File->filename if ($verbose >= 2);
+	$File->update_flags;
 	$files_new++;
     } else {
-	my @changes = $File->delta($File_old);
+	# Check changes and mask off atime changes
+	my $changes = FileUtility::stats_delta_binary($File->stat, $File_old->stat);
+	$changes = $changes & ~$FileUtility::stats_names{atime};
 
-	if (@changes > 0 && $verbose >= 2){
-	    say "\t\tDelta: ", join(", ", @changes);
-	}
-	
-	if (@changes > 0){
+	if ($changes){
+	    my @changes = FileUtility::stats_delta_array($changes);
 	    $files_change++;
-	}
 
-	# If old file is same size and same modified date - update any expensive values, such as md5
-        # Use mtime - don't care if name changed - care that contents changed
-	if ( ($File->size == $File_old->size) && ($File->mtime == $File_old->mtime) ) {
+	    if ($verbose >= 2){
+		say "\t\tDelta: ", join(", ", @changes);
+		printf "\t\t\tThe binary representation is: %013b\n", $changes;
+	    }
+
+	    # Decide what needs to be changed based upon what stats changed
+	    # if dev, ino or blksize changes - is error - should not happen
+	    if ($changes & ( $FileUtility::stats_names{dev} | $FileUtility::stats_names{ino} |
+				 $FileUtility::stats_names{blksize} )) {
+		die("Stats Delta Illegal stats change: ", join(", ", @changes));
+	    }
+
+	    # If ctime - maybe flags, maybe filename changed - seperate check filename change
+	    # ToDo
+	    # * print flags delta
+	    if ($changes & ( $FileUtility::stats_names{ctime})) {
+		$File->update_flags
+	    }
+
+	    # If NOT mtime, size or blocks - then we can reuse old md5 if it exists
+	    if (! $changes & ( $FileUtility::stats_names{mtime} | $FileUtility::stats_names{size} |
+				   $FileUtility::stats_names{blocks} )){
+		say "\t\tExisitng Unchanged: ", $File->filename if ($verbose >= 3);
+		
+		if ($File->can('md5') && $File_old->can('md5') && defined $File_old->md5){
+		    $File->_set_md5($File_old->md5);
+		}	
+	    }
+	
+	} else { # End If File Changed
+	    # If file unchanged - copy md5 value if it exists
 	    say "\t\tExisitng Unchanged: ", $File->filename if ($verbose >= 3);
 	    if ($File->can('md5') && $File_old->can('md5') && defined $File_old->md5){
 		$File->_set_md5($File_old->md5);
 	    }
-	} else {
-	    # $files_change++;
-	    say "\t\tExisitng Changed: ",$File->filename if ($verbose >= 2);
-	    say "\t\t\tDelta: ", join(", ", @changes)if ($verbose >= 2);
+
 	}
-	
-	# Need to independently check for rename - could be same size & mtime but a rename
-	if ($File->filename ne $File_old->filename){
+
+	# Need independent check for if file was renamed - rename does not change any of file stats, just
+	# dir stats.
+	# Could optimize by remembering if dir changed and only check if dir changed
+	if ($File->filepath ne $File_old->filepath){
 	    $files_rename++;
 	    say "\t\tRenamed: ",$File_old->filename, 
 		"\n\t\t     To: ", $File->filename if ($verbose >= 2);

@@ -3,7 +3,6 @@
 #
 # 
 # ToDo
-# Need utility convert stats to r/w/x dir/file/other
 
 package FileUtility;
 use Exporter qw(import);
@@ -43,7 +42,8 @@ sub dir_list {
     my $inc_dot   =  delete $opt{inc_dot}  // 0;
     my $inc_sym   =  delete $opt{inc_sym}  // 0;
     my $verbose   =  delete $opt{verbose}  // $main::verbose;
-    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+    # Can't check for unknown opt becuase passed thru to
+    # croak("Unknown params:".join( ", ", keys %opt)) if %opt;
 
     my @filepaths = ();
 
@@ -134,7 +134,13 @@ sub rename_unique {
     return($filename_new);
 }
 
-my @stats_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
+our @stats_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
+our %stats_names;
+
+foreach (0..12){
+     $stats_names{$stats_names[$_]} = 0b01 << $_;
+}
+
 
 
 #
@@ -174,6 +180,21 @@ sub stats_delta_binary {
     return($changes);
 }
 
+sub stats_delta_array {
+    my $binary = shift(@_);
+    my @changes;
+
+    foreach (0..12){
+	if ($binary & 0x01){
+	    push(@changes, $stats_names[$_]);
+	}
+	$binary = $binary >> 1;
+    }
+
+    return(@changes);
+}
+
+
 #
 # Need pretty way to check if bit set...
 # Convert vec to string / array
@@ -197,12 +218,18 @@ sub stats_delta_binary {
 
 # Ugly - Older flags docs don't cover new flags and this is too many bits
 # mapping
-# blank      0x01   <- -
+# blank      0x00   <- -
 # uchg       0x01   <- uchg, schg, restricted, sunlnk
 # hidden     0x02   <- hidden
 # compressed 0x04   <- compressed
 
-my %osx_flags = (uchg => 0x1, hidden => 0x2,  compressed => 0x4, schg => 0, restricted => 0, sunlnk => 0);
+our %osx_flags = ('-'        => 0x00, 
+		 uchg       => 0x01, schg => 0x1, restricted => 0x1, sunlnk => 0x1,
+		 hidden     => 0x02,  
+		 compressed => 0x04,
+	         nodump     => 0x08);
+
+our @osx_flags = qw(uchg hidden compressed nodump);
 
 sub osx_check_flags {
     my $filepath = shift(@_);
@@ -224,9 +251,8 @@ sub osx_check_flags {
 
     chomp($string);
     my $flags = (split(/\s+/, $string))[4];      # flags are 4th field in ls output
+    return 
     
-    return(@flags) if ($flags eq "-");
-
     @flags = sort(split(/,/, $flags));
  
     my @new = grep(! defined $osx_flags{$_}, @flags);
@@ -237,9 +263,53 @@ sub osx_check_flags {
     return(@flags);
 }
 
+sub osx_check_flags_binary {
+    my $filepath = shift(@_);
 
+    # On MacOS - ls command can check for extended atributes
+    # -l long -d don't diplay dir -1 make sure one colume -O show os x flags
+    my $cmd = 'ls -1lOd';
 
+    my @flags;
+    my $flags_binary = 0x00;
 
+    my $text = $filepath;
+    $text =~ s/'/'"'"'/g;                       # Escape ' in filename
+    my $string = `$cmd '$text' `;
+
+    if ($? != 0){
+	warn("Error executing ls on $filepath");
+	return($flags_binary);
+    }
+
+    my $flags = (split(/\s+/, $string))[4];     # flags are 4th field in ls output
+    @flags = split(/,/, $flags);          # flags feild split on space
+    
+    # Convert to binary
+    foreach my $flag (@flags){
+	if (defined $osx_flags{$flag} ){
+	    $flags_binary = $flags_binary | $osx_flags{$flag};
+	    # say "Flag: $flag";
+	} else {
+	    warn "Unknown Flag: $flag";
+	}
+    }
+
+    return($flags_binary);
+}
+
+sub osx_flags_binary_string {
+    my $binary = shift(@_);
+    my $string = "";
+
+    foreach (0..4){
+	if ($binary & 1 << $_){
+	    # say "Bit Set: $_";
+	    $string = $string.' '.$osx_flags[$_];
+	}
+    }
+    return($string);
+}
 
 # End of Module
 1;
