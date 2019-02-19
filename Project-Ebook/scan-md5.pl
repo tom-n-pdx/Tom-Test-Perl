@@ -3,6 +3,7 @@
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
+# use File::Find::Rule;
 use Getopt::Long;
 
 use lib '.';
@@ -21,6 +22,12 @@ use MooFile;
 # * add --help option
 # * return number of changes for dir update - total changes
 # * Cleanup debug prints & add a write to log?
+# * Move capture dupes, check dupes, save dupes to module
+# * Make scan dir smarter - check and move to new list
+# * Function, check if dir need scan?
+# * Delta stats function
+# * update based upon what's changed.
+
 my %size_count;
 
 my ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
@@ -87,8 +94,7 @@ sub wanted {
     # Need to check flags on OSX 
     my @flags = FileUtility::osx_check_flags($File::Find::name);
     
-    # say "Check Flags $_ ", join(', ', @flags);
-
+ 
     # Skip hidden or protected dirs
     if (grep(/hidden/, @flags) or grep(/uchg/, @flags)){
 	return;

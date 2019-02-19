@@ -11,6 +11,8 @@ Notes on ideas for ebook tracking software. Has evolved into file tracking softw
 
 
 * Refactor
+** Make flags into bit vector
+** Make stats delta into bit vector
 **  A Enable NodeTree insert to insert a whole tree for a Tree merge
 ** Cleanup files - delete old test files, organize, make names consistent.
 ** Release process for apps & lib into bin & released Lib

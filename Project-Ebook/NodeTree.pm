@@ -291,8 +291,6 @@ sub save_packed {
     my $filepath = $dir.'/'.$name;
     say("Debug: Store Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
 
-    # store($self, $filepath);
-
     rename($filepath, "$filepath.old") if (-e $filepath);
     open(my $fh, ">", $filepath);
     print $fh "# moo.tree.pdb version 1.2\n";
@@ -320,7 +318,7 @@ sub save_packed {
 
 	if ($Node->isa('MooDir')){
 	    $str = _packed_dir_str($Node);
-	    $old_path = $Node->filepath.'/';
+	    $old_path = $Node->filepath;
 	} else {
 	    $str = _packed_file_str($Node);
 	}
@@ -398,9 +396,10 @@ sub load {
 	eval { $self = retrieve($filepath)} ;
 
 	# If error not because of bad file, die
-	if ($@ && $@ !~ /Magic number checking/){
-	    die "Error on load Tree retrieve failed. $@ File: $filepath";
-	}
+	# perl storable
+	# if ($@ && $@ !~ /Magic number checking/){
+	#     die "Error on load Tree retrieve failed. $@ File: $filepath";
+	# }
 
 	if ($@ or !blessed($self)){
 	    carp "Bad db_file File: $filepath";

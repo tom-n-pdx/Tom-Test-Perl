@@ -3,6 +3,7 @@
 #
 # 
 # ToDo
+# Need utility convert stats to r/w/x dir/file/other
 
 package FileUtility;
 use Exporter qw(import);
@@ -133,6 +134,53 @@ sub rename_unique {
     return($filename_new);
 }
 
+my @stats_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
+
+
+#
+# Figure out changes between two files check all except skip atime (access time)
+#
+sub stats_delta {
+    my $old_stats_r = shift(@_);
+    my $new_stats_r = shift(@_);
+
+    my @changes;
+
+    foreach (0..7, 9..12){
+ 	if ($$old_stats_r[$_] != $$new_stats_r[$_]){
+      	    push(@changes, $stats_names[$_]);
+      	}
+    }
+
+    return(@changes);
+}
+
+#
+# Figure out changes between two files check all
+# * Create binary vector for changes
+# ToDO
+# * rewrite using vec?
+sub stats_delta_binary {
+    my $old_stats_r = shift(@_);
+    my $new_stats_r = shift(@_);
+
+    my $changes = 0b000000000000;
+
+    foreach (0..12){
+	if ($$old_stats_r[$_] != $$new_stats_r[$_]){
+	    $changes = $changes | (0x01 << $_);              # set bit corresponding to stat value 
+	}
+    }
+    return($changes);
+}
+
+#
+# Need pretty way to check if bit set...
+# Convert vec to string / array
+#
+
+
+
 #
 # OS X Specific utility
 #
@@ -140,7 +188,7 @@ sub rename_unique {
 # Known Flags:
 # uchg        ro user immutable /Users/tshott/Torrent/_Archive/_Move_Backup/Copy_Bootcamp/AppData/Local/Microsoft/Windows/Burn/Burn
 # schg        ro system immutable
-# hidden                        /Users/tshott/Torrent/TV/Icon
+# hidden                        /Users/tshott/Torrent/TV/Icon?
 # compressed                    /Users/tshott/Library/Application Scripts/com.apple.iChat/Auto Accept.applescript
 # restricted  ro                /System
 # sunlnk      ro System Integrity /private

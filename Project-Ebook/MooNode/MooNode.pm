@@ -6,7 +6,6 @@
 # ToDo
 # * add buld args check? No extra args
 # * string version mtime, dtime  -use duelvalue
-# !! convert isread, isfile to use stat values and not store seperate
 # * read labels / set
 # * add a save packed method
 
@@ -20,11 +19,13 @@ use File::Basename;             # Manipulate file paths
 use Time::localtime;            # Printing stat values in human readable time
 use FileUtility;
 
+
 # use Data::Dumper qw(Dumper);  # Debug print
 
 package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
+use Fcntl qw(:mode);		# Get fields to parse stat bits
 
 use Carp;
 
@@ -39,27 +40,6 @@ has 'stat',			# stat array - not live version, last time updated or created
     isa => 'ArrayRef[Int]',
     writer => '_set_stat';
 
-has 'isreadable',		# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_isreadable';
-
-has 'iswriteable',		# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_iswriteable';
-
-# use Fcntl qw(:mode);		# Get fields to parse stat bits
-
-has 'isdir',			# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_isdir';
-
-has 'isfile',			# not live version
-    is => 'ro',
-    isa => 'Bool',
-    writer => '_set_isfile';
 
 # Extended attributes OS X
 
@@ -111,9 +91,12 @@ sub BUILDARGS {
 #
 sub BUILD {
     my ($self)=shift( @_);
+    my $args_ref = shift(@_);
+    my $update_stat = $$args_ref{'update_stat'}  // 1; # default is do stat on file on creation
 
-    # Always checks stat - assumes file always exists live at creation.
-    $self->update_stat;
+    if ($update_stat){
+	$self->update_stat;
+    }
 
     return
 }
@@ -123,7 +106,7 @@ sub BUILD {
 # * if already exisists - return a list of what changed?
 # * save old values somewhere so can move in the tree?
 #
- 
+
 sub update_stat {
     my ($self)=shift( @_);
     my $filepath =  $self->filepath;
@@ -138,10 +121,10 @@ sub update_stat {
     $self->_set_flags(join('; ', @flags));
 
     # Update the logical values - humm - checks file or sym link pointing to?
-    $self->_set_isreadable( -r $filepath ? 1 : 0);
-    $self->_set_iswriteable( -w _ ? 1 : 0);
-    $self->_set_isdir(-d _  ? 1 : 0);
-    $self->_set_isfile(-f _ ? 1 : 0);
+    # $self->_set_isreadable( -r $filepath ? 1 : 0);
+    # $self->_set_iswriteable( -w _ ? 1 : 0);
+    # $self->_set_isdir(-d _  ? 1 : 0);
+    # $self->_set_isfile(-f _ ? 1 : 0);
         
 }
 
@@ -189,6 +172,39 @@ sub inode {
     
     my $inode =  ${$self->stat}[1];
     return($inode);
+}
+
+# from Stat Mode bits
+# Mask definations from Fcntl module:
+# Orginal examples modified from stat perldoc
+sub isdir {
+    my $self = shift(@_);
+    my $mode = ${$self->stat}[2];
+    
+    return(S_ISDIR($mode));
+}
+
+sub isfile {
+    my $self = shift(@_);
+    my $mode = ${$self->stat}[2];
+    
+    return(S_ISREG($mode));
+}
+
+sub isreadable {
+    my $self = shift(@_);
+    my $mode = ${$self->stat}[2];
+    
+    my $perms = ($mode & S_IRUSR) >> 8;
+    return($perms);
+}
+
+sub iswriteable {
+    my $self = shift(@_);
+    my $mode = ${$self->stat}[2];
+    
+    my $perms =  ($mode & S_IWUSR) >> 7;
+    return($perms);
 }
 
 
@@ -366,7 +382,6 @@ sub delta {
     # Check all except atime
     foreach (0..7, 9..12){
  	if ($self_stat[$_] != $other_stat[$_]){
-	    # if ( ($self->stat)[$_] != ($other->stat)[$_]){
       	    push(@changes, $stat_names[$_]);
       	}
     }
@@ -397,48 +412,6 @@ sub delta {
 
 #
 # Simpler ischanged - just if it has or not
-# - Live check, no update to stats
-# sub ischanged {
-#     my $self   =shift(@_);
-
-#     my $filepath = $self->filepath;
-
-#     my @changes;
-
-#     # if (! -e $filepath){
-#     #	push(@changes, "deleted");
-#     #	return (@changes);
-#     #}
-
-# #     if (! $self->isexist){
-# 	push(@changes, "deleted");
-# 	return (@changes);
-#     }
-    
-#     say "DEBUG: Name: ", $self->filename if ($main::verbose >= 2);
-
-
-
-#     # stat file - make a few quick checks
-#     my @old_stat = @{$self->stat};
-#     my @new_stat = lstat($filepath);	                            # Uses last stat value 
-
-#     say "Old Stats: ", join(", ", @old_stat) if ($main::verbose >= 2);
-#     say "New Stats: ", join(", ", @new_stat) if ($main::verbose >= 2);
-
-#     # Check dev, inode, size, mtime, ctime
-#     foreach (0..1, 7, 9..10){
-# 	if ($old_stat[$_] != $new_stat[$_]){
-# 	    push(@changes, $stat_names[$_]);
-# 	}
-#     }
-    
-    
-#     return @changes;
-# }
-
-#
-# Simpler ischanged - just if it has or not
 # even simpler live check - use delta function to make compare
 sub ischanged {
     my $self = shift(@_);
@@ -455,7 +428,6 @@ sub ischanged {
     my $Temp = MooNode->new($filepath);
     @changes = $self->delta($Temp);
     
-
     return (@changes);
 }
 

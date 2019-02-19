@@ -4,6 +4,7 @@
 use Modern::Perl '2016'; 
 use autodie;
 
+use lib '.';
 use lib 'MooNode';
 use MooNode;
 
