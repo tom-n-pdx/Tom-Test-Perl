@@ -1,0 +1,117 @@
+
+
+Fix fill mode in Org mode to allow ^q to fill and keep indent.
+
+* Book Python AI
+  + Examples for simple mechanisms in Python War Games
+  + From very simple to complex war game rules
+  + from simple to complex AI
+  + Git hub code
+  + Eventually have AI's compete - best method?
+
+* Board Game Notes
+  + Look at bunch of hex based war games, decide what the basic technologies are.
+
+
+* Book Notes 
+
+** Programming Game AI by Example
+
+   Pretty basic book on AI. Includes chapters explaining cartesian coordinates, vectors, basic physics.
+
+   Book code in C++. Includes some pretty basic concepts on how to communicate and structure code. Everything hard coded - no soft-coded methods.
+
+   Interesting. Would be worth 
+   + Simple State Machine
+   + Scripted
+   + Path finding
+   + Multi-level goal programming
+     + Could consider using GP for this, evolve best values
+     + Book talks about bot personality.
+   + Fuzzy Logic
+
+
+** Artificial Intelligence for Computer Games (2011, Springer)
+   Contributed book.
+   Academic, includes citations, algorithms, not code.
+   Too many papers on real time role player, not enough on strategy.
+   
+
+*** Real-Time Heuristic Search for Pathfinding in Video Games   
+    + A* too expensive on big map with too many agents
+    + List references for path finding algrathms
+    + Real-time search only paln a few actions ahead
+    + Classic path finding algorithms explained
+    + One method is do limited amount planning, then move in best found direction when CPU budget exceeded.
+    + Need to consider both CPU & memory - on console memory maybe very constrained (on phone?) 
+    + Also some solutions use some pre-computation if map not random
+
+*** Embedding Information into Game Worlds to Improve Interactive Intelligence 
+    "Worlds of visual richness and Information Poverty"
+    
+    Virtual 3D worlds more then strategic wargames.  Include information on "what" an object is.  Also can include information 
+    on probabilistic outcomes of actions. As actor discovers things, can add information to system. Got attaked by enemy, 
+    had infomatiin to that point on map that this area dangerious.
+
+*** Empowering Designers with Libraries of Self-Validated Query-Enabled Behaviour Trees    
+
+    Behaviour trees (BTs) are the technology of choice for AI programmers to build NPC behaviour.
+
+    Finite state machines (FSMs) are the most used technology for AI on games, easy to understand, deterministic and fast. Designers are also used to them, and they can be defined using simple (even graphical) tools. A way to scale up FSMs is to consider that a state can hide another FSM to decide its actions. Instead of having a flat set of states, they are arranged in different levels, creating an HFSM.
+
+    BT's are a expansion of HFSM. Goals, sub-goals.
+
+*** Game AI for Domination Games (Civ, Dominate Map)
+
+    Domination is a game style in which teams of players compete to control certain locations on a map called domination points within a real-time environment.
+
+    General ideas for controlling team:
+    * HTNBOTS - Use hierarchical task network (HTN) representation techniques to generate new plans. Monitor progress and geenrate new
+      plans on fly when needed.
+
+    * RETALIATE - ses reinforcement learning (RL) techniques; it uses a Q-learning al- gorithm to find policies that represent competent ways to play the game. Maintain - update - Q-Table.
+
+    * CBRETALITE - is built on top of RETALIATE; it stores and retrieves a library of policies, which are reused by the RL algorithm from RETALIATE. Re-use Q-table from previous games.
+
+*** Case-Based Reasoning and User-Generated Artificial Intelligence for Real-Time Strategy Games
+
+    End-user generated AI's for games.
+
+*** Game AI as Storytelling
+
+    The traditional goal of AI in games-to win the game-is but one of several interesting goals to pursue. We promote the alternative goal of making the human player’s play experience “better,” i.e., AI systems in games should reason about how to deliver the best possible experience within the context of the game
+
+    
+    
+
+** AI Game Programming Wisdom 1 (2002, Charles River Media)
+
+   Lots suggestions, ideas on development - not much code. Good general guidelines.
+
+   Interesting Chapter
+   + Fuzzy Logic
+   + Line of Sight Calculation
+   + Many good articles on path finding
+   + Flocking expensive - consider Swarms to move large group agents.
+   + Move to attack, move safely, positions to attack from that re safe from rear attack, flanking a enemy
+     + Pre-calculate penalty for nodes where you would be very visible.
+   + Influence maps to determine best spot to engage enemy.
+   + Section 5.2  -good on how to engage, attach enemy.
+   + Number articles on squad tactics - could be used for groups in strategy game?
+   + Formations of units, group path finding.
+   + State machines, GUI for state machines.
+   + Bayesian rules and reasoning about uncertainty. Alternative is Dempster-Shafer theory of belief (DST)
+   + 
+
+*** Find References
+    + Chapter 1
+      + These approaches were invariably based on game tree search [SvarovskyOO]
+      + Overview AI [AI95]
+      + AI pathfinding in every game genre (see [StoutOO], [RabinOO] for an excellent introduction to A*   
+    + 
+
+* Citations
+
+** Citation - Find
+   + John E. Laird, Michael van Lent: “Human-Level AI’s Killer Application: Interactive Computer Games”. AAAI/IAAI 2000: 1171–1178
+   + 

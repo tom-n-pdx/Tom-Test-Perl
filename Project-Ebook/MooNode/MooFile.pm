@@ -24,7 +24,7 @@ extends 'MooNode';
 
 has 'md5',
     is => 'ro',
-    isa => 'Str',
+    isa => 'Maybe[Str]',
     writer => '_set_md5';
 
    

@@ -82,7 +82,6 @@ foreach my $dir (@ARGV){
 exit;
 
 
-
 #
 # File find wanted sub. For any file that is a readable and writeable dir 
 # 
@@ -90,6 +89,7 @@ sub wanted {
     return unless (-d $File::Find::name);   # if not dir, skip
     return unless (-r $File::Find::name);   # if not readable skip
     return unless (-w $File::Find::name);   # if not writeable skip
+
     my $dir = $File::Find::name;
     return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
 
@@ -123,10 +123,10 @@ sub update_dir_md5 {
     my $Dir = MooDir->new(filepath => $dir);
     my $Tree = NodeTree->new(name => $dir);      # Store new files in Tree
 
-    if (!-w $dir){
-	warn "Dir not writable Dir: $dir";
-	return ($Tree);
-    }
+    # if (!-w $dir){
+    # 	warn "Dir not writable Dir: $dir";
+    # 	return ($Tree);
+    # }
 
     # Check if exiisting datafile
     if (-e "$dir/$db_name"){
@@ -149,9 +149,20 @@ sub update_dir_md5 {
     # Scan through all files in dir and the Dir obj. Can process Dir just like any other object
     # By default, Dir->List returns only normal files, not sym links, dirs, invisable or dot files
     # Include no path updae
-    my @Nodes = $Dir->List(update_flags => 0);
-    push(@Nodes, $Dir);
+    # my @Nodes = $Dir->List(update_flags => 0);
 
+    my @Nodes;
+    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_AoA_r) = FileUtility::dir_list(dir => $dir, inc_file => 1, use_ref => 1);
+    foreach (0..( @{$filepaths_r} - 1) ){
+	my $filepath = ${$filepaths_r}[$_];
+	# say $_, " Filepath: $filepath";
+	my $Node = MooFile->new(filepath => $filepath, 
+				stat => @{$stats_AoA_r}[$_], update_stat => 0,
+			        opt_update_md5 => 0);
+	push (@Nodes, $Node);
+    }
+
+    push(@Nodes, $Dir);
 
     foreach my $Node (@Nodes) {
 	update_file(file => $Node, Files_old_ref => $Tree_old, fast_scan=>$fast_scan);
@@ -202,11 +213,11 @@ sub update_file {
 
     say "\tChecking: ", $File->filename if ($verbose >= 3);
 
-
     # 
     # This checks for changes and determines what needs to be updated.
     # 
     my ($File_old) = $Tree_old->Search(hash => $File);
+
     if (! defined $File_old) {
 	# If no old file with inode, must be new file (could be new file with same name, and diff inode)
 	say "\t\tNew File: ", $File->filename if ($verbose >= 2);
@@ -214,8 +225,7 @@ sub update_file {
 	$files_new++;
     } else {
 	# Check changes and mask off atime changes
-	my $changes = FileUtility::stats_delta_binary($File->stat, $File_old->stat);
-	$changes = $changes & ~$FileUtility::stats_names{atime};
+	my $changes = FileUtility::stats_delta_binary($File->stat, $File_old->stat) & ~$FileUtility::stats_names{atime};
 
 	if ($changes){
 	    my @changes = FileUtility::stats_delta_array($changes);

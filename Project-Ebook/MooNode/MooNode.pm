@@ -9,8 +9,8 @@
 # * read labels / set
 # * add a save packed method
 # * use vec for decode perms
-# * change _set_stats to just r/w stats
-
+# * cleanup the stats delta code
+#
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -51,7 +51,8 @@ has 'stat',			# stat array - not live version, last time updated or created
 
 has 'flags',			# not live version
     is => 'rw',
-    isa => 'Int';
+    isa => 'Maybe[Int]',
+    default => 0;
 
 
 #

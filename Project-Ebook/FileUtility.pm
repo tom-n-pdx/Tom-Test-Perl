@@ -24,6 +24,9 @@ use File::Basename;             # Manipulate file paths
 # Checks paramater to make sure is valid.
 # If passed a normal, returns a lst with the normal file in it.
 # Default it to list only visable normal files
+#
+# Try to do only one stat per file in dir
+#
 #           Default
 # inc_dir   0
 # inc_file  1
@@ -33,63 +36,66 @@ use File::Basename;             # Manipulate file paths
 # ToDO
 # * add check hidden
 # * make foreach loop for dot files into nicer grep
-#
+# 
 sub dir_list {
     my %opt = @_;
     my $dir       =  delete $opt{dir} or croak("Missing 'dir' param");
+
+    my $use_ref   =  delete $opt{use_ref}  // 0;
+
     my $inc_dir   =  delete $opt{inc_dir}  // 0;
     my $inc_file  =  delete $opt{inc_file} // 1;
     my $inc_dot   =  delete $opt{inc_dot}  // 0;
-    my $inc_sym   =  delete $opt{inc_sym}  // 0;
+    # my $inc_sym   =  delete $opt{inc_sym}  // 0;
+
     my $verbose   =  delete $opt{verbose}  // $main::verbose;
-    # Can't check for unknown opt becuase passed thru to
-    # croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
 
     my @filepaths = ();
+    my @filenames = ();
+    my @stats_AoA = ();
+    my @flags_AoA = ();
 
     if (!-e $dir){
 	carp("Dir $dir does not exist");
-	return (@filepaths);
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
     }
 
     if (!-r _){
 	carp("Dir $dir is not readble");
-	return (@filepaths);
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
+    }
+    
+    if (! -d _) {
+	carp("Dir $dir is not a dir");
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
     }
 
     
-    if (! -d _) {
-	# If not dir, just insert filepath into list on it's own
-	@filepaths = ($dir);
-    } else {
-	# Get list of files in dir
-	opendir(my $dh, $dir);
-	@filepaths = readdir $dh;
-	closedir $dh;
+    # Get list of files in dir
+    opendir(my $dh, $dir);
+    my @filenames_temp = readdir $dh;
+    closedir $dh;
 
-	@filepaths = map("$dir/$_" , @filepaths);                            # convert dir file names to full filepaths
-    }
+    foreach my $name (@filenames_temp){
+    	my $filepath  = "$dir/$name";
+    	my @stats     = lstat($filepath);
 
-
-    # Now, narrow list based upon options
-    @filepaths = grep(!-d, @filepaths)      if (!$inc_dir);                  # remove dirs unless $inc_dir
-    @filepaths = grep(!-f, @filepaths)      if (!$inc_file);                 # remove files unless $inc_file
-    @filepaths = grep(!-l, @filepaths)      if (!$inc_sym);		     # remove sym links unless $inc_sym
-
-
-    my @temps = @filepaths;
-    @filepaths = ();
-    foreach (@temps){
-	my ($name, $path, $suffix) = File::Basename::fileparse($_);	
 	next if ($name eq '.' or $name eq '..');                             # remove . and .. 
-	next if (!$inc_dot && $name =~ /^\./); 
-	
-	my @flags = FileUtility::osx_check_flags($_);
-	next if (!$inc_dot && grep(/hidden/, @flags));                      # remove hidden files if unless $inc_dot
+	next if (!$inc_dot && $name =~ /^\./);                               # remove dot files
 
-	push(@filepaths, $_);
+	next if (-d _ && !$inc_dir);
+	next if (-f _ && !$inc_file);
+
+    	my @flags = FileUtility::osx_check_flags($filepath);
+    	next if (!$inc_dot && grep(/hidden/, @flags));                      # remove hidden files if unless $inc_dot
+
+	push(@filepaths, $filepath);
+	push(@filenames, $name);
+	push(@stats_AoA, \@stats);
     }
 
+    	
 
     # Debug code
     if ($verbose >= 3){
@@ -100,7 +106,7 @@ sub dir_list {
 	}
     }
 
-    return (@filepaths);
+    return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
 }
 
 
@@ -223,7 +229,7 @@ sub stats_delta_array {
 # hidden     0x02   <- hidden
 # compressed 0x04   <- compressed
 
-our %osx_flags = ('-'        => 0x00, 
+our %osx_flags = ('-'       => 0x00, 
 		 uchg       => 0x01, schg => 0x1, restricted => 0x1, sunlnk => 0x1,
 		 hidden     => 0x02,  
 		 compressed => 0x04,

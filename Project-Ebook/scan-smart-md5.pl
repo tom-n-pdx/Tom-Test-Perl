@@ -87,6 +87,8 @@ say " ";
 if (!-e "$dir/$db_tree_name"){
     die "No exiisting tree daatfile: $dir";
 }
+my $file_changes = 0;
+my $dir_changes = 0;
 
 my $Tree_old    = NodeTree->load(dir => $dir, name => $db_tree_name);
 my $Tree_new    = NodeTree->new;
@@ -98,99 +100,87 @@ say " ";
 say "Start Old: ", scalar($Tree_old->count), " New: ", scalar($Tree_new->count);
 say " ";
 
+#
+# Keep processing list until nothing changes or the old queue is empty
+# More effecient if process any dir changes first
+#
+my $i = 0;
 
-my @Dirs;
+# While - if nothing in old queue then done 
+do {
+    $file_changes = 0;
+    $i++;
+    say "Start Loop $i";
 
-# First Scan amd see if ANYTHING chanegd. Process Dirs, then Files
+    foreach my $Node (  $Tree_old->Search(dir => 1), $Tree_old->Search(file => 1) ){
+	my @stats_new = lstat($Node->filepath);
+	next if (!  @stats_new);
 
-# First Pass Process Dir & File
-my @Nodes = ($Tree_old->Search(dir => 1), $Tree_old->Search(file => 1));
-foreach my $Node (@Nodes){
-
-    my @changes = $Node->ischanged;
+	# Check changes and mask off atime changes
+	my $changes = FileUtility::stats_delta_binary($Node->stat,  \@stats_new);
+	$changes = $changes & ~$FileUtility::stats_names{atime};
     
-    # If no changes, move to new Tree
-    if (scalar(@changes) < 1){
+	if ($changes & $FileUtility::stats_names{ino}){
+	    say "Skipping Node - inode changed Old Name", $Node->filename;
+	    next;
+	}
+    
+	# remove from old list, update values, insert into new list
 	$Tree_old->Delete($Node);
+
+	if ($changes){
+	    $file_changes++;
+
+	    my @changes = FileUtility::stats_delta_array($changes);
+	    say "Detect Changes in ", $Node->isdir ? "Dir " : "File ", $Node->filename, " Changes: ", join(", ", @changes);
+	    &update_file($Node, $changes, @stats_new);
+	    &update_dir($Node, $changes, @stats_new) if $Node->isdir;
+	}
+
 	$Tree_new->insert($Node);
-	next;
     }
-    
-    # If Node has changes, we will deal with in second pass - leave in Old Tree
-    say "Pass 1 Detect Changes in ", $Node->isdir ? "Dir " : "File ", $Node->filename, " Changes: ", join(", ", @changes);
-}
 
-say " ";
-say "After First Pass: Old: ", scalar($Tree_old->count), " New: ", scalar($Tree_new->count);
-say " ";
+    say " ";
+    say "After Pass Changes: $file_changes Old: ", scalar($Tree_old->count), " New: ", scalar($Tree_new->count);
+    say " ";
 
-if (! scalar($Tree_old->count)){
-    say "No Changes! - Exit with no save";
-    exit;
-}
+} while ($Tree_old->List > 0 && $i < 10);
+
 
 $verbose = 2;
-
-# Second Scan and see what need to fixup
-# werid - changing flags changes inode value
-
-# foreach my $Node ($Tree_old->List){
-# my @Nodes;
-
+exit;
 
 #
 # Check Dirs
 # - problem - did we use files, dot files, etc when ran before?
 # - may insert more dirs so have to double loop
 
+foreach my $Node( $Tree_old->Search(dir => 1) ){
+    my @stats_new = lstat($Node->filepath);
+    next if (!  @stats_new);
 
-#while (@Dirs = $Tree_old->Search(dir => 1) ){
-foreach my $Node (@Dirs){
-    my @changes = $Node->ischanged;
+    # Check changes and mask off atime changes
+    my $changes = FileUtility::stats_delta_binary($Node->stat, \@stats_new);
+    $changes = $changes & ~$FileUtility::stats_names{atime};
 
-	# If doesn't exisit on disk leave in old Tree - likely deleted but maybe renamed
-    next if (grep(/deleted/, @changes));
-	
-    say "Dir: ", $Node->filename, " Changes: ", join(", ", @changes);
-    say "          Dir: ", $Node->path;
-    
-    # If dtime changed - update dtime
-    if ( grep(/dtime/, @changes) ) {
-	$Node->update_dtime;
+    if ($changes & $FileUtility::stats_names{ino}){
+	say "Skipping Dir - inode changed Old Name", $Node->filename;
+	next;
     }
 
-
-    # Update stats so don't scan again, remove, then update in case size / md5 changes, then insert
+    # Since things may change - delete from old list, make changes, add to new
     $Tree_old->Delete($Node);
-    $Node->update_stat;
-    $Tree_new->insert($Node);
 
-    # Need to deal with new dirs
-    # Exists on disk & changed, so list files in dir and see what to do
-    my @Nodes = $Node->List(inc_file => 1, inc_dir =>1);
-    foreach my $Node (@Nodes) {
-	# If in new list, know unchanged, can move on
-	if ($Tree_new->Search(hash => $Node)) {
-	    next;
-	}
-
-	# In old list, must have moved, update path
-	if (my ($old_node) = $Tree_old->Search(hash => $Node)) {
-	    if ($old_node->filepath ne $Node->filepath) {
-		say "Update filepath: ", $old_node->filename;
-		$old_node->filepath($Node->filepath);
-	    }
-	    next;
-	}
-	    
-	# New file, can directlly put in new list
-	say "New File in Dir: ", $Node->filename;
-	#if ($Node->isdir){
-	$Tree_old->insert($Node);
-	#} else {
-	$Tree_new->insert($Node);
-	#}
+    if ($changes){
+	$dir_changes++;
+	&update_file($Node, $changes, @stats_new);
+	
+	&update_dir($Node, $changes, @stats_new);
     }
+
+    $Tree_new->insert($Node);
+    
+
 }
 
 
@@ -203,26 +193,45 @@ say " ";
 # Check Files
 #
 foreach my $Node ($Tree_old->Search(file => 1)){
-    my @changes = $Node->ischanged;
+    my @stats_new = lstat($Node->filepath);
+    next if (!  @stats_new);
 
-    say "File: ", $Node->filename, " Changes: ", join(", ", @changes);
-    say "          Dir: ", $Node->path;
-    
-    # If doesn't exisit on disk leave in old queue - likely deleted but maybe renamed
-    next if (grep(/deleted/, @changes));
+    # Check changes and mask off atime changes
+    my $changes = FileUtility::stats_delta_binary($Node->stat, \@stats_new);
+    $changes = $changes & ~$FileUtility::stats_names{atime};
 
+    if ($changes & $FileUtility::stats_names{ino}){
+	say "Skipping File - inode changed Old Name", $Node->filename;
+	next;
+    }
+
+    # Remove from Old List
+    # Since some changes modify size, md5 or inode - and they are indexed by that, we need
+    # to remove from old List. modify, then insert into new list
     $Tree_old->Delete($Node);
-    $Node->update_stat;
-    $Node->update_md5;
-    $Tree_new->insert($Node);
+
+    # Make requied updates
+    if ($changes){
+	$file_changes++;
+	&update_file($Node, $changes, @stats_new);
+    }
+
+    # Insert in new list
+    if ($Tree_new->Search(hash => $Node)) {
+	warn "    Tried to insert dupe Node ".$Node->filename;
+	my ($Dupe) = $Tree_new->Search(hash => $Node);
+	warn "        Old: ".$Dupe->filename;
+    } else {
+	$Tree_new->insert($Node);
+    }
+	    
 }
 
 
 #
 # OK - any files left in Old List must have been deleted
 #
-
-@Nodes = $Tree_old->Search(file => 1);
+my @Nodes = $Tree_old->Search(file => 1);
 if(@Nodes > 0){
     say " ";
     say "Files Deleted: ", join(", ", map($_->filename, @Nodes));
@@ -238,75 +247,95 @@ say " ";
 say "After Second File Pass  Old: ", scalar($Tree_old->count), " New: ", scalar($Tree_new->count);
 say " ";
 
-if (! $Tree_old->count){
-    say "Saved File";
-    $Tree_new -> save(dir => $dir, name => $db_tree_name);
-}
+#if (! $Tree_old->count){
+say "Saved File";
+$Tree_new -> save(dir => $dir, name => $db_tree_name);
+#}
 
 exit;
 
+sub update_file {
+    my $Node = shift(@_);
+    my $changes = shift(@_);
+    my @stats_new = @_;
 
-foreach my $Node (@Dirs){
-    $Tree_old->Delete($Node);
-    
+    my @changes = FileUtility::stats_delta_array($changes);
+    say "    File: ", $Node->filename if ($verbose == 2);
+    say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
+    printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
 
-    # say "Checking: ", $Node->filename;
-    my @changes = $Node->ischanged; 
-    
-    if (! @changes){
-	# Unchanged. Move from old list to new.
+    $Node->stat(\@stats_new);                    # always update stats some changed
+
+    # Decide what needs to be changed based upon what stats changed
+    # if dev or blksize changes - is error - should not happen
+    if ($changes & ( $FileUtility::stats_names{dev} | $FileUtility::stats_names{blksize} )) {
+	die("Stats Delta Illegal stats change: ", join(", ", @changes));
+    }
+
+    # If ctime - maybe flags changed
+    # ToDo
+    # * print flags delta
+    if ($changes & ( $FileUtility::stats_names{ctime})) {
+	$Node->update_flags
+    }
+
+    # If mtime, size or blocks changed - then clear old md5
+    if ( $changes & ( $FileUtility::stats_names{mtime} | $FileUtility::stats_names{size}) ){
+	if ($Node->can('md5')){
+	    $Node->_set_md5(undef);
+	}	
+    }
+
+    # If can do MD5 value, and the obj does not have one and is readable - calculate it
+    if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
+	if (! $fast_scan){
+	    say "    Update MD5: ", $Node->filename if ($verbose == 2);
+	    $Node->update_md5;
+	}
+    }
+}
+
+# Need to deal with new dirs
+# Exists on disk & changed, so list files in dir and see what to do
+# ToDo
+# * optimize  - use list files so can use stats? skip useless object creation?
+# * not use global values for Tree's
+#
+sub update_dir {
+    my $Node = shift(@_);
+    my $changes = shift(@_);
+    my @stats_new = @_;
+
+    my @Nodes = $Node->List(inc_file => 1, inc_dir => 1);
+
+    foreach my $Node (@Nodes) {
+	# If is in new list, know unchanged, can skip
+	if ($Tree_new->Search(hash => $Node)) {
+	    next;
+	}
+
+	# In old list, check if need to update path
+	# And leave in Old list to process on next iteration
+	if (my ($old_node) = $Tree_old->Search(hash => $Node)) {
+	    if ($old_node->filepath ne $Node->filepath) {
+		say "Update filepath: ", $old_node->filename;
+		$old_node->filepath($Node->filepath);
+	    }
+	    next;
+	}
+	    
+	# New file, can directlly put in new list
+	# Do we need to check for dupe filepath in old list and cleanup?
+	say "New File in Dir: ", $Node->filename;
 	$Tree_new->insert($Node);
-	next;
-    }
-
-    # If Dir has been deleted - put back in old list - may have been renamed
-    if ($changes[0] eq "deleted"){
-	$Tree_old->insert($Node);
-	next;
-    }
-
-    say "Changed Dir: ", $Node->filepath, " Delta: ", join(", ", @changes);
-    $Node->update_stat;
-    $Tree_new->insert($Node);
-
-
-    # Need to list Dirs in dir & figure out what to do
-    my @Files = $Node->List(inc_dir => 1, inc_file => 1);
-
-    foreach (@Files){
-	# If already in new Tree - know nothing has changed, we are done with this dir
-	if ( defined ${$Tree_new->nodes}{$_->hash} ){
-	    next;
-	}
-	if ( defined ${$Tree_old->nodes}{$_->hash} ){
-	    my $old_dir = ${$Tree_old->nodes}{$_->hash};
-
-	    my @changes = $_->delta( $old_dir);
-	    next if (! @changes);
-	    say "Changes: ", join(', ', @changes);
-	    $old_dir->_set_filepath($_->filepath);
-	    say "Updated path for ", $old_dir->filename;
-	    next;
-	}
-	say "    New Node: ", $_->filename;	
+	
+	# If new node, place in old list?
 
     }
-} # Done with dirs
 
-
-@Dirs = grep({$_->isdir} $Tree_old->List);
-
-if (@Dirs){
-    say " ";
-    say "Done Processing dirs and these dirs left: "; 
-
-    foreach(@Dirs){
-     say $_->filepath;
- }
 }
-say " ";
 
-exit;
+
 
 sub where_found {
     my $Obj = shift(@_);
