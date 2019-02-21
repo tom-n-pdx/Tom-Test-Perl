@@ -24,8 +24,6 @@ use MooFile;
 # * Move capture dupes, check dupes, save dupes to module
 # * Make scan dir smarter - check and move to new list
 # * Function, check if dir need scan?
-# * Delta stats function
-# * update based upon what's changed.
 # * Change Dir List to dir_list?
 
 
@@ -98,8 +96,8 @@ exit;
 # 
 sub wanted {
     return unless (-d $File::Find::name);   # if not dir, skip
-    return unless (-r $File::Find::name);   # if not readable skip
-    return unless (-w $File::Find::name);   # if not writeable skip
+    return unless (-r _);   # if not readable skip
+    return unless (-w _);   # if not writeable skip
 
     my  $dir = $File::Find::name;
     return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
@@ -168,10 +166,10 @@ sub update_dir_md5_2 {
 	    #
 	    # ToDo
 	    # * optimize - can use lstat to detect file dos not exist, save a stat
-	    my @stats_new = lstat($Node->filepath);
+	    my @stats_new = lstat(_);
 
 	    # Check changes and mask off atime changes
-	    $changes = FileUtility::stats_delta_binary($Node->stat,  \@stats_new);
+	    $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new);
 	    $changes = $changes & ~$FileUtility::stats_names{atime};
 
 	    # If the inode has changed, this is not the same file. We used filename and did stat on new file
@@ -193,7 +191,7 @@ sub update_dir_md5_2 {
 		say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
 		printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
 
-		$Node->stat(\@stats_new);                    # always update stats some changed
+		$Node->stats(\@stats_new);                    # always update stats some changed
 
 		# Decide what needs to be changed based upon what stats changed
 		# if dev or blksize changes - is error - should not happen
@@ -283,51 +281,6 @@ sub update_dir_md5_2 {
 }
 
 #
-# Process New Dir
-# * This is only for creating a new dir where we have no db_file already.
-#   Skips dir, does not follow sym links
-#
-# Pass in Dir object, link to new files list
-#
-# sub add_dir {
-#     my %opt = @_;
-#     my $new_files = 0;
-
-#     my $Dir         = delete $opt{dir} or die "Missing param 'Dir'";
-#     # my $Tree_old    = delete $opt{Files_old} or die "Missing param 'Files_old' to update_file";
-#     my $Tree_new    = delete $opt{Files_New} or die "Missing param 'Files_new' to update_file";
-#     # my $fast_scan   = delete $opt{fast_scan} // 0;
-#     my $update_md5  = delete $opt{update_md5} // 0;
-#     my $verbose     = delete $opt{verbose} // $main::verbose;
-#     die "Unknown params:", join ", ", keys %opt if %opt;
-
-#     # First check that dir exists, is dir, is readable & writeable
-#     my $filepath = $Dir->filepath;
-#     if (!-e $filepath or ! -r _ or ! -w _){
-# 	warn("Bad dir: $filepath for add dir");
-# 	return($new_files);
-#     }
-
-#     # Now process each file
-#     # Need parm to list for md5 update or not
-#     my @Files = $Dir->List(update_md5 => $update_md5);
-
-#     foreach my $File (@Files) {
-# 	# Debug check - check if file already in new files list
-# 	if ($Tree_new->Search(hash => $File) ){
-# 	    warn("Tried to insert file already in new files list");
-# 	} else {
-# 	    $Tree_new->insert($File);
-# 	    $new_files++;
-# 	}
-#     }
-#     say "Added $new_files files";
-
-#     return($new_files);
-# }
-
-
-#
 # Pass in Dir object, link to new files list, old files list
 # This function does not deal with new dirs in dir - only new files in dir
 #
@@ -339,23 +292,17 @@ sub update_dir {
     my $Tree_old    = delete $opt{Files_old} or die "Missing param 'Files_old' to update_file";
     my $Tree_new    = delete $opt{Files_New} or die "Missing param 'Files_new' to update_file";
     my $update_md5  = delete $opt{update_md5} // 1;
-    my $verbose     = delete $opt{verbose} // $main::verbose;
+    my $verbose     = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
     my $filepath = $Dir->filepath;
   
-    # Loop through files in dir & process. Do own dir list so can save stats and use
-    # my @filepaths = $Dir->list_filepaths;
-    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_AoA_r) = FileUtility::dir_list(dir => $filepath, inc_file => 1, use_ref => 1);
-
-    # my @filepaths = @{$filepaths_r}; 
-
     say "    New Dir Check File: $filepath";
 
-    # foreach my $filepath (@filepaths){
-    foreach (0..( scalar(@{$filepaths_r}) - 1) ){
+    # Loop through files in dir & process. Do own dir list so can save stats and use
+    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_AoA_r) = FileUtility::dir_list(dir => $filepath, inc_file => 1, use_ref => 1);
+    foreach ( 0..$#{$filepaths_r} ){
 	my $filepath = @{$filepaths_r}[$_];
-	# my @stats = lstat($filepath);
 	my @stats = @{ ${$stats_AoA_r}[$_] };
 	my $hash = $stats[0].'-'.$stats[1];
 	
@@ -377,7 +324,8 @@ sub update_dir {
 	
 	# Not in either tree so must be new file
 	say "Update Dir - new file - $filepath";
-	my $File = MooFile->new(filepath => $filepath, stat => [ @stats ], update_stat => 0, 
+	my $File = MooFile->new(filepath => $filepath, 
+				stats => [ @stats ], update_stats => 0, 
 				opt_update_md5 => 0);
 
 	$size_count{$File->size}++;

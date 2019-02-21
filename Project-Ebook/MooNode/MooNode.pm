@@ -4,12 +4,13 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * add buld args check? No extra args
+# * add buld args check? No extra args. Use std args check across code
 # * string version mtime, dtime  -use duelvalue
 # * read labels / set
 # * add a save packed method
 # * use vec for decode perms
 # * cleanup the stats delta code
+# * move flag encodng into this file?
 #
 
 # Standard uses's
@@ -21,14 +22,13 @@ use File::Basename;             # Manipulate file paths
 use Time::localtime;            # Printing stat values in human readable time
 use FileUtility;
 
-
 # use Data::Dumper qw(Dumper);  # Debug print
 
 package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
 use Fcntl qw(:mode);		# Get fields to parse stat bits
-
+use Scalar::Util qw(dualvar);
 use Carp;
 
 has 'filepath',			# full name of file including path
@@ -36,22 +36,16 @@ has 'filepath',			# full name of file including path
     isa => 'Str',
     required => 1;
 
-has 'stat',			# stat array - not live version, last time updated or created
-    is => 'rw',
+has 'stats',			# stat array - not live version, last time updated or created. 
+    is => 'rw',                 # maybe undefined value.
     isa => 'ArrayRef[Int]';
-
 
 
 # Extended attributes OS X
 
-# has 'flags',			# not live version
-#     is => 'ro',
-#     isa => 'Str',
-#     writer => '_set_flags';
-
-has 'flags',			# not live version
-    is => 'rw',
-    isa => 'Maybe[Int]',
+has 'flags',			# not a live version. Maybe undef so has a Maybe[Int].
+    is => 'rw',                 # binary 8 bit vector. See file utility for bit encoding.
+    isa => 'Maybe[Int]',        # No standard bsd nor osx encoding.
     default => 0;
 
 
@@ -81,11 +75,10 @@ sub BUILDARGS {
     my %args = _args_helper(@original);
     my $filepath = $args{filepath};
 
-    # If filepath defined - check is a file of some type
-    if ($filepath && ! -e $filepath){
-	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
-    }
-
+    # # Normally check that file exists. But - if we skip checking stats - signal not to check if real file
+    # if ($filepath && ! -e $filepath){
+    # 	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
+    # }
 
     return \%args;
 };
@@ -99,13 +92,18 @@ sub BUILDARGS {
 sub BUILD {
     my ($self)=shift( @_);
     my $args_ref = shift(@_);
-    my $update_stat   = $$args_ref{'update_stat'}   // 1; # default is do stat on file on creation
+    my $update_stats  = $$args_ref{'update_stats'}  // 1; # default is do stat on file on creation
     my $update_flags  = $$args_ref{'update_flags'}  // 1; # default is expensive get flags on creation
 
 
-    # Check if the build not set
-    if (! defined $self->stat && $update_stat){
-	$self->update_stat;
+    # Now - check if really a file. Unless we are not filling in stats, then we assume user maybe not creating live Node
+
+    # make sure a file & fillin stats
+    if (! defined $self->stats && $update_stats){
+	if (!-e $self->filepath){
+	    croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$self->filepath;
+	}
+    	$self->update_stats;
     }
 
     if (! defined $self->flags){
@@ -124,12 +122,12 @@ sub BUILD {
 # * save old values somewhere so can move in the tree?
 #
 
-sub update_stat {
+sub update_stats {
     my ($self)=shift( @_);
     my $filepath =  $self->filepath;
  
     # Do NOT follow sym link
-    $self->stat( [ lstat($filepath) ] );
+    $self->stats( [ lstat($filepath) ] );
 
 }
 
@@ -139,90 +137,66 @@ sub update_flags {
     my $filepath =  $self->filepath;
  
     # Get OS X Extended Atributes before check premissions since premessions depend upon flags
-    # my @flags = FileUtility::osx_check_flags($filepath);
     my $flags = FileUtility::osx_check_flags_binary($filepath);
     $self->flags($flags);
 }
 
     
 #
-# Values derived from stat values
+# Values derived from stats values
 #
 sub size {
     my $self = shift(@_);
     
-    my $size = ${$self->stat}[7];
+    my $size = ${$self->stats}[7];
     return($size);
 }
+
+
+sub atime {
+    my $self = shift(@_);
+    
+    my $atime =  ${$self->stats}[8];
+    my $str   =  Time::localtime::ctime($atime);
+			   
+    return( dualvar($atime, $str) );
+}
+
 
 sub mtime {
     my $self = shift(@_);
     
-    my $mtime =  ${$self->stat}[9];
-    return($mtime);
+    my $mtime =  ${$self->stats}[9];
+    my $str   =  Time::localtime::ctime($mtime);
+			   
+    return( dualvar($mtime, $str) );
 }
 
-
-sub mtime_str {
-    my $self = shift(@_);
-        
-    return(Time::localtime::ctime($self->mtime));
-}
 
 sub ctime {
     my $self = shift(@_);
     
-    my $mtime =  ${$self->stat}[10];
-    return($mtime);
+    my $ctime =  ${$self->stats}[10];
+    my $str   =  Time::localtime::ctime($ctime);
+			   
+    return( dualvar($ctime, $str) );
 }
+
 
 sub dev {
     my $self = shift(@_);
     
-    my $dev =  ${$self->stat}[0];
+    my $dev =  ${$self->stats}[0];
     return($dev);
 }
+
 
 sub inode {
     my $self = shift(@_);
     
-    my $inode =  ${$self->stat}[1];
+    my $inode =  ${$self->stats}[1];
     return($inode);
 }
-
-# from Stat Mode bits
-# Mask definations from Fcntl module:
-# Orginal examples modified from stat perldoc
-sub isdir {
-    my $self = shift(@_);
-    my $mode = ${$self->stat}[2];
-    
-    return(S_ISDIR($mode));
-}
-
-sub isfile {
-    my $self = shift(@_);
-    my $mode = ${$self->stat}[2];
-    
-    return(S_ISREG($mode));
-}
-
-sub isreadable {
-    my $self = shift(@_);
-    my $mode = ${$self->stat}[2];
-    
-    my $perms = ($mode & S_IRUSR) >> 8;
-    return($perms);
-}
-
-sub iswriteable {
-    my $self = shift(@_);
-    my $mode = ${$self->stat}[2];
-    
-    my $perms =  ($mode & S_IWUSR) >> 7;
-    return($perms);
-}
-
 
 #
 # Derived unique value for hashing file
@@ -234,6 +208,55 @@ sub hash {
     my $hash = $self->dev.'-'.$self->inode;
     return($hash);
 }
+
+
+# From Stat Mode bits
+# Mask definations from Fcntl module:
+# Orginal examples modified from stat perldoc
+sub isdir {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    
+    return(S_ISDIR($mode));
+}
+
+sub isfile {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    
+    return(S_ISREG($mode));
+}
+
+sub type {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    my $type = "Othr";
+
+    $type = "Dir " if (S_ISDIR($mode)); # -d
+    $type = "File" if (S_ISREG($mode)); # -f
+    $type = "Sym " if (S_ISLNK($mode)); # -l
+
+    return($type);
+}
+
+
+
+sub isreadable {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    
+    my $perms = ($mode & S_IRUSR) >> 8;
+    return($perms);
+}
+
+sub iswriteable {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    
+    my $perms =  ($mode & S_IWUSR) >> 7;
+    return($perms);
+}
+
 
 #
 # Live checks - given object exists & filsystem mounted - check if things about file have changed
@@ -318,9 +341,9 @@ sub rename {
 
     $self->_set_filepath($filepath_new);
 
-    # Do I need to update stat after rename?
+    # Do I need to update stats after rename?
     # Wil this force a md5 stat?
-    $self->update_stat;
+    $self->update_stats;
 
 }
    
@@ -343,6 +366,7 @@ sub rename {
 # md5                 Y                   Y                           Y
 #
 
+# get from FileUtility?
 # Names of stat values
 # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
 my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
@@ -350,8 +374,8 @@ my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksi
 
 # 
 # Check differences between objects - maybe different disks, names - but contents same
-#  ToDo - make work on stats or object
-
+# ToDo - make work on stats or object
+#
 sub delta {
     my $self    = shift(@_);
     my $other   = shift(@_);
@@ -366,12 +390,12 @@ sub delta {
     push(@changes, "filepath")   if ($self->filepath ne $other->filepath);
     
     # OK need to check stats
-    my @self_stat =  @{$self->stat};
-    my @other_stat = @{$other->stat};
+    my @self_stats =  @{$self->stats};
+    my @other_stats = @{$other->stats};
 
     # Check all except atime
     foreach (0..7, 9..12){
- 	if ($self_stat[$_] != $other_stat[$_]){
+ 	if ($self_stats[$_] != $other_stats[$_]){
       	    push(@changes, $stat_names[$_]);
       	}
     }
@@ -427,24 +451,41 @@ sub true {
     return($_[0] ? "True" : "False");
 }
 
+use Number::Bytes::Human qw(format_bytes parse_bytes);
+
+# ToDo
+# * print human readable size
+# * print human decode flags
+
 sub dump {
     my $self = shift(@_);
+    my $str;
  
     print "File: ", $self->filename, "\n";
-    print "\tPath:  ", $self->path, "\n";
-    print "\tExt:   ", $self->ext, "\n";
-    print "\tDir:   ", $self->isdir, "\n";
-    print "\tFile:  ", $self->isfile, "\n";
-    print "\tRead:  ", $self->isreadable, "\n";
-    print "\tSize:  ", $self->size, "\n";
-    print "\tInode: ", $self->inode, "\n";
-    print "\tFlags: ", $self->flags, "\n";
-    print "\tStat:  ", join(', ',  @{$self->stat} ), "\n";
+    print "\tPath:   ", $self->path, "\n";
+    print "\tExt:    ", $self->ext, "\n";
+
+    print "\tisDir:  ", true($self->isdir), "\n";
+    print "\tisFile: ", true($self->isfile), "\n";
+    print "\tType:   ", $self->type, "\n";
+
+    print "\tRead:   ", true($self->isreadable), "\n";
+    print "\tWrite:  ", true($self->iswriteable), "\n";
+
+    $str = format_bytes($self->size);
+
+    print "\tSize:   ", $self->size, "  $str\n";
+    print "\tInode:  ", $self->inode, "\n";
+
+    $str = osx_flags_binary_string($self->flags);
+    print "\tFlags:  ", $self->flags, " $str\n";
+    print "\tStats:  ", join(', ',  @{$self->stats} ), "\n";
 
     print "\n";
-    print "\tAtime: ", Time::localtime::ctime(@{$self->stat}[8]), "\n";
-    print "\tMtime: ", Time::localtime::ctime(@{$self->stat}[9]), "\n";
-    print "\tCtime: ", Time::localtime::ctime(@{$self->stat}[10]), "\n";
+    #print "\tAtime:  ", Time::localtime::ctime(@{$self->stats}[8]), "\n";
+    print "\tAtime:  ", $self->atime, "\n";
+    print "\tMtime:  ", $self->mtime, "\n";
+    print "\tCtime:  ", $self->ctime, "\n";
 }
    
 sub dump_raw {
@@ -453,7 +494,7 @@ sub dump_raw {
    # Moose semi unfriendly - uses raw access to class variables... may break in future
    print "INFO: Dump Raw: File: ", $self->filename, " Class: $class\n";
 
-   my %atributes = (isfile => 'Bool', isdir => 'Bool', isreadable => 'Bool', stat =>'ArrayRef');
+   my %atributes = (stats =>'ArrayRef');
 
    my @keys = sort keys(%$self);
    foreach (@keys){

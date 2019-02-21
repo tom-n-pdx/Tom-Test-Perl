@@ -7,7 +7,7 @@
 # * list files return list file objects?
 # * check times, all times seem to chage ven if not write dir
 # * skip system files in list - .DS_store
-
+# * rework to use improve list dir file utility
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -33,13 +33,13 @@ sub BUILDARGS {
     my %args = MooNode::_args_helper(@original);
     my $filepath = $args{filepath};
 
-    # If filepath defined - check is a file of some type
-    if ($filepath && ! -e $filepath){
-    	croak "ERROR: constructor failed - tried to create Dir of non-existent file: ".$filepath;
-    }
-    if ($filepath && ! -d $filepath){
-    	croak "ERROR: constructor failed - tried to create Dir of non-Dir file: ".$filepath;
-    }
+    # # If filepath defined - check is a file of some type
+    # if ($filepath && ! -e $filepath){
+    # 	croak "ERROR: constructor failed - tried to create Dir of non-existent file: ".$filepath;
+    # }
+    # if ($filepath && ! -d $filepath){
+    # 	croak "ERROR: constructor failed - tried to create Dir of non-Dir file: ".$filepath;
+    # }
 
     return \%args;
 };
@@ -52,6 +52,13 @@ sub BUILD {
     my $self=shift( @_);
     my $args_ref = shift(@_);
     my $opt_update_dtime = $$args_ref{'opt_update_dtime'}  // 1;
+    my $update_stats     = $$args_ref{'update_stats'}      // 1; # default is do stat on file on creation
+
+    if ($update_stats){
+	if (!-e $self->filepath or !-d _) {
+	    croak "ERROR: constructor failed - tried to create Node of non-existent or non-dir file: ".$self->filepath;
+	}
+    }
 
     if ($opt_update_dtime){
 	$self->update_dtime;
@@ -62,19 +69,18 @@ sub BUILD {
 
 #
 # Calculate last time the dir or any file in dir changed
-# NOTE: assumes online copy of dir. Note that by default it does not look for changes in any dot files
+# NOTE: assumes online copy of dir. Note it does not look for changes in any dot files
 #
 sub _calc_dtime {
     my $self = shift(@_);
 
     # Start with latest of mtime, ctime
-    my $dtime = max(@{ $self->stat }[9, 10]);
+    my $dtime = max(@{ $self->stats }[9, 10]);
 
     # Check files (not subdir, socket, hidden, symlink)
-    # Check dir?
     foreach ($self->list_filepaths){
 	if (-f $_){
-	    $dtime = max(  (stat($_) )[9, 10], $dtime);
+	    $dtime = max(  (stat(_) )[9, 10], $dtime);
 	}
     }
 
@@ -94,29 +100,6 @@ sub update_dtime {
 };
 
 
-#
-# Dir list method
-# Returns a list of filepath not objects
-# Skips ., .. and other hidden files - may need to create option for all files, etc.
-# it does include un-readable normal files
-# Store a version?
-# 
-# sub list_filepaths {
-#     my $self = shift(@_);
-
-#     # Open dir & Scan Files
-#     opendir(my $dh, $self->filepath);
-#     my @filepaths = readdir $dh;
-#     closedir $dh;
-
-#     @filepaths = grep(!/^\./, @filepaths);                  # remove dot files
-#     @filepaths = map($self->filepath.'/'.$_, @filepaths);   # make into absoule path         
-#     @filepaths = grep( {-f} @filepaths);                    # remove none standard files (drop dirs, sockets, etc)
-    
-
-#     return(@filepaths);
-# }
-
 sub list_filepaths {
     my $self = shift(@_);
     my %opts  = @_;
@@ -135,31 +118,39 @@ sub List {
     my $self = shift(@_);
     my %opt = @_;
     my $update_dtime =  delete $opt{update_dtime}  // 0;
-    my $update_md5   =  delete $opt{update_md5}  // 0;
+    my $update_md5   =  delete $opt{update_md5}    // 0;
     # No check for unused opts - they are passed to dir_list
 
     
-    my @filepaths = dir_list(dir => $self->filepath, %opt);
+#    my @filepaths = dir_list(dir => $self->filepath, %opt);
 
-    my @Files;
-    foreach my$filepath (@filepaths){
-	my $File;
+    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_AoA_r) = 
+	FileUtility::dir_list(dir => $self->filepath, use_ref => 1, %opt);
+
+    my @Nodes;
+    foreach (0..( @{$filepaths_r} - 1) ){
+	my $Node;
+	my $filepath = ${$filepaths_r}[$_];
+	
+
 	if (-d $filepath){
-	    $File =  MooDir->new(filepath => $filepath,  opt_update_dtime => $update_dtime, %opt);
+	    $Node = MooDir->new(filepath => $filepath, 
+				stats => @{$stats_AoA_r}[$_], update_stats => 0,
+			        update_dtime => $update_dtime);
 	} elsif (-f _) {
-	    $File =  MooFile->new(filepath => $filepath, opt_update_md5 => $update_md5, %opt);
+	    $Node =  MooFile->new(filepath => $filepath, 
+				stats => @{$stats_AoA_r}[$_], update_stats => 0,
+			        update_md5 => $update_md5);
 	} else {
 	    # warn("Unknown file type: $filepath");
-	    $File =  MooNode->new(filepath => $filepath);
+	    $Node =  MooNode->new(filepath => $filepath, 
+				stats => @{$stats_AoA_r}[$_], update_stats => 0);
 	}
 
-	# If hidden file, don't put on list
-	# next if ($File->ishidden);
-
-	push(@Files, $File);
+	push (@Nodes, $Node);
     }
 
-    return(@Files);
+    return(@Nodes);
 }
 
 #

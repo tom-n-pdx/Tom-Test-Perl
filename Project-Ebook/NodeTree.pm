@@ -201,6 +201,20 @@ sub Search {
     return(@Nodes);
 }
 
+#
+# For Search by hash - no need to search - just lookup!
+#
+sub Exist {
+    my $self   = shift(@_);
+    my %opt = @_;
+
+    my $search_hash = delete $opt{hash}    // 0;
+    my $verbose     = delete $opt{verbose} // $main::verbose;
+    croak "Unknown params:", join ", ", keys %opt if %opt;
+
+    my $Node = ${$self->Nodes}{$search_hash};
+}
+
 
 #
 # Need a check and summary function to detect errors
@@ -337,7 +351,7 @@ sub _packed_file_str {
     my $type    = "File";
     my $extend  = " ";
     my $md5     = $Node->md5 // MD5_BAD;
-    my @stats   = @{$Node->stat};
+    my @stats   = @{$Node->stats};
     my $name    = $Node->filename;
     warn("Name > space 329 $name") if (length($name) > 329);
 
@@ -352,7 +366,7 @@ sub _packed_cwd_str {
     my $type    = "Cwd";
     my $extend  = " ";
     my $md5     = MD5_BAD;
-    my @stats   = @{$Node->stat};
+    my @stats   = @{$Node->stats};
     my $name    = $Node->path;
     warn("Name > space 329 $name") if (length($name) > 329);
 
@@ -366,7 +380,7 @@ sub _packed_dir_str {
     my $type    = "Dir";
     my $extend  = " ";
     my $md5     = MD5_BAD;
-    my @stats   = @{$Node->stat};
+    my @stats   = @{$Node->stats};
     my $name    = $Node->filepath.'/';
     warn("Name > space 329 $name") if (length($name) > 329);
 
@@ -409,6 +423,20 @@ sub load {
 	    $self = NodeTree->new();
 	    return($self);
 	}
+
+	# Changed name of atribute in Node - need to check if this restore file OK
+	my ($Node) = $self->List;
+	my $stats_r = $Node->stats;
+
+	if (!defined $stats_r){
+	    carp "Old db_file - no stats method  File: $filepath";
+	    rename($filepath, "$filepath.old");
+	    
+	    $self = NodeTree->new();
+	    return($self);
+	}
+
+
 
 	my $count = $self->count;
 	say "\tLoaded $count records" if ($main::verbose >= 2);

@@ -27,6 +27,8 @@ use Scalar::Util qw(blessed);
 
 #
 # Todo
+# * Check packed, then regular - either
+#
 # * Storable fails on very deep dir (Video13) - too deep
 #   + paramater to increase depth?
 #   + Can disable warning https://www.perlmonks.org/?node_id=324564
@@ -52,6 +54,8 @@ if ($debug or $verbose >= 2){
 }
 
 my $db_name =  ".moo.db";
+my $db_name_packed = ".moo.dbp";
+
 my $db_tree_name =  ".moo.tree.db";
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks";
 
@@ -70,8 +74,7 @@ foreach my $dir (@ARGV){
     
     # Save Tree
     my $count = $Tree->count;
-    say "Total $count records loaded";
-
+    say "Total $count records saved" if ($verbose >= 1);
     $Tree -> save(dir => $dir, name => $db_tree_name);
 
     # Save a copy into Datadir
@@ -129,6 +132,8 @@ sub dir_collect_md5 {
 
 	 # Error check
 	 warn "WARN: ", scalar(@Nodes), " loaded from file, Dir: $dir" if (@Nodes < 1);
+	 say "Loaded ", scalar(@Nodes), " from file, Dir: $dir" if ($verbose >= 2);
+
 
 	 # Insert into global list
 	 $Tree->insert(@Nodes);

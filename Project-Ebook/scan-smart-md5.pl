@@ -117,7 +117,7 @@ do {
 	next if (!  @stats_new);
 
 	# Check changes and mask off atime changes
-	my $changes = FileUtility::stats_delta_binary($Node->stat,  \@stats_new);
+	my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new);
 	$changes = $changes & ~$FileUtility::stats_names{atime};
     
 	if ($changes & $FileUtility::stats_names{ino}){
@@ -160,7 +160,7 @@ foreach my $Node( $Tree_old->Search(dir => 1) ){
     next if (!  @stats_new);
 
     # Check changes and mask off atime changes
-    my $changes = FileUtility::stats_delta_binary($Node->stat, \@stats_new);
+    my $changes = FileUtility::stats_delta_binary($Node->stats, \@stats_new);
     $changes = $changes & ~$FileUtility::stats_names{atime};
 
     if ($changes & $FileUtility::stats_names{ino}){
@@ -264,7 +264,7 @@ sub update_file {
     say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
     printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
 
-    $Node->stat(\@stats_new);                    # always update stats some changed
+    $Node->stats(\@stats_new);                    # always update stats some changed
 
     # Decide what needs to be changed based upon what stats changed
     # if dev or blksize changes - is error - should not happen

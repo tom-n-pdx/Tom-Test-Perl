@@ -20,6 +20,7 @@ use Data::Dumper;           # Debug print
 
 
 # My Modules
+use lib '/Users/tshott/Workspace/Tom-Test-Perl/Project-Ebook';
 use lib '.';
 use MooNode;
 # use MooFile;
@@ -27,7 +28,7 @@ use MooNode;
 
 my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
 my $test_file;
-$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
+$test_file = "/Users/tshott/Downloads/_ebook/_test_Zeppelins/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 # $test_file = $ebook_base_dir;
 
@@ -36,12 +37,17 @@ my $test = MooNode->new($test_file);
 
 my $size = $test->size;
 say "File: ", $test->filepath, " size: ", $size;
-say "Stat: ", join(', ',  @{$test->stat});
+say "Stat: ", join(', ',  @{$test->stats});
 
 say "Version: ", $test->VERSION;
 
 $test->dump;
+say " ";
+say " ";
+
 $test->dump_raw;
+exit;
+
 
 # say Dumper($test);
 

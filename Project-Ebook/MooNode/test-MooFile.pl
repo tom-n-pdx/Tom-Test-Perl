@@ -18,17 +18,18 @@ use Data::Dumper;           # Debug print
 # use Fcntl qw(:DEFAULT :flock);
 
 # My Modules
+use lib '/Users/tshott/Workspace/Tom-Test-Perl/Project-Ebook';
 use lib '.';
 use MooFile;
 
 
-my $ebook_base_dir = "/Users/tshott/Downloads/_ebook";
+my $ebook_base_dir = "/Users/tshott/Downloads/_ebook/_test_Zeppelins";
 my $test_file;
-#$test_file = "$ebook_base_dir/_Zeppelins_testing/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
-$test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin.jpg";
-#$test_file = "$ebook_base_dir/_Zeppelins_testing/The Zeppelin-BAD.jpg";
-#$test_file = "$ebook_base_dir/_Zeppelins_testing/Airship technology_test.gif";   # no read access
-#$test_file = $ebook_base_dir;
+$test_file = "$ebook_base_dir/[New Vanguard 101] Charles Stephenson - Zeppelins_ German Airships 1900 - 40 (2004, Osprey Publishing Ltd).pdf";
+$test_file = "$ebook_base_dir/The Zeppelin.jpg";
+$test_file = "$ebook_base_dir/The Zeppelin-BAD.jpg";
+$test_file = "$ebook_base_dir/Airship technology_test.gif";   # no read access
+$test_file = $ebook_base_dir;
 
 #my $test = MooFile->new(filepath => $test_file, 'opt_update_md5' => 1);
 my $test = MooFile->new($test_file); # Use short version no opts
@@ -37,23 +38,23 @@ my $test = MooFile->new($test_file); # Use short version no opts
 # my $test = MooFile->new;
 
 my $size = $test->size || "undefined";
-say "File: ", $test->filepath, " size: ", $size, " mtime: ", $test->mtime_str;
+say "File: ", $test->filepath, " size: ", $size, " mtime: ", $test->mtime;
 
 # Check stats array
-say "Stats: ", join(', ',  @{$test->stat});
+say "Stats: ", join(', ',  @{$test->stats});
 
 # Check Dump
 # say "Dump:";
-#$test->dump;
+$test->dump;
 
 say "Dump:";
 $test->dump_raw;
 
 say "Update Stats";
-$test->update_stat;
+$test->update_stats;
 $test->dump_raw;
 
-die;
+exit;
 
 #
 # Check the iseqal & ischanged options

@@ -34,13 +34,13 @@ sub BUILDARGS {
     my %args = MooNode::_args_helper(@original);
     my $filepath = $args{filepath};
 
-    # If filepath defined - check is a file of some type
-    if ($filepath && ! -e $filepath){
-    	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
-    }
-    if ($filepath && ! -f $filepath){
-    	croak "ERROR: constructor failed - tried to create Node of non-file file: ".$filepath;
-    }
+    # # If filepath defined - check is a file of some type
+    # if ($filepath && ! -e $filepath){
+    # 	croak "ERROR: constructor failed - tried to create Node of non-existent file: ".$filepath;
+    # }
+    # if ($filepath && ! -f $filepath){
+    # 	croak "ERROR: constructor failed - tried to create Node of non-file file: ".$filepath;
+    # }
 
     return \%args;
 };
@@ -53,9 +53,17 @@ sub BUILDARGS {
 sub BUILD {
     my $self=shift( @_);
     my $args_ref = shift(@_);
+    my $opt_update_md5 = $$args_ref{'opt_update_md5'}  // 1;
+    my $update_stats   = $$args_ref{'update_stats'}    // 1; # default is do stat on file on creation
+
+    if ($update_stats){
+	if (!-e $self->filepath or ! -f _){
+	    croak "ERROR: constructor failed - tried to create Node of non-existent or non-file file: ".$self->filepath;
+	}
+    }
+
 
     # option to not generate md5 but default is to create signature
-    my $opt_update_md5 = $$args_ref{'opt_update_md5'}  // 1;
     if ($opt_update_md5){
 	$self->update_md5;
     }
@@ -77,7 +85,7 @@ sub update_md5 {
 
     $digest = Digest::MD5::File::file_md5_hex($self->filepath);
     if (!defined $digest){
-	warn "ERROR md5 returned undefined value. filepath: ".$self->filepath;
+	carp "ERROR md5 returned undefined value. filepath: ".$self->filepath;
     } else {
 	$self->_set_md5($digest);
     }
@@ -116,8 +124,8 @@ sub dump {
    $self->SUPER::dump();
 
    # Now print the md5 value
-   my $string = $self->md5 || "undef";
-   print "\n\tMD5: ", $string, "\n";
+   my $string = $self->md5 || "Undef";
+   print "\n\tMD5:    ", $string, "\n";
 
    return;
 }

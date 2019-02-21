@@ -20,6 +20,20 @@ use Carp qw(croak carp);
 use File::Basename;             # Manipulate file paths
 
 #
+# Global Module Values
+#
+# our %osx_flags = ('-'       => 0x00, 
+# 		 uchg       => 0x01, schg => 0x1, restricted => 0x1, sunlnk => 0x1,
+# 		 hidden     => 0x02,  
+# 		 compressed => 0x04,
+# 	         nodump     => 0x08);
+
+# our @osx_flags = qw(uchg hidden compressed nodump);
+
+our %osx_flags;
+our @osx_flags;
+
+#
 # Return a list of files
 # Checks paramater to make sure is valid.
 # If passed a normal, returns a lst with the normal file in it.
@@ -87,12 +101,15 @@ sub dir_list {
 	next if (-d _ && !$inc_dir);
 	next if (-f _ && !$inc_file);
 
-    	my @flags = FileUtility::osx_check_flags($filepath);
-    	next if (!$inc_dot && grep(/hidden/, @flags));                      # remove hidden files if unless $inc_dot
+    	my $flags = FileUtility::osx_check_flags_binary($filepath);
+	if ($flags & $osx_flags{hidden} && ! $inc_dot){
+	    next;
+	}
 
 	push(@filepaths, $filepath);
 	push(@filenames, $name);
 	push(@stats_AoA, \@stats);
+	push(@flags_AoA, $flags);
     }
 
     	
@@ -229,13 +246,16 @@ sub stats_delta_array {
 # hidden     0x02   <- hidden
 # compressed 0x04   <- compressed
 
-our %osx_flags = ('-'       => 0x00, 
-		 uchg       => 0x01, schg => 0x1, restricted => 0x1, sunlnk => 0x1,
-		 hidden     => 0x02,  
-		 compressed => 0x04,
-	         nodump     => 0x08);
 
-our @osx_flags = qw(uchg hidden compressed nodump);
+%osx_flags = ('-'         => 0x00, 
+	      uchg        => 0x01, schg => 0x1, restricted => 0x1, sunlnk => 0x1,
+	      hidden      => 0x02,  
+	      compressed  => 0x04,
+	      nodump      => 0x08);
+
+@osx_flags = qw(uchg hidden compressed nodump);
+
+
 
 sub osx_check_flags {
     my $filepath = shift(@_);
@@ -289,7 +309,7 @@ sub osx_check_flags_binary {
     }
 
     my $flags = (split(/\s+/, $string))[4];     # flags are 4th field in ls output
-    @flags = split(/,/, $flags);          # flags feild split on space
+    @flags = split(/,/, $flags);                # flags feild split on space
     
     # Convert to binary
     foreach my $flag (@flags){
