@@ -6,7 +6,7 @@
 
 package FileUtility;
 use Exporter qw(import);
-our @EXPORT_OK = qw(dir_list rename_unique);
+our @EXPORT_OK = qw(dir_list rename_unique osx_check_flags_binary %osx_flags stats_delta_binary %stats_names);
 
 
 # Standard uses's

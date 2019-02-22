@@ -3,6 +3,7 @@
 #
 #
 # ToDo
+# * add save / load dupes file function
 # * Sub formal paramaters?
 # * Move md5, file info into a singular complex data structure instead of 4 hash's
 # * write debug pring functions, count lines, etc

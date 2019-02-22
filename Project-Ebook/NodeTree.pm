@@ -207,12 +207,17 @@ sub Search {
 sub Exist {
     my $self   = shift(@_);
     my %opt = @_;
+    my $Node;
 
     my $search_hash = delete $opt{hash}    // 0;
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
-    my $Node = ${$self->Nodes}{$search_hash};
+    
+
+    $Node = ${$self->nodes}{$search_hash};
+    
+    return($Node);
 }
 
 
@@ -268,7 +273,7 @@ sub save {
     store($self, $filepath);
 
     my $count = $self->count;
-    say "Saved $count records" if ($main::verbose >= 2);
+    say "    Saved $count records" if ($main::verbose >= 3);
 
 }
 
@@ -439,7 +444,7 @@ sub load {
 
 
 	my $count = $self->count;
-	say "\tLoaded $count records" if ($main::verbose >= 2);
+	say "    Loaded $count records" if ($main::verbose >= 3);
 
 	# $dbfile_mtime = (stat(_))[9];
     } else {
