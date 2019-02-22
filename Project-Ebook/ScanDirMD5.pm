@@ -22,13 +22,16 @@
 
 package ScanDirMD5;
 use Exporter qw(import);
-our @EXPORT = qw(scan_dir_md5 load_dupes save_dupes);
+our @EXPORT = qw(scan_dir_md5 load_dupes save_dupes update_file_md5 update_dir_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
 use Digest::MD5::File;
 use autodie;
 use File::Basename;                     # Manipulate file paths
+
+use lib '.';
+use FileUtility qw(%stats_names dir_list);
 
 use constant MD5_BAD => "x" x 32;
 
@@ -39,6 +42,158 @@ our (%md5_old,    %mtime_old,    %size_old,    %filename_old);
 my %md5_check;
 our %md5_check_HoA;
 our %size_check_HoA;
+
+#
+# Access gloabl values to track file changes
+# Access global lists of files
+# Make size array local to md5 module, make file change stats local to md5 module
+
+#
+# Don't need access to new and old lists
+#
+sub update_file_md5 {
+    my %opt = @_;
+
+    my $Node        = delete $opt{Node}       // die "Missing param 'Node'";
+    my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
+    my $changes     = delete $opt{changes}    // die "Missing param 'changes'";
+
+    my $update_md5  = delete $opt{update_md5} // 1;
+    my $verbose     = delete $opt{verbose}    // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    my @stats_new   = @{$stats_new_r};
+    # my $new_files = 0;
+
+    if ($changes){
+	$main::files_change++;
+	my @changes = FileUtility::stats_delta_array($changes);
+	say "    File: ", $Node->filename if ($verbose == 2);
+	say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
+	printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
+
+	$Node->stats(\@stats_new);        # always update stats if some changed
+
+	# Decide what needs to be changed based upon what stats changed
+	# if dev or blksize changes - is error - should not happen
+	if ($changes & ( $stats_names{dev} | $stats_names{ino} | $stats_names{blksize} )) {
+	    croak("Stats Delta Illegal stats change: ", join(", ", @changes));
+	}
+
+	# If ctime - maybe flags changed
+	if ($changes & ( $stats_names{ctime})) {
+	    $Node->update_flags
+	}
+
+	# If mtime or size changed - then clear old md5
+	if ( ($changes & ( $stats_names{mtime} | $stats_names{size})) && $Node->can('md5') && defined $Node->md5){
+	    $Node->_set_md5(undef);
+	}
+    }
+
+    # Even if no changs, need to maybe update md5
+    $main::size_count{$Node->size}++;
+    my $count = $main::size_count{$Node->size};
+
+    if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
+	if ($update_md5 or  $count >= 2){
+	    say "    Update MD5: ", $Node->filename if ($verbose == 2);
+	    $Node->update_md5;
+	    $main::files_change++;
+	    $main::files_md5++;
+	}
+    }
+
+    return;
+}
+
+#
+# ToDo
+# * not use global values for Tree's
+# 
+sub update_dir_md5 {
+    my %opt = @_;
+
+    my $Dir         = delete $opt{Dir}        // die "Missing param 'Dir'";
+    my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
+    my $changes     = delete $opt{changes}    // die "Missing param 'changes'";
+
+    my $Tree_new    = delete $opt{Tree_new}   // die "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old}   // die "Missing param 'Tree_old'";
+
+    my $update_md5  = delete $opt{update_md5} // 1;
+    my $verbose     = delete $opt{verbose}    // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    my @stats_new = @{$stats_new_r};
+    say "       Update Dir: ", $Dir->filepath;
+
+    # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
+    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, inc_file => 1, use_ref => 1);
+    foreach ( 0..$#{$filepaths_r} ){
+	my $filepath  = @{$filepaths_r}[$_];
+	my @stats     = @{ ${$stats_AoA_r}[$_] };
+	my $flags     = @{$flags_r}[$_];
+
+	my $hash      = $stats[0].'-'.$stats[1];
+
+	# If is already in new list, we know is unchanged, we can skip checking
+	if ($Tree_new->Exist(hash => $hash)) {
+	    next;
+	}
+
+	# If in old list, check if we need to update path and leave in Old list to process on next iteration
+	my $old_node = $Tree_old->Exist(hash => $hash);
+	if (defined $old_node) {
+	    if ($old_node->filepath ne $filepath) {
+		say "          Dir Update- Update filepath: ", $old_node->filepath, " to ", $filepath;
+		$old_node->filepath($filepath);
+		$main::files_rename++;
+		$main::files_change++;
+	    }
+	    next;
+	}
+	    
+	# New file or dir, can directlly put in new list
+	say "          Dir Update- New Node in Dir: ", $filepath;
+	my $Node;
+
+	# New file or dir
+	if (-r $filepath){
+	    $Node = MooFile->new(filepath => $filepath, 
+				    stats => [ @stats ], update_stats => 0, 
+				    flags => $flags,     update_flags => 0,
+				    update_md5 => 0);
+	
+	    $main::size_count{$Node->size}++;
+	    my $count = $main::size_count{$Node->size};
+
+	    if ( $Node->can('md5') && ! defined $Node->md5 && $Node->isreadable  &&
+		     ($update_md5 or ($count >= 2))){
+		$Node->update_md5;
+	    }
+	} else {
+	    # New Dir
+	    $Node = MooDir->new(filepath => $filepath, 
+				    stats => [ @stats ], update_stats => 0, 
+				    flags => $flags,     update_flags => 0,
+				    update_dtime => 0);
+	
+	    update_dir_md5($Node, 0x00, @stats);
+	}	    
+
+	$Tree_new->insert($Node);
+	$main::files_change++;
+	$main::files_new++;
+
+    }
+
+}
+
+
+
 
 # my $dbfile;
 
