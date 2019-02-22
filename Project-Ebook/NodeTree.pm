@@ -5,17 +5,11 @@
 # 
 # ToDo
 # * Add search
+# * Make exist work n objects
 # !! Make remove work on Objects
-# * add a insert tree for inserting into tree
-# * add make sure insert, delete work both for single or list
-# * find way to pass no md5 or no dtime to insert
-# * look for dupes in size, md5
 # * itterator method to cycle over whole tree
-# * Need update if re-calc MD5 for file gets added, fixup HoA's
 # * write pack / unpack save & restore
 # * add index by filename
-# * Move HoA to seperate utility file
-# * add search methods. by size, md5, name, mtime, 
 # * lock save / rstore file?
 # * add a dump method for debug
 # * add a pop / shift method.
@@ -155,24 +149,24 @@ sub Search {
     my $self   = shift(@_);
     my %opt = @_;
 
-    my $search_hash = delete $opt{hash}    // 0;
+#    my $search_hash = delete $opt{hash}    // 0;
     my $search_dir  = delete $opt{dir}     // 0;
     my $search_file = delete $opt{file}    // 0;
     my $search_path = delete $opt{path}    // 0;
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
-    if ( ! $search_hash && ! $search_dir && ! $search_file && ! $search_path){
-	croak ("Illegal set of search options: By_Hash: $search_hash Dir: $search_dir File: $search_file Path: $search_path");
+    if ( ! $search_dir && ! $search_file && ! $search_path){
+	croak ("Illegal set of search options: Dir: $search_dir File: $search_file Path: $search_path");
     }
 
     my @Nodes;
 
     # Search By Hash
-    if ( $search_hash->isa('MooNode') ){
-	$search_hash = $search_hash->hash;
-    }
-    say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
+    # if ( $search_hash->isa('MooNode') ){
+    # 	$search_hash = $search_hash->hash;
+    # }
+    # say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
     
     # Search By Dir
     say ("DEBUG: Searching by dir value = ", $search_dir) if ($verbose >= 3 && $search_dir);
@@ -186,7 +180,7 @@ sub Search {
     my @keys = sort keys %{$self->nodes};
     foreach my $key (@keys){
 	my $Node =  ${$self->nodes}{$key};
-	next if ($search_hash && $Node->hash ne $search_hash);
+	# next if ($search_hash && $Node->hash ne $search_hash);
 	next if ($search_path && $Node->path ne $search_path);
 
 	# Bug
@@ -212,8 +206,6 @@ sub Exist {
     my $search_hash = delete $opt{hash}    // 0;
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
-
-    
 
     $Node = ${$self->nodes}{$search_hash};
     

@@ -4,20 +4,8 @@
 #
 # ToDo
 # * add save / load dupes file function
-# * Sub formal paramaters?
-# * Move md5, file info into a singular complex data structure instead of 4 hash's
 # * write debug pring functions, count lines, etc
-# * add dir info to datafile 
-# * light weight find dupe - only calc MD5 if size matches
-# * Save dev? For tree - dir - all on one dev - no... but might need for dir later....
-# * How save dir stats in datafile...
-# * pass debug as function option var
-# * write find dupe code off of reading tree datafile
-# * Export key functsions
-# * make db tree seperate module
-# * handle long filenames, dir names
-# * Check for .unwanted
-#
+# * Move stats for tracking if files changed into this module
 # * Bug - if saved fast values, won't save full values until forced update
 
 package ScanDirMD5;
@@ -29,11 +17,13 @@ use List::Util qw(min max);	        # Import min()
 use Digest::MD5::File;
 use autodie;
 use File::Basename;                     # Manipulate file paths
+use Carp;
 
 use lib '.';
 use FileUtility qw(%stats_names dir_list);
 
 use constant MD5_BAD => "x" x 32;
+
 
 
 our (%md5,        %mtime,        %size,        %filename);
@@ -115,23 +105,26 @@ sub update_file_md5 {
 sub update_dir_md5 {
     my %opt = @_;
 
-    my $Dir         = delete $opt{Dir}        // die "Missing param 'Dir'";
-    my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
-    my $changes     = delete $opt{changes}    // die "Missing param 'changes'";
+    my $Dir         = delete $opt{Dir}        // croak "Missing param 'Dir'";
+    my $stats_new_r = delete $opt{stats}      // croak "Missing parm 'stats'";
+    my $changes     = delete $opt{changes}    // croak "Missing param 'changes'";
 
-    my $Tree_new    = delete $opt{Tree_new}   // die "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old}   // die "Missing param 'Tree_old'";
+    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
 
     my $update_md5  = delete $opt{update_md5} // 1;
+    my $inc_dir     = delete $opt{inc_dir}    // 0;
     my $verbose     = delete $opt{verbose}    // $main::verbose;
-    die "Unknown params:", join ", ", keys %opt if %opt;
+    croak "Unknown params:", join ", ", keys %opt if %opt;
 
 
     my @stats_new = @{$stats_new_r};
     say "       Update Dir: ", $Dir->filepath;
 
     # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
-    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, inc_file => 1, use_ref => 1);
+    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
+								   inc_file => 1,inc_dir => $inc_dir, 
+								   use_ref => 1);
     foreach ( 0..$#{$filepaths_r} ){
 	my $filepath  = @{$filepaths_r}[$_];
 	my @stats     = @{ ${$stats_AoA_r}[$_] };
@@ -181,7 +174,10 @@ sub update_dir_md5 {
 				    flags => $flags,     update_flags => 0,
 				    update_dtime => 0);
 	
-	    update_dir_md5($Node, 0x00, @stats);
+	    # update_dir_md5(Node => $Node, changes => 0x00, stats => @stats, );
+	    update_dir_md5(Dir => $Node, Tree_new => $Tree_new, Tree_old => $Tree_old, 
+			   update_md5 => $update_md5, inc_dir => $inc_dir);
+
 	}	    
 
 	$Tree_new->insert($Node);
