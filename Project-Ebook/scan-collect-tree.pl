@@ -57,6 +57,7 @@ my $db_name =  ".moo.db";
 my $db_name_packed = ".moo.dbp";
 
 my $db_tree_name =  ".moo.tree.db";
+my $db_tree_name_packed =  ".moo.tree.dbp";
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks";
 
 my $Tree;
@@ -75,7 +76,8 @@ foreach my $dir (@ARGV){
     # Save Tree
     my $count = $Tree->count;
     say "Total $count records saved" if ($verbose >= 1);
-    $Tree -> save(dir => $dir, name => $db_tree_name);
+    $Tree -> save(       dir => $dir, name => $db_tree_name);
+    # $Tree -> save_packed(dir => $dir, name => $db_tree_name_packed);
 
     # Save a copy into Datadir
     my $name = $dir;
@@ -127,6 +129,7 @@ sub dir_collect_md5 {
 	 }
 
 	 $Tree_dir = NodeTree->load(dir => $dir, name => $db_name);
+	 # $Tree_dir = NodeTree->load_packed(dir => $dir, name => $db_name_packed);
 
 	 my @Nodes = $Tree_dir->List;
 

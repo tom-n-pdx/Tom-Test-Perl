@@ -4,12 +4,11 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * Add search
-# * Make exist work n objects
+# * write pack restore
+# * debug packed store maybe a character off in dirs
+# * Make exist work on objects
 # !! Make remove work on Objects
 # * itterator method to cycle over whole tree
-# * write pack / unpack save & restore
-# * add index by filename
 # * lock save / rstore file?
 # * add a dump method for debug
 # * add a pop / shift method.
@@ -24,13 +23,13 @@ package NodeTree;
 use Moose;
 use namespace::autoclean;
 use Carp;
+# use feature "switch";
 
-
-use Data::Dumper qw(Dumper);           # Debug print
+# use Data::Dumper qw(Dumper);           # Debug print
 
 # Default save file name
 our $db_name        =  ".moo.db";
-our $db_name_packed =  ".moo.pdb";
+our $db_name_packed =  ".moo.dbp";
 use constant MD5_BAD => "x" x 32;
 
 #
@@ -279,19 +278,22 @@ sub save {
 # 4    data type 4 chars
 # 2    extended  1 chars
 # 33   MD5 32 chars
+# 9    Flags 8 bits
 # 143  13 x Long Unsigned Ints 10 characters - stats
 # ===
-# 183
+# 191
 # 
-# 329  Filename - 329
+# 321  Filename - 321
 # ===
 # 512
-# Filename - up to 256 - using 200
-my $dbtree_template1 = "A4 A2 A33 (A11)13 A441";         # length 512
+#
+my $dbtree_template1 = "A4 A2 A33 A9 (A11)13 A312";         # length 512
+
 
 #
 # Do not rotate files - but for debug  -rotate
 # If we saved on a per dir bases as we loaded dir files, then we'd generate less cwd records for tree
+
 sub save_packed {
     my $self = shift(@_);
  
@@ -303,58 +305,44 @@ sub save_packed {
     my $filepath = $dir.'/'.$name;
     say("Debug: Store Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
 
-    rename($filepath, "$filepath.old") if (-e $filepath);
+    # Do not rotate Files, cause Dir mtime to change
+    #rename($filepath, "$filepath.old") if (-e $filepath);
     open(my $fh, ">", $filepath);
     print $fh "# moo.tree.pdb version 1.2\n";
 
     my $str;
     my @Nodes = $self->List;
-    my $old_path = "";
 
-    # Need to sort @Nodes by Dir to minimize the number of cwd records wrote. Will work fine without
+    # Need to sort @Nodes by diectory path to minimize the number of cwd records wrote. Will work fine without
     # Need better sort - this one is wrong
-    # @Nodes = sort({$a->path cmp $b->path} @Nodes);
 
 
+    # By sorting by full filepath, end up with dir's before files in dir
+    @Nodes = sort({$a->filepath cmp $b->filepath} @Nodes);
+
+    my $old_path = "";
     foreach my $Node (@Nodes) {
-	# If this record is different path from the current path - need to write an extra cwd dir to change
+	# If this record  path is different from the current path - need to write an extra cwd record to change
 	# assumed dir. Unless this IS a dir record. Means we'll print two lines on this itteration of loop.
 	# If we are lucky and Nodes ordered in right order - we will never issue a cwd record
 	#
-	if (! $Node->isa('MooDir') && $Node->path ne $old_path){
-	    $str = _packed_cwd_str($Node);
-	    print $fh "$str\n";
-	    $old_path = $Node->path;
-	}
-
 
 	if ($Node->isa('MooDir')){
-	    $str = _packed_dir_str($Node);
 	    $old_path = $Node->filepath;
 	} else {
-	    $str = _packed_file_str($Node);
+	    if ($Node->path ne $old_path){
+		$str = _packed_cwd_str($Node);
+		print $fh "$str\n";
+		$old_path = $Node->path;
+	    }
 	}
 
+	$str = $Node->packed_str;
     	print $fh "$str\n";
     }
 
     close($fh);
     return;
-}
-
-sub _packed_file_str {
-    my $Node = shift(@_);
-    
-    my $type    = "File";
-    my $extend  = " ";
-    my $md5     = $Node->md5 // MD5_BAD;
-    my @stats   = @{$Node->stats};
-    my $name    = $Node->filename;
-    warn("Name > space 329 $name") if (length($name) > 329);
-
-    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
-
-    return($str);
 }
 
 sub _packed_cwd_str {
@@ -363,31 +351,91 @@ sub _packed_cwd_str {
     my $type    = "Cwd";
     my $extend  = " ";
     my $md5     = MD5_BAD;
+    my $flags   = $Node->flags;
     my @stats   = @{$Node->stats};
     my $name    = $Node->path;
     warn("Name > space 329 $name") if (length($name) > 329);
 
-    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
+    my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
 
     return($str);
 }
-sub _packed_dir_str {
-    my $Node = shift(@_);
+
+sub load_packed {
+    my $self = shift(@_);
+ 
+    my %opt = @_;   
+    my $dir     =  delete $opt{dir}     // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $name    =  delete $opt{name}    // $db_name_packed;
+    my $verbose =  delete $opt{verbose} // $main::verbose;
+    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+
+    # Check file exists
+    my $filepath = $dir.'/'.$name;
+    say("Debug: Load Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
+    if (! -e $filepath){
+	croak("Tried to load non-existent packed db file $filepath");
+    }
+
+    $self = NodeTree->new();
+
+
+    # Open file, loop read
+    open(my $fh, "<", $filepath);
+ 
+    $_ = <$fh>;
+    say "Reading lines from packed db file: $_" if ($verbose >= 3);
     
-    my $type    = "Dir";
-    my $extend  = " ";
-    my $md5     = MD5_BAD;
-    my @stats   = @{$Node->stats};
-    my $name    = $Node->filepath.'/';
-    warn("Name > space 329 $name") if (length($name) > 329);
 
-    my $str = pack($dbtree_template1, $type, $extend, $md5, @stats, $name);
+    my $cwd = "";
+    while (<$fh>){
+	my ($type, $extend, $md5, $flags, @stats) = unpack($dbtree_template1, $_);
+	my $name = pop(@stats);
 
-    return($str);
+	my $Node;
+	my $null;
+
+	# say "$type $extend $md5 $flags ", join(";", @stats), "  - $name";
+
+      SWITCH: 
+      	for ($type) {
+      	    if (/^File/) { $Node = MooFile->new(filepath => "$cwd/$name", 
+      						stats => \@stats, update_stats => 0, 
+      						flags => $flags,  update_flags => 0,
+					        update_md5 => 0);
+
+			   $Node->md5($md5) if ($md5 ne MD5_BAD);
+
+     			   last SWITCH; }
+
+      	    if (/^Node/) { $Node = MooNode->new(filepath  => "$cwd/$name", 
+      						stats => \@stats, update_stats => 0, 
+      						flags => $flags,  update_flags => 0);
+      			   last SWITCH; }
+
+      	    if (/^Dir/)  { $cwd = $name; 
+      			   $Node = MooDir->new(filepath  => "$cwd",
+      			   		       stats => \@stats, update_stats => 0, 
+      			   		       flags => $flags,  update_flags => 0,
+      			   		       update_dtime => 0);
+
+      			   last SWITCH; }
+
+      	    if (/^Cwd/) { $cwd = $name;
+      			  last SWITCH; }	
+	    
+       	    croak("Unnown type: $type");
+      	}
+	$self->insert($Node) if (defined $Node);
+
+    }
+
+    # Close file
+    close($fh);
+
+    # Return data
+    return($self);
 }
-
-
-
 #
 # ToDo
 # * If named when enter method  -should have same name after load?

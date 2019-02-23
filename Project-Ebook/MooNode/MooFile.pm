@@ -4,7 +4,6 @@
 #
 # ToDo
 # * add rename file method
-# * change clalc md5 to update md5
 # * Add live ischanged?
 
 # Standard uses's
@@ -19,14 +18,13 @@ package MooFile;
 use Moose;
 use namespace::autoclean;
 use Carp;
+use constant MD5_BAD => "x" x 32;
 
 extends 'MooNode';
 
 has 'md5',
-    is => 'ro',
-    isa => 'Maybe[Str]',
-    writer => '_set_md5';
-
+    is => 'rw',
+    isa => 'Maybe[Str]';
    
 sub BUILDARGS {
     my ($class, @original) = @_;
@@ -53,8 +51,8 @@ sub BUILDARGS {
 sub BUILD {
     my $self=shift( @_);
     my $args_ref = shift(@_);
-    my $opt_update_md5 = $$args_ref{'opt_update_md5'}  // 1;
-    my $update_stats   = $$args_ref{'update_stats'}    // 1; # default is do stat on file on creation
+    my $update_md5     = $$args_ref{'update_md5'}   // 1;
+    my $update_stats   = $$args_ref{'update_stats'} // 1; # default is do stat on file on creation
 
     if ($update_stats){
 	if (!-e $self->filepath or ! -f _){
@@ -64,11 +62,12 @@ sub BUILD {
 
 
     # option to not generate md5 but default is to create signature
-    if ($opt_update_md5){
+    if ($update_md5){
 	$self->update_md5;
     }
     return
 }
+
 
 #
 # BUG: ocassional undefined MD5 value returned
@@ -87,7 +86,7 @@ sub update_md5 {
     if (!defined $digest){
 	carp "ERROR md5 returned undefined value. filepath: ".$self->filepath;
     } else {
-	$self->_set_md5($digest);
+	$self->md5($digest);
     }
 
     return $digest;
@@ -113,6 +112,34 @@ sub isequal {
    
    return @changes;
 }
+
+my $dbtree_template1 = "A4 A2 A33 A9 (A11)13 A441";         # length 512
+
+
+#
+# Generate packed str for write to file
+#  
+sub packed_str {
+    my $self = shift(@_);
+
+    my $type    = "File";
+    my $extend  = " ";
+    my $md5     = $self->md5 // MD5_BAD;
+    my $flags   = $self->flags;
+    my @stats   = @{$self->stats};
+
+    my $name    = $self->filename;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
+
+    return($str);
+}
+
+
+
+
+
 
 #
 # Need to extend node dumper to include MD5 if present

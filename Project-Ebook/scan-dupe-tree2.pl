@@ -41,7 +41,7 @@ sub scan_tree(@dirpath){
 	print "Scan File: $_\n";
 
 	# my @files_add  = scan_dir($File::Find::name, 0);
-	my $file = MooFile->new(filepath =>$File::Find::name , opt_update_md5 => 0);
+	my $file = MooFile->new(filepath =>$File::Find::name , update_md5 => 0);
 	push(@file_objs, $file);
 	$size_hash{$file->size}++;
 
@@ -80,7 +80,7 @@ sub scan_tree(@dirpath){
 #     my @file_objs;
 #     foreach(@file_names){
 # 	my $file_readable = $calc_md5 // -r $_;             # Use // - if first arg defeined - uses it  -otherwise 2nd 
-# 	my $file_obj = MooFile->new(filepath => $_, opt_update_md5 => $file_readable);
+# 	my $file_obj = MooFile->new(filepath => $_, update_md5 => $file_readable);
 # 	push(@file_objs, $file_obj);
 #     }
 

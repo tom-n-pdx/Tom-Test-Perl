@@ -62,18 +62,37 @@ if ($debug or $verbose >= 2){
     say " ";
 }
 
-my $Tree = NodeTree->new();
-
 my $Dir1;
-$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
-# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
+# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
+$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
 # $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
+
+my $dir1;
+$dir1 = "/Users/tshott/Downloads/_ebook/_temp";
+$dir1 = "/Users/tshott/Downloads/_ebook";
+$dir1 = "/Users/tshott/Downloads";
+
+my $Tree = NodeTree->new();
+$Tree = NodeTree->load(dir => $dir1, name => ".moo.tree.db");
+
+say "Standard Restore";
+$Tree->summerize;
+
+
+$Tree = NodeTree->load_packed(dir => $dir1, name => ".moo.tree.dbp");
+say "Packed Restore";
+$Tree->summerize;
+
+
+exit;
+
+
 
 # say $Dir1;
 # say $Dir1->dump;
 
 
-my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship ( technology )_test1.gif", opt_update_md5 => 0);
+my $File1  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship ( technology )_test1.gif", update_md5 => 0);
 my $File2  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins/Airship technology )_test2.gif");
 my $File3  =  MooFile->new(filepath => "/Users/tshott/Downloads/_ebook/Ultimate Origami for Beginners (ebook, LaFosse, Tuttle Publishing, 2014, Orginal).pdf");
 

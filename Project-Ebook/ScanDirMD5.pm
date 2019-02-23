@@ -10,7 +10,7 @@
 
 package ScanDirMD5;
 use Exporter qw(import);
-our @EXPORT = qw(scan_dir_md5 load_dupes save_dupes update_file_md5 update_dir_md5);
+our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -78,7 +78,7 @@ sub update_file_md5 {
 
 	# If mtime or size changed - then clear old md5
 	if ( ($changes & ( $stats_names{mtime} | $stats_names{size})) && $Node->can('md5') && defined $Node->md5){
-	    $Node->_set_md5(undef);
+	    $Node->md5(undef);
 	}
     }
 

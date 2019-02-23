@@ -27,11 +27,12 @@ use MooFile;
 
 # Notes Perf
 # 
-# Tested on ~/Downloads, no updates required
+# Tested on ~/Downloads, no updates required. PLUGGED IN
 # time ./scan-md5.pl -f -v 2 -t ~/Downloads
 #
 # scan-md5         9.647u 7.403s 0:24.47 69.6%	0+0k 0+9io 0pf+0w
 # * 1 less stat    4.736u 3.386s 0:11.72 69.1%	0+0k 0+3io 0pf+0w
+#                  4.715u 3.868s 0:11.64 73.6%	0+0k 0+3io 0pf+0w
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
@@ -129,7 +130,7 @@ sub scan_dir_md5 {
     say "  Checking $dir" if ($verbose >= 2);
 
     my $Dir_old;
-    my $Tree_old = NodeTree->new(name => $dir);
+    my $Tree_old;
 
     my $Dir_new;
     my $Tree_new = NodeTree->new(name => $dir);
@@ -148,7 +149,9 @@ sub scan_dir_md5 {
 	    return( () );
 	}
 
-	$Tree_old = NodeTree->load(dir => $dir, name => $db_name);
+	# say "Loaded Tree Packed";
+	# $Tree_old = NodeTree->load_packed(dir => $dir);
+	$Tree_old = NodeTree->load(dir => $dir);
 	
 	# First process Dir, then Files
 	my @Dirs_old = $Tree_old->Search(dir => 1);
@@ -163,6 +166,10 @@ sub scan_dir_md5 {
 
 	# Check for changes and mask atime changes - a dir name change will not change dir stats
 	my $changes = stats_delta_binary($Dir_new->stats, $Dir_old->stats) & ~$stats_names{atime};
+	
+	# say "Dir Delta: $changes";
+	# say "Dir Old Before Change: ", $Dir_old->dump;
+
 	if ($changes or $Dir_old->filepath ne $dir){
 	    update_file_md5(Node => $Dir_old, changes => $changes, stats => $Dir_new->stats, update_md5 => ! $fast_scan);
 
@@ -176,6 +183,8 @@ sub scan_dir_md5 {
 	    $files_change++;
 	}
 	$Tree_new->insert( $Dir_old );
+	# say "Dir Old After Change: ", $Dir_old->dump;
+
 
 	# Now scan through files
 	foreach my $Node ($Tree_old->Search(file => 1) ){
@@ -198,14 +207,18 @@ sub scan_dir_md5 {
 
 	    # Make requied updates
 	    # update_file($Node, $changes, @stats_new);
-	    update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, update_md5 => ! $fast_scan);
 
+	    if ($changes){
+		update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, 
+				update_md5 => ! $fast_scan);
+	    }
 	    # Insert in new list
 	    $Tree_new->insert($Node);
 
 	}
     } else {
 	# No db_file exists
+	$Tree_old = NodeTree->new(name => $dir);
 
 	# Trick. Create empty db_file and update Dir object, so when check later no changes to dir
 	say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
@@ -214,9 +227,9 @@ sub scan_dir_md5 {
 
 	# New Dir - Insert Dir object and then list dir and add files
 	$Tree_new->insert($Dir_new);
-	$files_change += update_dir_md5(Dir => $Dir_new, 
+	$files_change += update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
 					Tree_new => $Tree_new, Tree_old => $Tree_old, 
-					update_md5 => ! $fast_scan, inc_dirs => 0);
+					update_md5 => ! $fast_scan);
     }
 
 
@@ -233,8 +246,9 @@ sub scan_dir_md5 {
     }
 
     if ($files_change > 0 or $files_md5 > 0){ 
+	say "Saved File";
 	$Tree_new->save(name => $db_name);
-	# $Tree_new->save_packed;    # For debug
+	# $Tree_new->save_packed; # For debug
     }
 
     say ("    Changes: $files_change New: $files_new") if ($verbose >= 2 or ($files_change > 0 && $verbose >= 2));
@@ -278,7 +292,7 @@ sub scan_dir_md5 {
 # 	# If mtime, size or blocks changed - then clear old md5
 # 	if ( $changes & ( $stats_names{mtime} | $stats_names{size}) ){
 # 	    if ($Node->can('md5')){
-# 		$Node->_set_md5(undef);
+# 		$Node->md5(undef);
 # 	    }	
 # 	}
 #     }

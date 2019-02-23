@@ -3,7 +3,7 @@
 #
 # Test Scan dir
 #
-use Modern::Perl 2016; 		# Implies strict, warnings
+use Modern::Perl 2016; 		         # Implies strict, warnings
 use autodie;			        # Easier write open  /close code
 
 #
@@ -34,7 +34,7 @@ $test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin.jpg";
 #$test_file = "$ebook_base_dir/_Zeppelins/The Zeppelin-BAD.jpg";
 #$test_file = $ebook_base_dir;
 
-my $test2 = MooFile->new('filepath' => $test_file, 'opt_update_md5' => 0);
+my $test2 = MooFile->new('filepath' => $test_file, 'update_md5' => 0);
 #my $test = MooFile->new('filepath' => $test_file);
 #my $test = MooFile->new('FileName' => $test_file);
 # my $test = MooFile->new;

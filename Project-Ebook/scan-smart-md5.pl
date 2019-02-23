@@ -31,9 +31,10 @@ use FileUtility qw(%stats_names dir_list);
 #
 # Perf
 # time ./scan-smart-md5.pl -f ~/Downloads
-# 0.513u 0.048s 0:00.57 96.4%	0+0k 0+3io 0pf+0w
-# 0.470u 0.045s 0:00.52 98.0%	0+0k 0+0io 0pf+0w
-#
+#         0.513u 0.048s 0:00.57 96.4%	0+0k 0+3io 0pf+0w
+#         0.470u 0.045s 0:00.52 98.0%	0+0k 0+0io 0pf+0w
+#         1.607u 0.150s 0:01.77 98.8%	0+0k 0+0io 0pf+0w
+# packed 14.642u 8.478s 0:33.85 68.2%	0+0k 0+0io 0pf+0w !!!
 
 my %size_count;
 
@@ -72,6 +73,7 @@ if ($debug or $verbose >= 2){
 
 # For each tree, load old data & walk nodes
 my $db_tree_name =  ".moo.tree.db";
+my $db_tree_name_packed =  ".moo.tree.dbp";
 
 my $dir = shift(@ARGV);
 
@@ -84,6 +86,7 @@ if (!-e "$dir/$db_tree_name"){
     die "No exiisting tree datafile: $dir";
 } else {
     $Tree_old    = NodeTree->load(dir => $dir, name => $db_tree_name);
+    # $Tree_old    = NodeTree->load_packed(dir => $dir, name => $db_tree_name_packed);
 }
 
 my $Tree_new    = NodeTree->new;
@@ -162,7 +165,8 @@ if(@Nodes > 0){
 }
 
 if ($files_change_total > 0){
-    $Tree_new -> save(dir => $dir, name => $db_tree_name);
+    $Tree_new->save(dir => $dir, name => $db_tree_name);
+    # $Tree_new->save_packed (dir => $dir, name => $db_tree_name_packed) ;    # For debug
     say "Saved File";
 }
 

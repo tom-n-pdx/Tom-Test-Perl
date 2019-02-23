@@ -20,16 +20,18 @@ use autodie;			# Easier write open  /close code
 
 use File::Basename;             # Manipulate file paths
 use Time::localtime;            # Printing stat values in human readable time
-use FileUtility;
 
 # use Data::Dumper qw(Dumper);  # Debug print
 
 package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
+
+use FileUtility qw(osx_check_flags_binary osx_flags_binary_string @stats_names);
 use Fcntl qw(:mode);		# Get fields to parse stat bits
 use Scalar::Util qw(dualvar);
 use Carp;
+use constant MD5_BAD => "x" x 32;
 
 has 'filepath',			# full name of file including path
     is => 'rw', 
@@ -137,7 +139,7 @@ sub update_flags {
     my $filepath =  $self->filepath;
  
     # Get OS X Extended Atributes before check premissions since premessions depend upon flags
-    my $flags = FileUtility::osx_check_flags_binary($filepath);
+    my $flags = osx_check_flags_binary($filepath);
     $self->flags($flags);
 }
 
@@ -346,7 +348,44 @@ sub rename {
     $self->update_stats;
 
 }
-   
+
+
+
+# every size one larger then needed so leave human readable spalce
+# 4    data type 4 chars
+# 2    extended  1 chars
+# 33   MD5 32 chars
+# 143  13 x Long Unsigned Ints 10 characters - stats
+# ===
+# 183
+# 
+# 329  Filename - 329
+# ===
+# 512
+# Filename - up to 256 - using 200
+my $dbtree_template1 = "A4 A2 A33 A9 (A11)13 A441";         # length 512
+
+
+#
+# Generate packed str for write to file
+#  
+sub packed_str {
+    my $self = shift(@_);
+
+    my $type    = "Node";
+    my $extend  = " ";
+    my $md5     = MD5_BAD;
+    my $flags   = $self->flags;
+    my @stats   = @{$self->stats};
+
+    my $name    = $self->filename;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
+
+    return($str);
+}
+
 
 #
 # Check if two objects are equal
@@ -369,7 +408,7 @@ sub rename {
 # get from FileUtility?
 # Names of stat values
 # my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat(_);
-my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
+# my @stat_names = qw(dev ino mode nlink uid gid rdev size atime mtime ctime blksize blocks);
     
 
 # 
@@ -396,7 +435,7 @@ sub delta {
     # Check all except atime
     foreach (0..7, 9..12){
  	if ($self_stats[$_] != $other_stats[$_]){
-      	    push(@changes, $stat_names[$_]);
+      	    push(@changes, $stats_names[$_]);
       	}
     }
 
@@ -473,7 +512,6 @@ sub dump {
     print "\tWrite:  ", true($self->iswriteable), "\n";
 
     $str = format_bytes($self->size);
-
     print "\tSize:   ", $self->size, "  $str\n";
     print "\tInode:  ", $self->inode, "\n";
 

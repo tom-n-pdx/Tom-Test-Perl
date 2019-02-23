@@ -19,6 +19,7 @@ use namespace::autoclean;
 use List::Util qw(max);
 use FileUtility qw(dir_list);
 use Carp;
+use constant MD5_BAD => "x" x 32;
 
 extends 'MooNode';
 
@@ -179,6 +180,27 @@ sub ischanged {
 
    return @changes;
 }
+
+my $dbtree_template1 = "A4 A2 A33 A9 (A11)13 A441";         # length 512
+
+sub packed_str {
+    my $self = shift(@_);
+    
+    my $type    = "Dir";
+    my $extend  = " ";
+    my $md5     = MD5_BAD;
+    my $flags   = $self->flags;
+    my @stats   = @{$self->stats};
+    my $name    = $self->filepath;
+    warn("Name > space 329 $name") if (length($name) > 329);
+
+    my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
+
+    return($str);
+}
+
+
+
 
 
 #

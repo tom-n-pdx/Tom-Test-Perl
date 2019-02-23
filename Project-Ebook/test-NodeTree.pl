@@ -299,7 +299,7 @@ $Tree->remove($File2->inode);
 #     } else {
 # 	# If old file newer or same age, transfer md5
 # 	if (defined $File_old->md5 && $File->size == $File_old->size && $File->mtime <= $File_old->mtime) {
-# 	    $File->_set_md5($File_old->md5);
+# 	    $File->md5($File_old->md5);
 # 	}
 # 	# Check if name changed
 # 	if ($File->filename ne $File_old->filename) {

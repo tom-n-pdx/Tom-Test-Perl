@@ -262,7 +262,7 @@ sub update_file {
 	if ( ($File->size == $File_old->size) && ($File->mtime == $File_old->mtime) ) {
 	    say "\t\tExisitng Unchanged: ", $File->filename if ($verbose >= 3);
 	    if ($File->can('md5') && $File_old->can('md5') && defined $File_old->md5){
-		$File->_set_md5($File_old->md5);
+		$File->md5($File_old->md5);
 	    }
 	} else {
 	    # $files_change++;
