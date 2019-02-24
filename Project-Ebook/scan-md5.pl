@@ -21,6 +21,8 @@ use MooFile;
 # use Scalar::Util qw(blessed);
 #
 # Todo
+# * only save dupes when found more - move to md6 lib
+# * Add a every so often save
 # * add --help option
 # * Cleanup debug prints & add a write to log?
 # !! try if move dir, name dir changes
@@ -33,6 +35,8 @@ use MooFile;
 # scan-md5         9.647u 7.403s 0:24.47 69.6%	0+0k 0+9io 0pf+0w
 # * 1 less stat    4.736u 3.386s 0:11.72 69.1%	0+0k 0+3io 0pf+0w
 #                  4.715u 3.868s 0:11.64 73.6%	0+0k 0+3io 0pf+0w
+# +hash md5        4.840u 3.690s 0:12.06 70.7%	0+0k 0+9io 0pf+0w
+#                  3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
@@ -41,6 +45,7 @@ use MooFile;
 my %size_count;
  
 our ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
+our $total_changes = 0;
 
 my $db_name =  ".moo.db";
 
@@ -49,6 +54,8 @@ our $verbose = 1;
 our $fast_scan = 0;
 our $fast_dir  = 0;
 our $tree = 0;
+our $force_update = 0;
+our $save_packed = 0;
 our $md5_save_limit = 100;
 
 GetOptions (
@@ -57,6 +64,8 @@ GetOptions (
     'fast'        => \$fast_scan,
     'quick'       => \$fast_dir,
     'tree'        => \$tree,
+    'update'      => \$force_update,
+    'packed'      => \$save_packed,
 );
 
 if ($debug or $verbose >= 2){
@@ -87,10 +96,11 @@ foreach my $dir (@ARGV){
     }
 }
 
+say "Total Changes: $total_changes";
+
 &save_dupes(dupes => \%size_count);
 
 exit;
-
 
 
 #
@@ -156,7 +166,12 @@ sub scan_dir_md5 {
 	# First process Dir, then Files
 	my @Dirs_old = $Tree_old->Search(dir => 1);
 	if (@Dirs_old != 1){
-	    die "db_file does not contain only one Dir record $dir";
+	    warn "db_file does not contain only one Dir record $dir";
+	    if (-e "$dir/$db_name"){
+		rename("$dir/$db_name", "$dir/$db_name.old");
+	    }
+	    return;
+
 	}
 	$Dir_old = $Dirs_old[0];
 
@@ -167,27 +182,23 @@ sub scan_dir_md5 {
 	# Check for changes and mask atime changes - a dir name change will not change dir stats
 	my $changes = stats_delta_binary($Dir_new->stats, $Dir_old->stats) & ~$stats_names{atime};
 	
-	# say "Dir Delta: $changes";
-	# say "Dir Old Before Change: ", $Dir_old->dump;
-
 	if ($changes or $Dir_old->filepath ne $dir){
 	    update_file_md5(Node => $Dir_old, changes => $changes, stats => $Dir_new->stats, update_md5 => ! $fast_scan);
 
 	    if ($Dir_old->filepath ne $Dir_new->filepath){
 		$Dir_old->filepath($Dir_new->filepath);
 		say "    Dir rename";
+		$files_rename++;
 	    }
 	    update_dir_md5(Dir => $Dir_old, changes => $changes, stats => $Dir_new->stats, 
 			   Tree_new => $Tree_new, Tree_old => $Tree_old, 
 			   update_md5 => ! $fast_scan, inc_dir => 0);
-	    $files_change++;
 	}
 	$Tree_new->insert( $Dir_old );
-	# say "Dir Old After Change: ", $Dir_old->dump;
 
 
-	# Now scan through files
-	foreach my $Node ($Tree_old->Search(file => 1) ){
+	# Now scan through whats left in list
+	foreach my $Node ($Tree_old->List ){
 	    say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
 
 	    # If doesn't exist on disk - leave in old list for now
@@ -205,15 +216,20 @@ sub scan_dir_md5 {
 	    # to remove from old List, update, then insert into new list
 	    $Tree_old->Delete($Node);
 
-	    # Make requied updates
-	    # update_file($Node, $changes, @stats_new);
 
-	    if ($changes){
-		update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, 
-				update_md5 => ! $fast_scan);
-	    }
-	    # Insert in new list
+	    # Call even if no changes - may need md5 calculated
+	    update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, 
+			    update_md5 => ! $fast_scan);
+
 	    $Tree_new->insert($Node);
+
+
+	    if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
+		say "    Saved Checkpoint Datafile" if ($verbose >= 2);
+		$Tree_new->save(name => $db_name);
+	    }
+
+
 
 	}
     } else {
@@ -227,9 +243,10 @@ sub scan_dir_md5 {
 
 	# New Dir - Insert Dir object and then list dir and add files
 	$Tree_new->insert($Dir_new);
-	$files_change += update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
-					Tree_new => $Tree_new, Tree_old => $Tree_old, 
-					update_md5 => ! $fast_scan);
+	update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
+			Tree_new => $Tree_new, Tree_old => $Tree_old, 
+			update_md5 => ! $fast_scan)
+
     }
 
 
@@ -237,150 +254,30 @@ sub scan_dir_md5 {
     # A renamed file we would have caught becuase the inode stayed the same
     my @Files = $Tree_old->List;
     $files_delete += scalar(@Files);
-    $files_change += scalar(@Files);
     if (@Files >= 1 && $verbose >= 1){
-    	say "\tDeleted files:";
+    	say "    Deleted files:";
     	foreach my $File (@Files){
-    	    say "\t\t", $File->filename;
+    	    say "      ", $File->filename;
     	}
     }
 
-    if ($files_change > 0 or $files_md5 > 0){ 
-	say "Saved File";
-	$Tree_new->save(name => $db_name);
-	# $Tree_new->save_packed; # For debug
-    }
+    my $changes = $files_new + $files_delete + $files_change + $files_md5 + $files_rename;
+    $total_changes = $total_changes + $changes;
 
-    say ("    Changes: $files_change New: $files_new") if ($verbose >= 2 or ($files_change > 0 && $verbose >= 2));
+    if ($force_update or $changes > 0){ 
+	say "    Saved Datafile" if ($verbose >= 2);
+	$Tree_new->save(name => $db_name);
+	if ($save_packed){
+	    say "    Saved Packed Datafile" if ($verbose >= 1);
+	    $Tree_new->save_packed; # For debug
+	}
+    }
+    say "  Checking $dir" if ($verbose == 1 && $changes > 0);
+    say("    Changes: $changes - New: $files_new Deleted: $files_delete", 
+	" Change: $files_change MD5: $files_md5 Rename: $files_rename") 
+	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+
     return;
 }
 
-# # Required changes based upon stats changed
-# #
-# # Files
-# #
-# # dev inode size - delete from List and re-insert since index values will change
-# # mode nlink uid gid rdev   - update stats
-# # size mtime blksize blocks - update md5, stats
-# # ctime      - update flags - update flags, maybe filename
-# #
-# sub update_file {
-#     my $Node      = shift(@_);
-#     my $changes   = shift(@_);
-#     my @stats_new = @_;
-
-#     if ($changes){
-# 	$files_change++;
-# 	my @changes = FileUtility::stats_delta_array($changes);
-# 	say "    File: ", $Node->filename if ($verbose == 2);
-# 	say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
-# 	printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
-
-# 	$Node->stats(\@stats_new);        # always update stats if some changed
-
-# 	# Decide what needs to be changed based upon what stats changed
-# 	# if dev or blksize changes - is error - should not happen
-# 	if ($changes & ( $stats_names{dev} | $stats_names{blksize} )) {
-# 	    die("Stats Delta Illegal stats change: ", join(", ", @changes));
-# 	}
-
-# 	# If ctime - maybe flags changed
-# 	if ($changes & ( $stats_names{ctime})) {
-# 	    $Node->update_flags
-# 	}
-
-# 	# If mtime, size or blocks changed - then clear old md5
-# 	if ( $changes & ( $stats_names{mtime} | $stats_names{size}) ){
-# 	    if ($Node->can('md5')){
-# 		$Node->md5(undef);
-# 	    }	
-# 	}
-#     }
-
-#     # Even if no changs, need to maybe update md5
-#     $size_count{$Node->size}++;
-#     my $count = $size_count{$Node->size};
-
-#     if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
-# 	if (! $fast_scan or  $count >= 2){
-# 	    say "    Update MD5: ", $Node->filename if ($verbose == 2);
-# 	    $Node->update_md5;
-# 	    $files_change++
-# 	}
-#     }
-#     return;
-# }
-
-
-# #
-# # Pass in Dir object, link to new files list, old files list
-# # This function does not deal with dirs in dir - only files in dir
-# #
-# sub update_dir {
-#     my %opt = @_;
-#     my $new_files = 0;
-
-#     my $Dir         = delete $opt{dir} or die "Missing param 'Dir'";
-
-#     my $Tree_old    = delete $opt{Files_old} or die "Missing param 'Files_old' to update_file";
-#     my $Tree_new    = delete $opt{Files_New} or die "Missing param 'Files_new' to update_file";
-
-#     my $update_md5  = delete $opt{update_md5} // 1;
-#     my $verbose     = delete $opt{verbose}    // $main::verbose;
-#     die "Unknown params:", join ", ", keys %opt if %opt;
-
-#     my $filepath = $Dir->filepath;
-  
-#     say "    Dir Changes Check File: $filepath";
-
-#     # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
-#     my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $filepath, inc_file => 1, use_ref => 1);
-#     foreach ( 0..$#{$filepaths_r} ){
-# 	my $filepath  = @{$filepaths_r}[$_];
-# 	my @stats     = @{ ${$stats_AoA_r}[$_] };
-# 	my $flags     = @{$flags_r}[$_];
-
-# 	my $hash      = $stats[0].'-'.$stats[1];
-
-# 	if ( $Tree_new->Exist(hash => $hash) ){ # In New tree - can skip further processing
-# 	    say "    Update dir - existing - new List skip $filepath";
-# 	    next;
-# 	}
-
-# 	# Obj In Old Tree - update filepath if needed & do file updates
-# 	# Optimize - have stats, update file
-# 	# But problem is that if we move from old to new, will have error becuase it's still in old list
-# 	#
-# 	my ($Old_file) = $Tree_old->Exist(hash => $hash);
-# 	if ($Old_file){ 
-# 	    if ($filepath ne $Old_file->filepath){
-# 		$Old_file->filepath($filepath);
-# 		say "    Update dir - rename existing - old List skip $filepath";
-# 		$files_change++;
-# 	    }
-# 	    next;
-# 	}
-	
-# 	# Not in either tree so must be new file
-# 	say "    Update Dir - new file - $filepath";
-# 	my $File = MooFile->new(filepath => $filepath, 
-# 				stats => [ @stats ], update_stats => 0, 
-# 				flags => $flags,     update_flags => 0,
-# 				opt_update_md5 => 0);
-
-# 	$size_count{$File->size}++;
-# 	my $count = $size_count{$File->size};
-
-# 	my $calc_md5 = ($update_md5 or ($count >= 2));
-# 	if ($calc_md5 && $File->isreadable && $File->can('md5')){
-# 	    $File->update_md5;
-# 	}
-
-# 	$Tree_new->insert($File);
-# 	$files_new++;
-# 	$files_change++
-#     }
-
-#     return ($new_files);
-# }
 

@@ -66,26 +66,28 @@ has 'md5_HoA',
 #
 sub insert {
     my $self = shift( @_);
-    my @objs =  @_;
+    my @Objs =  @_;
     
-    foreach my $obj (@objs){
-	croak "not a node object" if ! $obj->isa('MooNode');
+    foreach my $Obj (@Objs){
+	croak "not a node object" if ! $Obj->isa('MooNode');
 
-	my $hash = $obj->hash;
+	my $hash = $Obj->hash;
 	if (defined ${$self->nodes}{$hash} ){
 	    carp "WARN: Inserting dupe node. hash=$hash";
 	} else {
-	    ${$self->nodes}{$hash} = $obj;
+	    ${$self->nodes}{$hash} = $Obj;
 
 	    # Now insert into Size_HoA
-	    my $size = $obj->size;
-	    &HoA_push($self->size_HoA , $size, $hash);
+	    my $size = $Obj->size;
+	    # &HoA_push($self->size_HoA , $size, $hash);
+	    &HoA_push($self->size_HoA , $size, $Obj);
 
 	    # If object is file also insert into MD5 HoA if has a MD5
-	    # if ($obj->isfile && defined $obj->md5) {
-	    #	my $md5 = $obj->md5;
-	    #	&HoA_push($self->md5_HoA , $md5, $hash);
-	    # }
+	    if ($Obj->can('md5') && defined $Obj->md5) {
+	    	my $md5 = $Obj->md5;
+	    	# &HoA_push($self->md5_HoA , $md5, $hash);
+		&HoA_push($self->md5_HoA , $md5, $Obj);
+	    }
 
 	}
     }
@@ -100,21 +102,21 @@ sub Delete {
 
    foreach my $hash (@hashs){
        my $hash_value = $hash->isa('MooNode') ?  $hash = $hash->hash : $hash;
-       my $obj = delete ${$self->nodes}{$hash_value};
+       my $Obj = delete ${$self->nodes}{$hash_value};
 
-       if (! defined $obj){
+       if (! defined $Obj){
 	   carp "Trying to delete value not in Tree Hash: $hash Value: $hash-value"  if ($main::verbose >= 2);
 	   next;
        }
-       push(@Deleted, $obj);
+       push(@Deleted, $Obj);
 
        # Delete from size_HoA
-       &HoA_remove($self->size_HoA , $obj->size, $hash) if defined $obj->size;       
+       &HoA_remove($self->size_HoA , $Obj->size, $hash) if defined $Obj->size;       
 
        # If obj has MD5 value - remove from MD5_HoA
-       # if ($obj->can('md5') && defined $obj->md5){
-       #	   &HoA_remove($self->md5_HoA , $obj->md5, $hash);
-       # }
+       if ($Obj->can('md5') && defined $Obj->md5){
+       	   &HoA_remove($self->md5_HoA , $Obj->md5, $hash);
+       }
        
    }
    

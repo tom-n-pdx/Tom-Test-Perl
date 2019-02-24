@@ -20,7 +20,7 @@ use File::Basename;                     # Manipulate file paths
 use Carp;
 
 use lib '.';
-use FileUtility qw(%stats_names dir_list);
+use FileUtility qw(%stats_names stats_delta_binary dir_list);
 
 use constant MD5_BAD => "x" x 32;
 
@@ -45,23 +45,21 @@ sub update_file_md5 {
     my %opt = @_;
 
     my $Node        = delete $opt{Node}       // die "Missing param 'Node'";
-    my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
     my $changes     = delete $opt{changes}    // die "Missing param 'changes'";
+    my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
+    my @stats_new   = @{$stats_new_r};
 
     my $update_md5  = delete $opt{update_md5} // 1;
     my $verbose     = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
 
-    my @stats_new   = @{$stats_new_r};
-    # my $new_files = 0;
-
     if ($changes){
 	$main::files_change++;
 	my @changes = FileUtility::stats_delta_array($changes);
-	say "    File: ", $Node->filename if ($verbose == 2);
-	say "        Delta: ", join(", ", @changes) if ($verbose >= 2);
-	printf "\t\t\tThe binary representation is: %013b\n", $changes if ($verbose >= 2);
+	# say "    File: ", $Node->filename if ($verbose == 2);
+	say "    ", $Node->filename, " Delta: ", join(", ", @changes) if ($verbose >= 2);
+	printf "          The binary representation is: %013b\n", $changes if ($verbose >= 3);
 
 	$Node->stats(\@stats_new);        # always update stats if some changed
 
@@ -88,9 +86,8 @@ sub update_file_md5 {
 
     if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
 	if ($update_md5 or  $count >= 2){
-	    say "    Update MD5: ", $Node->filename if ($verbose == 2);
+	    say "      Update MD5" if ($verbose == 2);
 	    $Node->update_md5;
-	    $main::files_change++;
 	    $main::files_md5++;
 	}
     }
@@ -106,8 +103,9 @@ sub update_dir_md5 {
     my %opt = @_;
 
     my $Dir         = delete $opt{Dir}        // croak "Missing param 'Dir'";
-    my $stats_new_r = delete $opt{stats}      // croak "Missing parm 'stats'";
     my $changes     = delete $opt{changes}    // croak "Missing param 'changes'";
+    my $stats_new_r = delete $opt{stats}      // croak "Missing parm 'stats'";
+    my @stats_new = @{$stats_new_r};
 
     my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
     my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
@@ -117,9 +115,7 @@ sub update_dir_md5 {
     my $verbose     = delete $opt{verbose}    // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
-
-    my @stats_new = @{$stats_new_r};
-    say "       Update Dir: ", $Dir->filepath;
+    say "       Dir Update: ", $Dir->filepath if ($verbose >= 2);
 
     # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
     my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
@@ -127,6 +123,7 @@ sub update_dir_md5 {
 								   use_ref => 1);
     foreach ( 0..$#{$filepaths_r} ){
 	my $filepath  = @{$filepaths_r}[$_];
+	my $name      = @{$names_r}[$_];
 	my @stats     = @{ ${$stats_AoA_r}[$_] };
 	my $flags     = @{$flags_r}[$_];
 
@@ -141,24 +138,34 @@ sub update_dir_md5 {
 	my $old_node = $Tree_old->Exist(hash => $hash);
 	if (defined $old_node) {
 	    if ($old_node->filepath ne $filepath) {
-		say "          Dir Update- Update filepath: ", $old_node->filepath, " to ", $filepath;
+		say "          Dir Update- Update filepath: ", $old_node->filename, " to ", $name;
 		$old_node->filepath($filepath);
 		$main::files_rename++;
-		$main::files_change++;
 	    }
+
+	    # Now Go ahead and process as normal file
+	    my $changes = stats_delta_binary($old_node->stats,  \@stats) & ~$stats_names{atime};
+
+	    $Tree_old->Delete($old_node);
+	    update_file_md5(Node => $old_node, changes => $changes, stats => \@stats, 
+			    update_md5 => $update_md5);
+	    $Tree_new->insert($old_node);
+
 	    next;
 	}
 	    
 	# New file or dir, can directlly put in new list
-	say "          Dir Update- New Node in Dir: ", $filepath;
+	say "          Dir Update- New Node in Dir: ", $name if ($verbose >= 2);
 	my $Node;
 
 	# New file or dir
 	if (-r $filepath){
+	    $main::files_new++;
 	    $Node = MooFile->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_md5 => 0);
+
 	
 	    $main::size_count{$Node->size}++;
 	    my $count = $main::size_count{$Node->size};
@@ -166,9 +173,13 @@ sub update_dir_md5 {
 	    if ( $Node->can('md5') && ! defined $Node->md5 && $Node->isreadable  &&
 		     ($update_md5 or ($count >= 2))){
 		$Node->update_md5;
+		say "          Dir Update- Calc MD5" if ($verbose >= 2);
+
+		$main::files_md5++;
 	    }
 	} else {
 	    # New Dir
+	    $main::files_new++;
 	    $Node = MooDir->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
@@ -181,9 +192,6 @@ sub update_dir_md5 {
 	}	    
 
 	$Tree_new->insert($Node);
-	$main::files_change++;
-	$main::files_new++;
-
     }
 
 }
@@ -432,13 +440,14 @@ sub save_dupes {
     }
 
     # save to temp file and rotate files
-    open(my $fd, ">", "$dir/$name.tmp");
+    open(my $fd, ">", "$dir/$name");
     foreach my $size (sort {$a <=> $b} @dupes){
 	print $fd "$size\n";
     }
     close($fd);
-    rename("$dir/$name",      "$dir/$name.old") if -e "$dir/$name";
-    rename("$dir/$name.tmp",  "$dir/$name");
+
+    # rename("$dir/$name",      "$dir/$name.old") if -e "$dir/$name";
+    # rename("$dir/$name.tmp",  "$dir/$name");
 
     return;
 }
