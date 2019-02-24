@@ -8,6 +8,7 @@ use Getopt::Long;
 use lib '.';
 use ScanDirMD5;
 use NodeTree;
+use NodeHeap;
 
 use lib 'MooNode';
 use MooDir;
@@ -15,7 +16,6 @@ use MooFile;
 
 # For Debug
 use Data::Dumper qw(Dumper);           # Debug print
-
 
 
 #
@@ -46,10 +46,10 @@ our $tree=0;
 
 
 GetOptions (
-    'debug=i'       => \$debug,
+    'debug=i'      => \$debug,
     'verbose=i'    => \$verbose,
-    'fast'          => \$fast_scan,
-    'tree'              => \$tree,
+    'fast'         => \$fast_scan,
+    'tree'         => \$tree,
 );
 
 if ($debug or $verbose >= 2){
@@ -70,20 +70,32 @@ $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
 
 my $dir1;
 $dir1 = "/Users/tshott/Downloads/_ebook/_temp";
-$dir1 = "/Users/tshott/Downloads/_ebook";
-$dir1 = "/Users/tshott/Downloads";
+# $dir1 = "/Users/tshott/Downloads/_ebook";
+# $dir1 = "/Users/tshott/Downloads";
 
-my $Tree = NodeTree->new();
-$Tree = NodeTree->load(dir => $dir1, name => ".moo.tree.db");
+my $Tree; # = NodeTree->new();
+
+# $Tree = NodeTree->load(dir => $dir1, name => ".moo.db");
+$Tree = NodeHeap->load(dir => $dir1, name => ".moo.db");
 
 say "Standard Restore";
 $Tree->summerize;
 
+my $Heap = NodeHeap->new();
 
-$Tree = NodeTree->load_packed(dir => $dir1, name => ".moo.tree.dbp");
-say "Packed Restore";
+for my $Node ($Tree->List){
+    $Heap->insert($Node);
+}
+
+say "Heap Summerize";
 $Tree->summerize;
 
+
+# $Tree = NodeTree->load_packed(dir => $dir1, name => ".moo.tree.dbp");
+# say "Packed Restore";
+# $Tree->summerize;
+
+$Heap->save(dir => $dir1, name => ".moo.db");
 
 exit;
 
@@ -116,7 +128,7 @@ my @Nodes;
 # @Nodes = $Tree->Search(dir => 1, file => 1);
 say "Found Match Path: ", scalar(@Nodes);
 
-my @Nodes;
+# my @Nodes;
 say "Dir: ", $Dir1->filepath;
 say "Files in Dir: ";
 @Nodes = $Tree->Search(path => $Dir1->filepath);
