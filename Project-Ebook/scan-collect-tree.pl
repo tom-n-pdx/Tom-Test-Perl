@@ -6,7 +6,10 @@
 # Good idea to make data files dor files, not rotate. When update the dir dtime does not change.
 # 
 #
-
+# ToDo
+# * Threads!
+#   Can't share top level Tree...
+#   
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
@@ -15,6 +18,7 @@ use Getopt::Long;
 use lib '.';
 use ScanDirMD5;
 use NodeTree;
+use NodeHeap;
 
 use lib 'MooNode';
 use MooDir;
@@ -24,6 +28,13 @@ use MooFile;
 use Data::Dumper qw(Dumper);           # Debug print
 use Scalar::Util qw(blessed);
 
+# To support threads
+use Config;
+$Config{useithreads} or die('Recompile Perl with threads to run this program.');
+use threads;
+use Thread::Queue;		        # One data queue - list of dirs that need to be processed
+# use Thread::Semaphore;
+# use threads::shared;
 
 #
 # Todo
@@ -39,11 +50,14 @@ use Scalar::Util qw(blessed);
 
 our $debug = 0;
 our $verbose = 1;
+# our $jobs = 1;
 
 GetOptions (
     'debug=i'     => \$debug,
     'verbose=i'   => \$verbose,
+#    'jobs=i'      => \$jobs,
 );
+
 
 if ($debug or $verbose >= 2){
     say "Options";
@@ -60,37 +74,101 @@ my $db_tree_name =  ".moo.tree.db";
 my $db_tree_name_packed =  ".moo.tree.dbp";
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks";
 
-my $Tree;
+my $Tree;			# Need to share global Tree
 
+
+#
+# Create a queue of dirs that need to be processed on the main thread (includes the find) will load the queue
+# with dirs that need to be processed and the load dir thread(s) will take item off queue 
+#
+my $DirQueue = Thread::Queue->new();
+# my $ObjQueue = Thread::Queue->new();
+# my $mutex = Thread::Semaphore->new();          # 
+
+# if ($jobs >= 2){
+#     foreach (1..$jobs-1){
+# 	say "Created Thead $_";
+#  	my $thr =;
+#     }
+# }
+#my $thr =  threads->create(\&saver);
+#$thr = threads->create(\&loader);
 
 #
 # Scan each arg as dir root of tree scan.
 #
-foreach my $dir (@ARGV){
-    say "Scanning Tree: $dir" if ($verbose >= 0); 
+# foreach my $dir (@ARGV){
+my $dir = shift(@ARGV);
+say "Scanning Tree: $dir" if ($verbose >= 0); 
 
-    # Clear tree
-    $Tree = NodeTree->new();
-    find(\&wanted,  $dir);
+# Clear tree
+$Tree = NodeTree->new();
+find(\&wanted,  $dir);
+
+#
+# Signal End of Dir Queue
+#
+$DirQueue->end;
+
+&loader;
+
+# &saver;
+
+# &saver;
+
+# Wait for any other threads to finish
+# my $total = 0;
+# foreach my $thr (threads->list()) {
+#     my $changes = $thr->join();
+#     say "Thread Finished - loaded $changes";
+#     $total += $changes;
+# }
+
+# say "Total Loaded: $total";
+
+# Save Tree
+my $count = $Tree->count;
+say "Total $count records saved" if ($verbose >= 1);
+$Tree -> save( dir => $dir, name => $db_tree_name);
+# $Tree -> save_packed(dir => $dir, name => $db_tree_name_packed);
+
+# Save a copy into Datadir
+my $name = $dir;
+$name =~ s!^/!!;
+$name =~ s!/!_!g;
+$name = "$name$db_tree_name"; 
+# say "data dir name: $name";
+
+$Tree -> save(dir => $data_dir, name => $name);
     
-    # Save Tree
-    my $count = $Tree->count;
-    say "Total $count records saved" if ($verbose >= 1);
-    $Tree -> save(       dir => $dir, name => $db_tree_name);
-    # $Tree -> save_packed(dir => $dir, name => $db_tree_name_packed);
+exit;
 
-    # Save a copy into Datadir
-    my $name = $dir;
-    $name =~ s!^/!!;
-    $name =~ s!/!_!g;
-    $name = "$name$db_tree_name"; 
-    # say "data dir name: $name";
+# DEBUG
+# $Tree -> save_packed(dir => $dir);
+# }
 
-    $Tree -> save(dir => $data_dir, name => $name);
-    
-    # DEBUG
-    # $Tree -> save_packed(dir => $dir);
+exit;
+
+
+#
+# Loader Thread - Producer - Thread
+# * as long as dirs in queue, keep processing
+#
+sub loader {
+    my $total = 0;
+    while (my $dir = $DirQueue->dequeue){
+	$total += dir_collect_md5($dir);
+    }  
+    return($total);
 }
+
+#
+# Singler Saver Thread
+# sub saver {
+#     while (my $Obj = $ObjQueue->dequeue_timed(5)){
+# 	$Tree->insert($Obj);
+#     }
+# }
 
 
 exit;
@@ -109,7 +187,9 @@ sub wanted {
 	return;
     }
 
-    dir_collect_md5($dir);
+    # dir_collect_md5($dir);
+    # say "Find: Add $dir";
+    $DirQueue->enqueue($dir);
 
     return;
 }
@@ -137,14 +217,19 @@ sub dir_collect_md5 {
 	 warn "WARN: ", scalar(@Nodes), " loaded from file, Dir: $dir" if (@Nodes < 1);
 	 say "Loaded ", scalar(@Nodes), " from file, Dir: $dir" if ($verbose >= 2);
 
-
+	 
 	 # Insert into global list
 	 $Tree->insert(@Nodes);
+	 
+	 # Queue Objects
+	 #foreach my $Obj ($Tree_dir->List){
+	 #    $ObjQueue->enqueue($Obj);
+	 #}
 
      } else {
 	 warn("May need re-scan, no db_file Dir: $dir");
      }
 
-     return ($Tree_dir);
+     return ($Tree_dir->count);
 }
 

@@ -1,5 +1,22 @@
 #!/usr/bin/env perl
 #
+#
+# Todo
+# * move quick dir check into find
+# * only save dupes when found more - move to md6 lib
+# * Add a every so often save
+# * add --help option
+# * Cleanup debug prints & add a write to log?
+# !! try if move dir, name dir changes
+#
+# * threads
+#   need dup values, changes not shared
+#   make load / save dupes thread safe
+#   add thread # to output
+#   save output, lock stdout, unlock, print
+#   or use a printer thread
+
+
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
@@ -9,7 +26,8 @@ use Getopt::Long;
 use Config;
 $Config{useithreads} or die('Recompile Perl with threads to run this program.');
 use threads;
-
+use Thread::Queue;		        # One data queue - list of dirs that need to be processed
+use Thread::Semaphore;
 
 use lib '.';
 use ScanDirMD5;
@@ -26,23 +44,21 @@ use MooFile;
 # use Data::Dumper qw(Dumper);           # Debug print
 # use Scalar::Util qw(blessed);
 #
-# Todo
-# * only save dupes when found more - move to md6 lib
-# * Add a every so often save
-# * add --help option
-# * Cleanup debug prints & add a write to log?
-# !! try if move dir, name dir changes
-
 # Notes Perf
 # 
 # Tested on ~/Downloads, no updates required. PLUGGED IN
 # time ./scan-md5.pl -f -v 2 -t ~/Downloads
 #
-# scan-md5         9.647u 7.403s 0:24.47 69.6%	0+0k 0+9io 0pf+0w
-# * 1 less stat    4.736u 3.386s 0:11.72 69.1%	0+0k 0+3io 0pf+0w
-#                  4.715u 3.868s 0:11.64 73.6%	0+0k 0+3io 0pf+0w
-# +hash md5        4.840u 3.690s 0:12.06 70.7%	0+0k 0+9io 0pf+0w
-#                  3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
+# scan-md5                 9.647u 7.403s 0:24.47 69.6%	0+0k 0+9io 0pf+0w
+# * 1 less stat            4.736u 3.386s 0:11.72 69.1%	0+0k 0+3io 0pf+0w
+#                          4.715u 3.868s 0:11.64 73.6%	0+0k 0+3io 0pf+0w
+# +hash md5                4.840u 3.690s 0:12.06 70.7%	0+0k 0+9io 0pf+0w
+#                          3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
+# +queue, no threads       3.783u 2.726s 0:09.19 70.7%	0+0k 0+0io 0pf+0w
+# +queue, 1 thread         4.435u 3.411s 0:05.79 135.4%	0+0k 0+0io 0pf+0w
+# +queue, 2 thread         3.949u 2.911s 0:08.77 78.1%	0+0k 0+3io 0pf+0w
+# +queue, 3 thread         4.586u 3.912s 0:05.84 145.3%	0+0k 0+3io 0pf+0w
+# +queue, 4 thread         5.180u 4.660s 0:05.34 184.2%	0+0k 0+2io 0pf+0w
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
@@ -63,6 +79,7 @@ our $tree = 0;
 our $force_update = 0;
 our $save_packed = 0;
 our $md5_save_limit = 100;
+our $jobs = 1;
 
 GetOptions (
     'debug=i'     => \$debug,
@@ -72,6 +89,7 @@ GetOptions (
     'tree'        => \$tree,
     'update'      => \$force_update,
     'packed'      => \$save_packed,
+    'jobs=i'      => \$jobs,
 );
 
 if ($debug or $verbose >= 2){
@@ -83,11 +101,31 @@ if ($debug or $verbose >= 2){
     say "\tQuick Dir: ", $fast_dir;
     say "\tTree: ", $tree;
 
+
     say " ";
 }
 
 # If existing file of dupe sizes, load
 &load_dupes(dupes => \%size_count);
+
+#
+# Create a queue of dirs that need to be processed * the main thread (includes the find) will load the queue
+# with dirs that need to be processed and the scan dir thread(s) will take item off queue * start worker
+# thread to process data queued
+#
+my $DirQueue = Thread::Queue->new();
+my $mutex = Thread::Semaphore->new();          # Printing semaphore
+
+if ($jobs >= 2){
+    foreach (1..$jobs-1){
+	say "Created Thead $_";
+ 	my $thr = threads->create(\&worker);
+    }
+}
+
+
+
+
 
 #
 # Scan each arg as dir, using dir or tree scan.
@@ -98,15 +136,65 @@ foreach my $dir (@ARGV){
 	find(\&wanted,  $dir);
     } else {
 	say "Scanning Dir: $dir" if ($verbose >=0 ); 
-	scan_dir_md5(dir=>$dir, fast_scan=> $fast_scan, fast_dir => $fast_dir);
+	# scan_dir_md5(dir=>$dir, fast_scan=> $fast_scan, fast_dir => $fast_dir);
+	$DirQueue->enqueue($dir);
     }
 }
+#
+# Signal End of Queue
+#
+$DirQueue->end;
+
+
+#
+# Thread Test
+#
+#& worker;
+# Wait forworker thread to finish
+# my @ReturnData = $thr1->join();
+# print('Thread 1 returned ', join(', ', @ReturnData), "\n");
+# my @ReturnData = $thr2->join();
+# print('Thread 2 returned ', join(', ', @ReturnData), "\n");
+# my @ReturnData = $thr3->join();
+# print('Thread 3 returned ', join(', ', @ReturnData), "\n");
+
+# Loop through all the threads
+# if ($jobs >= 1){
+#     foreach my $thr (threads->list()) {
+# 	my $changes = $thr->join();
+# 	$total_changes = $total_changes + $changes;
+# 	say "Thread Finished: Changes: $changes";
+	
+#     }
+# } else {
+#     &worker;
+# }
+my $changes = &worker;
+$total_changes = $total_changes + $changes;
+
+foreach my $thr (threads->list()) {
+    my $changes = $thr->join();
+    $total_changes = $total_changes + $changes;
+    say "Thread Finished: Changes: $changes";
+}
+
 
 say "Total Changes: $total_changes";
 
 &save_dupes(dupes => \%size_count);
 
-exit;
+
+#
+# Worker Thread - Consumer - Thread
+#
+sub worker {
+
+    while (my $dir = $DirQueue->dequeue){
+	scan_dir_md5(dir=>$dir, fast_scan=> $fast_scan, fast_dir => $fast_dir);
+    }    
+
+    return ($total_changes);
+}
 
 
 #
@@ -125,7 +213,9 @@ sub wanted {
     if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
 	return;
     }
-    scan_dir_md5(dir=>$dir, fast_scan=>$fast_scan, fast_dir=>$fast_dir);
+    # Thread Support
+    # scan_dir_md5(dir=>$dir, fast_scan=>$fast_scan, fast_dir=>$fast_dir);
+    $DirQueue->enqueue($dir);
 
     return;
 }
@@ -142,8 +232,14 @@ sub scan_dir_md5 {
     my $dir       =  delete $opt{dir} or die "Missing param to scan_dir_md5";
     die "Unknown params:", join ", ", keys %opt if %opt;
 
+    my $tid = ($jobs >= 2) ? threads->tid() : " ";
+    
+
     ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
-    say "  Checking $dir" if ($verbose >= 2);
+    $mutex->down(); 
+    say "$tid  Checking $dir" if ($verbose >= 2);
+    STDOUT->flush();
+    $mutex->up();
 
     my $Dir_old;
     my $Tree_old;
@@ -278,10 +374,15 @@ sub scan_dir_md5 {
 	    $Tree_new->save_packed; # For debug
 	}
     }
-    say "  Checking $dir" if ($verbose == 1 && $changes > 0);
-    say("    Changes: $changes - New: $files_new Deleted: $files_delete", 
+
+    # Use semaphore around summery prints
+    $mutex->down(); 
+    say "$tid  Checking $dir" if ($verbose == 1 && $changes > 0);
+    say("$tid    Changes: $changes - New: $files_new Deleted: $files_delete", 
 	" Change: $files_change MD5: $files_md5 Rename: $files_rename") 
 	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+    STDOUT->flush();
+    $mutex->up();
 
     return;
 }
