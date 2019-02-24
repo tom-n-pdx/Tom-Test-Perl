@@ -5,6 +5,12 @@ use autodie;
 use File::Find;
 use Getopt::Long;
 
+# To support threads
+use Config;
+$Config{useithreads} or die('Recompile Perl with threads to run this program.');
+use threads;
+
+
 use lib '.';
 use ScanDirMD5;
 use NodeTree;
