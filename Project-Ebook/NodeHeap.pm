@@ -23,11 +23,17 @@ package NodeHeap;
 use Moose;
 use namespace::autoclean;
 use Carp;
+#use YAML qw(LoadFile DumpFile);
+#use YAML::XS qw(LoadFile DumpFile);
+#use IO::YAML;
+#use YAML::Tiny;
+#use utf8;
+use open qw(:std :utf8);
 
 # use Data::Dumper qw(Dumper);           # Debug print
 
 # Default save file name
-our $db_name        =  ".moo.db";
+our $db_name        =  ".moo.yaml";
 our $db_name_packed =  ".moo.dbp";
 use constant MD5_BAD => "x" x 32;
 
@@ -104,7 +110,7 @@ sub Delete {
        my $Obj = delete ${$self->nodes}{$hash_value};
 
        if (! defined $Obj){
-	   carp "Trying to delete value not in Tree Hash: $hash Value: $hash-value"  if ($main::verbose >= 2);
+	   carp "Trying to delete value not in Heap Hash: $hash Value: $hash-value"  if ($main::verbose >= 2);
 	   next;
        }
        push(@Deleted, $Obj);
@@ -243,28 +249,173 @@ sub summerize {
 # * Consider deleting HoA before save, rebuild after load
 # * Consider using text based save
 
-use Storable;
+use Storable qw(store_fd fd_retrieve);
 #
 # Save Obj to file. Use Perl Storable format 
 # Do not use rotate file since it will change mtime for the dir.
-#
+# Do not save whole structure - save each object
+
+
 sub save {
     my $self = shift(@_);
  
     my %opt = @_;   
-    # my $dir   =  delete $opt{dir} or croak("Missing 'dir' param nor does Tree have name");
-    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
     my $name    =  delete $opt{name} // $db_name;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
     my $filepath = $dir.'/'.$name;
-    say("Debug: Store Tree Name: ", $filepath) if ($main::verbose >= 3);
+    say("DEBUG: Store Heap Name: ", $filepath) if ($main::verbose >= 3);
 
-    store($self, $filepath);
+    # Dump Individual Objs all at once
+    my @List = $self->List;
+    say "DEBUG: Saving ", scalar(@List), " Nodes";
+
+
+    open(my $fh, ">:utf8", $filepath);
+    # binmode $fh;
+
+    foreach my $Obj (@List){
+	store_fd($Obj, $fh);
+    }
+    # Hack - bug when readng, need to write end of file mark
+    my $sentinel = "EOF"; 
+    store_fd(\$sentinel, $fh);
+
+    close($fh);
+
+    # DumpFile($filepath, @List);
+
+
+    # store($self, $filepath);
+
+    # open(my $fh, ">", $filepath);
+    # foreach my $Obj (@List){
+    # 	my $yaml = Dump($Obj);
+    # 	print $fh $yaml;
+    # }
+    # close($fh);
+
+    # my $io = IO::YAML->new;
+    # $io->open($filepath, ">");
+    # foreach my $Node (@List){
+	# store_fd($Node, $fh);
+	# my $str = YAML::Dump($Node);
+	# print $io $Node;
+    # }
+    # my $sentinel = "EOF"; 
+    # store_fd(\$sentinel, $fh);
+
+    # $io->close;
 
     my $count = $self->count;
     say "    Saved $count records" if ($main::verbose >= 3);
 
+}
+
+#
+# ToDo
+# * If named when enter method  -should have same name after load?
+#
+sub load {
+    my $self = shift(@_);
+
+    my %opt = @_;
+    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
+    my $name    =  delete $opt{name} // $db_name;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    $self = NodeHeap->new;
+    # my $dbfile_mtime = 0;
+    my $filepath = $dir.'/'.$name;
+    # my $i = 1;
+
+
+    if (-e $filepath) {
+	say "DEBUG: Open $filepath";
+
+	open(my $fh, "<", $filepath);
+	# # binmode $fh;
+	while ( my $Node = fd_retrieve($fh)) {
+	    last if (ref($Node) eq 'SCALAR');
+	    $self->insert($Node);
+	}
+
+
+	# foreach my $Obj (@List){
+	#    $self->insert($Obj);
+	#   }
+
+
+	# while (my $Node = <$io>){
+	    # my $Node = YAML::Load($_);
+	    # $self->insert($Node);
+	# }
+
+
+	# my $io = IO::YAML->new;
+	# $io->auto_load(1);
+	# $io->open($filepath, "<");
+
+	# while (my $Node = <$io>){
+	    # my $Node = YAML::Load($_);
+	    # $self->insert($Node);
+	# }
+
+	# $io->close;
+
+	# # hack - fd_retrieve fails if not check for end of file sentinel
+	# open(my $fh, "<", $filepath);
+	# # binmode $fh;
+	# while ( my $Node = fd_retrieve($fh)) {
+	#     last if (ref($Node) eq 'SCALAR');
+	#     $self->insert($Node);
+	# }
+
+
+	# # Need to use eval becuase read errors are fatal
+	# eval { $self = retrieve($filepath)} ;
+
+	# # If error not because of bad file, die
+	# # perl storable
+	# if ($@ && $@ !~ /Magic number checking/){
+	#     die "Error on load Tree retrieve failed. $@ File: $filepath";
+	# }
+
+	# if ($@ or !blessed($self)){
+	#     carp "Bad db_file File: $filepath";
+	#     rename($filepath, "$filepath.old");
+	    
+	#     $self = NodeTree->new();
+	#     return($self);
+	# }
+
+	# # Changed name of atribute in Node - need to check if this restore file OK
+	# my ($Node) = $self->List;
+	# my $stats_r = $Node->stats;
+
+	# if (!defined $stats_r){
+	#     carp "Old db_file - no stats method  File: $filepath";
+	#     rename($filepath, "$filepath.old");
+	    
+	#     $self = NodeTree->new();
+	#     return($self);
+	# }
+
+	# my $pkg = blessed( $self );
+	# say "Loaded $pkg";
+
+
+	my $count = $self->count;
+	say "    Loaded $count records" if ($main::verbose >= 3);
+
+	# $dbfile_mtime = (stat(_))[9];
+    } else {
+	$self = NodeHeap->new();
+    }
+
+    return ($self);
 }
 
 #
@@ -297,12 +448,12 @@ sub save_packed {
     my $self = shift(@_);
  
     my %opt = @_;   
-    my $dir     =  delete $opt{dir}  // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $dir     =  delete $opt{dir}  // $self->name or croak("Missing 'dir' param nor does Heap have name");
     my $name    =  delete $opt{name} // $db_name_packed;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
     my $filepath = $dir.'/'.$name;
-    say("Debug: Store Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
+    say("Debug: Store Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
 
     # Do not rotate Files, cause Dir mtime to change
     #rename($filepath, "$filepath.old") if (-e $filepath);
@@ -364,19 +515,19 @@ sub load_packed {
     my $self = shift(@_);
  
     my %opt = @_;   
-    my $dir     =  delete $opt{dir}     // $self->name or croak("Missing 'dir' param nor does Tree have name");
+    my $dir     =  delete $opt{dir}     // $self->name or croak("Missing 'dir' param nor does Heap have name");
     my $name    =  delete $opt{name}    // $db_name_packed;
     my $verbose =  delete $opt{verbose} // $main::verbose;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
 
     # Check file exists
     my $filepath = $dir.'/'.$name;
-    say("Debug: Load Packed Tree Name: ", $filepath) if ($main::verbose >= 3);
+    say("Debug: Load Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
     if (! -e $filepath){
 	croak("Tried to load non-existent packed db file $filepath");
     }
 
-    $self = NodeTree->new();
+    $self = NodeHeap->new();
 
 
     # Open file, loop read
@@ -435,66 +586,6 @@ sub load_packed {
     # Return data
     return($self);
 }
-#
-# ToDo
-# * If named when enter method  -should have same name after load?
-#
-sub load {
-    my $self = shift(@_);
-
-    my %opt = @_;
-    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Tree have name");
-    my $name    =  delete $opt{name} // $db_name;
-    die "Unknown params:", join ", ", keys %opt if %opt;
-
-    # my $dbfile_mtime = 0;
-    my $filepath = $dir.'/'.$name;
-
-    if (-e $filepath) {
-	# Need to use eval becuase read errors are fatal
-	eval { $self = retrieve($filepath)} ;
-
-	# If error not because of bad file, die
-	# perl storable
-	if ($@ && $@ !~ /Magic number checking/){
-	    die "Error on load Tree retrieve failed. $@ File: $filepath";
-	}
-
-	if ($@ or !blessed($self)){
-	    carp "Bad db_file File: $filepath";
-	    rename($filepath, "$filepath.old");
-	    
-	    $self = NodeTree->new();
-	    return($self);
-	}
-
-	# Changed name of atribute in Node - need to check if this restore file OK
-	my ($Node) = $self->List;
-	my $stats_r = $Node->stats;
-
-	if (!defined $stats_r){
-	    carp "Old db_file - no stats method  File: $filepath";
-	    rename($filepath, "$filepath.old");
-	    
-	    $self = NodeTree->new();
-	    return($self);
-	}
-
-	my $pkg = blessed( $self );
-	say "Loaded $pkg";
-
-
-	my $count = $self->count;
-	say "    Loaded $count records" if ($main::verbose >= 3);
-
-	# $dbfile_mtime = (stat(_))[9];
-    } else {
-	$self = NodeTree->new();
-    }
-
-    return ($self);
-}
-
 
 
 #

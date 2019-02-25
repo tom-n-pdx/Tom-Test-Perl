@@ -7,6 +7,7 @@ use Getopt::Long;
 
 use lib '.';
 use ScanDirMD5;
+use open qw(:std :utf8);
 use NodeTree;
 use FileUtility qw(osx_check_flags_binary %osx_flags 
 		   dir_list 

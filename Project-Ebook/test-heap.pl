@@ -9,6 +9,8 @@ use lib '.';
 use ScanDirMD5;
 use NodeTree;
 use NodeHeap;
+#use open qw(:std :utf8);
+
 
 use lib 'MooNode';
 use MooDir;
@@ -20,12 +22,9 @@ use Data::Dumper qw(Dumper);           # Debug print
 
 #
 # Todo
-# * add --help option
-# * move collect dupes, into seperate sub
-# * merge ave tree & save dir into one sub
-# * write check dupes sub
-# * write update file sub
-
+# 1. Fix write unicode
+# 2. fix read unicode
+# 3. make incremental
 
 # dupes
 # * problem is when first dupe in seperate dir from 2nd dupe - need to redo first dir
@@ -65,7 +64,7 @@ if ($debug or $verbose >= 2){
 
 my $Dir1;
 # $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook/_test_Zeppelins");
-$Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
+# $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads/_ebook");
 # $Dir1 = MooDir->new(filepath => "/Users/tshott/Downloads");
 
 my $dir1;
@@ -73,29 +72,36 @@ $dir1 = "/Users/tshott/Downloads/_ebook/_temp";
 # $dir1 = "/Users/tshott/Downloads/_ebook";
 # $dir1 = "/Users/tshott/Downloads";
 
-my $Tree; # = NodeTree->new();
+my $Tree;
+#my $Tree; # = NodeTree->new();
 
-# $Tree = NodeTree->load(dir => $dir1, name => ".moo.db");
-$Tree = NodeHeap->load(dir => $dir1, name => ".moo.db");
+# $Tree = NodeTree->load(dir => $dir1, name => ".moo.tree.db");
+$Tree = NodeTree->load(dir => $dir1, name => ".moo.db");
 
-say "Standard Restore";
+say "Tree Restore";
 $Tree->summerize;
 
-my $Heap = NodeHeap->new();
+my $Heap;
+$Heap = NodeHeap->new();
 
 for my $Node ($Tree->List){
-    $Heap->insert($Node);
+     $Heap->insert($Node);
 }
-
 say "Heap Summerize";
-$Tree->summerize;
+$Heap->summerize;
+$Heap->save(dir => $dir1);
 
+$Heap = NodeHeap->load(dir => $dir1);
+say "Heap Restore";
+$Heap->summerize;
+
+exit;
 
 # $Tree = NodeTree->load_packed(dir => $dir1, name => ".moo.tree.dbp");
 # say "Packed Restore";
 # $Tree->summerize;
 
-$Heap->save(dir => $dir1, name => ".moo.db");
+# $Heap->save(dir => $dir1, name => ".moo.db");
 
 exit;
 

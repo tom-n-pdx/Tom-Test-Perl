@@ -15,6 +15,7 @@ use Getopt::Long;
 use lib '.';
 use ScanDirMD5;
 use NodeTree;
+use NodeHeap;
 
 use lib 'MooNode';
 use MooDir;
@@ -23,7 +24,8 @@ use MooFile;
 # For Debug
 use Data::Dumper qw(Dumper);           # Debug print
 use Scalar::Util qw(blessed);
-
+# use utf8;
+use open qw(:std :utf8);
 
 #
 # Todo
@@ -56,11 +58,11 @@ if ($debug or $verbose >= 2){
 my $db_name =  ".moo.db";
 my $db_name_packed = ".moo.dbp";
 
-my $db_tree_name =  ".moo.tree.db";
-my $db_tree_name_packed =  ".moo.tree.dbp";
+my $db_tree_name =  ".moo.tree.yaml";
+# my $db_tree_name_packed =  ".moo.tree.dbp";
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks";
 
-my $Tree;
+my $Heap;
 
 
 #
@@ -70,14 +72,13 @@ foreach my $dir (@ARGV){
     say "Scanning Tree: $dir" if ($verbose >= 0); 
 
     # Clear tree
-    $Tree = NodeTree->new();
+    $Heap = NodeHeap->new();
     find(\&wanted,  $dir);
     
     # Save Tree
-    my $count = $Tree->count;
+    my $count = $Heap->count;
     say "Total $count records saved" if ($verbose >= 1);
-    $Tree -> save(       dir => $dir, name => $db_tree_name);
-    # $Tree -> save_packed(dir => $dir, name => $db_tree_name_packed);
+    $Heap -> save(       dir => $dir, name => $db_tree_name);
 
     # Save a copy into Datadir
     my $name = $dir;
@@ -86,10 +87,8 @@ foreach my $dir (@ARGV){
     $name = "$name$db_tree_name"; 
     # say "data dir name: $name";
 
-    $Tree -> save(dir => $data_dir, name => $name);
+    $Heap -> save(dir => $data_dir, name => $name);
     
-    # DEBUG
-    # $Tree -> save_packed(dir => $dir);
 }
 
 
@@ -129,8 +128,6 @@ sub dir_collect_md5 {
 	 }
 
 	 $Tree_dir = NodeTree->load(dir => $dir, name => $db_name);
-	 # $Tree_dir = NodeTree->load_packed(dir => $dir, name => $db_name_packed);
-
 	 my @Nodes = $Tree_dir->List;
 
 	 # Error check
@@ -139,7 +136,7 @@ sub dir_collect_md5 {
 
 
 	 # Insert into global list
-	 $Tree->insert(@Nodes);
+	 $Heap->insert(@Nodes);
 
      } else {
 	 warn("May need re-scan, no db_file Dir: $dir");

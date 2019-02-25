@@ -53,7 +53,6 @@ sub update_file_md5 {
     my $verbose     = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-
     if ($changes){
 	$main::files_change++;
 	my @changes = FileUtility::stats_delta_array($changes);
@@ -117,6 +116,9 @@ sub update_dir_md5 {
 
     say "       Dir Update: ", $Dir->filepath if ($verbose >= 2);
 
+    # ToDo
+    # * convert to a iterator on dir list
+
     # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
     my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
 								   inc_file => 1,inc_dir => $inc_dir, 
@@ -135,66 +137,85 @@ sub update_dir_md5 {
 	}
 
 	# If in old list, check if we need to update path and leave in Old list to process on next iteration
+	# * If we rename a dir - need to force a change to ensure dir update on next loop
+	#
 	my $old_node = $Tree_old->Exist(hash => $hash);
 	if (defined $old_node) {
 	    if ($old_node->filepath ne $filepath) {
 		say "          Dir Update- Update filepath: ", $old_node->filename, " to ", $name;
 		$old_node->filepath($filepath);
 		$main::files_rename++;
+
+		# If we renaamed a dir, force a change to stats to force dir update scan on next loop
+		if ($old_node->isdir){
+		    $stats[9] = 0; # clear mtime
+		    $old_node->stats(\@stats);
+		}
 	    }
-
-	    # Now Go ahead and process as normal file
-	    my $changes = stats_delta_binary($old_node->stats,  \@stats) & ~$stats_names{atime};
-
-	    $Tree_old->Delete($old_node);
-	    update_file_md5(Node => $old_node, changes => $changes, stats => \@stats, 
-			    update_md5 => $update_md5);
-	    $Tree_new->insert($old_node);
-
 	    next;
 	}
-	    
-	# New file or dir, can directlly put in new list
-	say "          Dir Update- New Node in Dir: ", $name if ($verbose >= 2);
+	
+	# New file or dir
 	my $Node;
 
-	# New file or dir
-	if (-r $filepath){
+	# New file - - create new, place in new list
+	if (-f $filepath){
+	    say "          Dir Update- New File in Dir: ", $name if ($verbose >= 2);
 	    $main::files_new++;
 	    $Node = MooFile->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_md5 => 0);
 
-	
-	    $main::size_count{$Node->size}++;
-	    my $count = $main::size_count{$Node->size};
+	    # Don't need to update but also updates things like md5
+	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, 
+			    update_md5 => $update_md5);
 
-	    if ( $Node->can('md5') && ! defined $Node->md5 && $Node->isreadable  &&
-		     ($update_md5 or ($count >= 2))){
-		$Node->update_md5;
-		say "          Dir Update- Calc MD5" if ($verbose >= 2);
 
-		$main::files_md5++;
-	    }
+	    # $main::size_count{$Node->size}++;
+	    # my $count = $main::size_count{$Node->size};
+
+	    # if ( $Node->can('md5') && ! defined $Node->md5 && $Node->isreadable  &&
+	    # 	     ($update_md5 or ($count >= 2))){
+	    # 	$Node->update_md5;
+	    # 	say "          Dir Update- Calc MD5" if ($verbose >= 2);
+
+	    # 	$main::files_md5++;
+	    # }
+
+	    $Tree_new->insert($Node);
+
 	} else {
 	    # New Dir
+	    # Create new, then put into old list to process on next loop
+	    say "          Dir Update- New Dir in Dir: ", $name if ($verbose >= 2);
 	    $main::files_new++;
+
+	    # Modify stats to force update
+	    $stats[9] = 0;
 	    $Node = MooDir->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_dtime => 0);
 	
-	    # update_dir_md5(Node => $Node, changes => 0x00, stats => @stats, );
-	    update_dir_md5(Dir => $Node, Tree_new => $Tree_new, Tree_old => $Tree_old, 
-			   update_md5 => $update_md5, inc_dir => $inc_dir);
-
+	    $Tree_old->insert($Node);	    
 	}	    
 
-	$Tree_new->insert($Node);
     }
 
 }
+
+
+# Fist check a full filname, then check for dir with list names?
+
+
+sub md5_db_exist {
+    my $filepath;
+    my $mtime = 0;
+
+    return $mtime;
+}
+
 
 
 

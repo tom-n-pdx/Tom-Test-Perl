@@ -1,11 +1,9 @@
 #!/usr/bin/env perl
 #
 
-# !! Add - new dir
-# Optimize  - if dir not chaanged  - can we move all files in subdir without checking if changed?
-# + Need search match path
-# + trigger rescan dir and update dir?
-#
+# ToDo
+# * Fix so if no db file, will seed one and start
+# * count changes & print
 
 use Modern::Perl; 		         # Implies strict, warnings
 # use autodie;
@@ -15,12 +13,15 @@ use Getopt::Long;
 use lib '.';
 use ScanDirMD5;
 use NodeTree;
+use NodeHeap;
 
 use lib 'MooNode';
 use MooNode;
 use MooDir;
 use MooFile;
 use FileUtility qw(%stats_names dir_list);
+use utf8;
+use open qw(:std :utf8);
 
 # For Debug
 # use Data::Dumper qw(Dumper);           # Debug print
@@ -31,17 +32,19 @@ use FileUtility qw(%stats_names dir_list);
 #
 # Perf
 # time ./scan-smart-md5.pl -f ~/Downloads
-#         0.513u 0.048s 0:00.57 96.4%	0+0k 0+3io 0pf+0w
-#         0.470u 0.045s 0:00.52 98.0%	0+0k 0+0io 0pf+0w
-#         1.607u 0.150s 0:01.77 98.8%	0+0k 0+0io 0pf+0w
-# packed 14.642u 8.478s 0:33.85 68.2%	0+0k 0+0io 0pf+0w !!!
+#           0.513u 0.048s 0:00.57 96.4%	0+0k 0+3io 0pf+0w
+#           0.470u 0.045s 0:00.52 98.0%	0+0k 0+0io 0pf+0w
+#           1.607u 0.150s 0:01.77 98.8%	0+0k 0+0io 0pf+0w
+# packed   14.642u 8.478s 0:33.85 68.2%	0+0k 0+0io 0pf+0w !!!
+# use heap  0.515u 0.044s 0:00.56 98.2%	0+0k 0+0io 0pf+0w
+
+
 
 my %size_count;
 
 our ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
 my $files_change_total = 0;
 
-my $db_name =  ".moo.db";
 
 our $debug = 0;
 our $verbose = 1;
@@ -72,24 +75,24 @@ if ($debug or $verbose >= 2){
 
 
 # For each tree, load old data & walk nodes
-my $db_tree_name =  ".moo.tree.db";
-my $db_tree_name_packed =  ".moo.tree.dbp";
+my $db_name =  ".moo.db";
+my $db_tree_name =  ".moo.tree.yaml";
+# my $db_tree_name_packed =  ".moo.tree.dbp";
 
 my $dir = shift(@ARGV);
 
 say "Updating Tree: $dir";
 say " ";
 
-
 my $Tree_old;
 if (!-e "$dir/$db_tree_name"){
     die "No exiisting tree datafile: $dir";
 } else {
-    $Tree_old    = NodeTree->load(dir => $dir, name => $db_tree_name);
+    $Tree_old    = NodeHeap->load(dir => $dir, name => $db_tree_name);
     # $Tree_old    = NodeTree->load_packed(dir => $dir, name => $db_tree_name_packed);
 }
 
-my $Tree_new    = NodeTree->new;
+my $Tree_new    = NodeHeap->new;
 
 
 $Tree_old->summerize;
@@ -100,7 +103,6 @@ say " ";
 
 #
 # Keep processing list until nothing changes or the old queue is empty
-# More effecient if process any dir changes first
 #
 
 my $i = 0;
@@ -113,27 +115,31 @@ do {
 
     foreach my $Node ( $Tree_old->List ) {
 	my @stats_new = lstat($Node->filepath);
-	next if (!  @stats_new);                                       # File Does not exist at old filename - deleted or renamed
+	if (! @stats_new){
+	    say "    Missing File: ", $Node->filename if ($verbose >= 3);
+	    next;
+	}
 
 	# Check changes and mask off atime changes
 	my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new) & ~$stats_names{atime};
     
 	# This is likely a file that has been renamed and a new file has the old name
 	if ($changes & $stats_names{ino}) {
-	    say "  Skipping Node - inode changed. Old Name", $Node->filename;
+	    say "    Skipping Node - inode changed. Old Name", $Node->filename if ($verbose >= 2);
 	    next;
 	}
     
 	# remove from old list, update values, insert into new list
 	$Tree_old->Delete($Node);
 
-	# need to always call update file since may need to do md6 calc even if no changes
-	# Update file also updates the basic dir stats
+	# need to always call update file since may need to do md5 calc even if no changes
+	# Update file also updates dir stats
 	&update_file_md5(Node => $Node,   changes => $changes, stats => \@stats_new, update_md5 => ! $fast_scan);
+
 	if ($changes && $Node->isdir) {
 	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats_new, 
 			    Tree_old => $Tree_old, Tree_new => $Tree_new,
-			    update_md5 => ! $fast_scan);
+			    update_md5 => ! $fast_scan, inc_dir => 1);
 	}
 
 	$Tree_new->insert($Node);
@@ -154,7 +160,7 @@ do {
 
 #
 # Check Deleted
-# Still in old list, but we are done making changes, must be deleted
+# Still in old list, but we are done making changes, must have been deleted
 #
 my @Nodes = $Tree_old->List;
 if(@Nodes > 0){
