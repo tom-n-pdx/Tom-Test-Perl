@@ -22,7 +22,12 @@ use MooFile;
 # use Scalar::Util qw(blessed);
 #
 # Todo
-# * only save dupes when found more - move to md6 lib
+# * rewrite, leverage new md5 lib and how smart one is coded.
+# * Can this be a variant of smart scan?
+# * use heap?
+# * Broken - assumes everything done in one loop and update_dir takes two
+#   Broken if no files in new dir?
+# * only save dupes when found more - move to md5 lib
 # * Add a every so often save
 # * add --help option
 # * Cleanup debug prints & add a write to log?
@@ -38,6 +43,8 @@ use MooFile;
 #                  4.715u 3.868s 0:11.64 73.6%	0+0k 0+3io 0pf+0w
 # +hash md5        4.840u 3.690s 0:12.06 70.7%	0+0k 0+9io 0pf+0w
 #                  3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
+# + iter dir       5.032u 3.658s 0:12.22 71.0%	0+0k 0+10io 7pf+0w
+#
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
@@ -45,38 +52,38 @@ use MooFile;
 
 my %size_count;
  
-our ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
 our $total_changes = 0;
+
 
 my $db_name =  ".moo.db";
 
-our $debug = 0;
+#our $debug = 0;
 our $verbose = 1;
 our $fast_scan = 0;
 our $fast_dir  = 0;
 our $tree = 0;
 our $force_update = 0;
-our $save_packed = 0;
+
 our $md5_save_limit = 100;
 
 GetOptions (
-    'debug=i'     => \$debug,
+#    'debug=i'     => \$debug,
     'verbose=i'   => \$verbose,
     'fast'        => \$fast_scan,
     'quick'       => \$fast_dir,
     'tree'        => \$tree,
     'update'      => \$force_update,
-    'packed'      => \$save_packed,
 );
 
-if ($debug or $verbose >= 2){
+if ($verbose >= 2){
     say "Options";
 
-    say "\tDebug: ", $debug;
+#    say "\tDebug: ", $debug;
     say "\tVerbose: ", $verbose;
     say "\tFast: ", $fast_scan;
     say "\tQuick Dir: ", $fast_dir;
     say "\tTree: ", $tree;
+    say "\tUpdate: ", $force_update;
 
     say " ";
 }
@@ -137,7 +144,8 @@ sub scan_dir_md5 {
     my $dir       =  delete $opt{dir} or die "Missing param to scan_dir_md5";
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-    ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
+    &files_change_clear;
+
     say "  Checking $dir" if ($verbose >= 2);
 
     my $Dir_old;
@@ -160,14 +168,14 @@ sub scan_dir_md5 {
 	    return( () );
 	}
 
-	# say "Loaded Tree Packed";
-	# $Tree_old = NodeTree->load_packed(dir => $dir);
 	$Tree_old = NodeTree->load(dir => $dir);
 	
 	# First process Dir, then Files
 	my @Dirs_old = $Tree_old->Search(dir => 1);
 	if (@Dirs_old != 1){
 	    warn "db_file does not contain only one Dir record $dir";
+	    say "Dir: $dir Records: ", $Tree_old->count;
+	    
 	    if (-e "$dir/$db_name"){
 		rename("$dir/$db_name", "$dir/$db_name.old");
 	    }
@@ -189,7 +197,7 @@ sub scan_dir_md5 {
 	    if ($Dir_old->filepath ne $Dir_new->filepath){
 		$Dir_old->filepath($Dir_new->filepath);
 		say "    Dir rename";
-		$files_rename++;
+		$files_change{rename}++;
 	    }
 	    update_dir_md5(Dir => $Dir_old, changes => $changes, stats => $Dir_new->stats, 
 			   Tree_new => $Tree_new, Tree_old => $Tree_old, 
@@ -225,7 +233,8 @@ sub scan_dir_md5 {
 	    $Tree_new->insert($Node);
 
 
-	    if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
+	    # if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
+	    if ($files_change{md5} >= 1 && $files_change{md5} % $md5_save_limit == 0){
 		say "    Saved Checkpoint Datafile" if ($verbose >= 2);
 		$Tree_new->save(name => $db_name);
 	    }
@@ -254,7 +263,9 @@ sub scan_dir_md5 {
     # Done scanning old files, check if any objs left - file must have been deleted, or moved to new dir
     # A renamed file we would have caught becuase the inode stayed the same
     my @Files = $Tree_old->List;
-    $files_delete += scalar(@Files);
+    #$files_delete += scalar(@Files);
+    $files_change{delete} += scalar(@Files);
+
     if (@Files >= 1 && $verbose >= 1){
     	say "    Deleted files:";
     	foreach my $File (@Files){
@@ -262,21 +273,19 @@ sub scan_dir_md5 {
     	}
     }
 
-    my $changes = $files_new + $files_delete + $files_change + $files_md5 + $files_rename;
+    my $changes = &files_change_total;
     $total_changes = $total_changes + $changes;
 
     if ($force_update or $changes > 0){ 
 	say "    Saved Datafile" if ($verbose >= 2);
 	$Tree_new->save(name => $db_name);
-	if ($save_packed){
-	    say "    Saved Packed Datafile" if ($verbose >= 1);
-	    $Tree_new->save_packed; # For debug
-	}
     }
     say "  Checking $dir" if ($verbose == 1 && $changes > 0);
-    say("    Changes: $changes - New: $files_new Deleted: $files_delete", 
-	" Change: $files_change MD5: $files_md5 Rename: $files_rename") 
-	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+    # say("    Changes: $changes - New: $files_new Deleted: $files_delete", 
+    # 	" Change: $files_change MD5: $files_md5 Rename: $files_rename") 
+    # 	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+    say("    Changes: $changes (", &files_change_string, ")") 
+	if ($verbose >= 2 or ($changes > 0 && $verbose >= 1));
 
     return;
 }

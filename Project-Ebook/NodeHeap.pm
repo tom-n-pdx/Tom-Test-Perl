@@ -172,7 +172,7 @@ sub Search {
     # if ( $search_hash->isa('MooNode') ){
     # 	$search_hash = $search_hash->hash;
     # }
-    # say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
+    #say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
     
     # Search By Dir
     say ("DEBUG: Searching by dir value = ", $search_dir) if ($verbose >= 3 && $search_dir);
@@ -228,7 +228,7 @@ sub summerize {
     # first - just count how many items in hash
     my $count = $self->count;
     my @List = $self->List;
-    say "DEBUG Summerize: $count records and List has ", scalar(@List), " records";
+    say "INFO: Summerize: $count records and List has ", scalar(@List), " records";
 
     foreach my $hash (sort keys %{$self->nodes}){
 	my $obj = ${$self->nodes}{$hash};
@@ -265,11 +265,10 @@ sub save {
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
     my $filepath = $dir.'/'.$name;
-    say("DEBUG: Store Heap Name: ", $filepath) if ($main::verbose >= 3);
 
     # Dump Individual Objs all at once
     my @List = $self->List;
-    say "DEBUG: Saving ", scalar(@List), " Nodes";
+    say("DEBUG: Store Heap Records: ", scalar(@List), " Name: ", $filepath) if ($main::verbose >= 3);
 
 
     open(my $fh, ">:utf8", $filepath);
@@ -283,30 +282,6 @@ sub save {
     store_fd(\$sentinel, $fh);
 
     close($fh);
-
-    # DumpFile($filepath, @List);
-
-
-    # store($self, $filepath);
-
-    # open(my $fh, ">", $filepath);
-    # foreach my $Obj (@List){
-    # 	my $yaml = Dump($Obj);
-    # 	print $fh $yaml;
-    # }
-    # close($fh);
-
-    # my $io = IO::YAML->new;
-    # $io->open($filepath, ">");
-    # foreach my $Node (@List){
-	# store_fd($Node, $fh);
-	# my $str = YAML::Dump($Node);
-	# print $io $Node;
-    # }
-    # my $sentinel = "EOF"; 
-    # store_fd(\$sentinel, $fh);
-
-    # $io->close;
 
     my $count = $self->count;
     say "    Saved $count records" if ($main::verbose >= 3);
@@ -333,7 +308,7 @@ sub load {
 
 
     if (-e $filepath) {
-	say "DEBUG: Open $filepath";
+	# say "DEBUG: Open $filepath";
 
 	open(my $fh, "<", $filepath);
 	# # binmode $fh;
@@ -342,69 +317,6 @@ sub load {
 	    $self->insert($Node);
 	}
 
-
-	# foreach my $Obj (@List){
-	#    $self->insert($Obj);
-	#   }
-
-
-	# while (my $Node = <$io>){
-	    # my $Node = YAML::Load($_);
-	    # $self->insert($Node);
-	# }
-
-
-	# my $io = IO::YAML->new;
-	# $io->auto_load(1);
-	# $io->open($filepath, "<");
-
-	# while (my $Node = <$io>){
-	    # my $Node = YAML::Load($_);
-	    # $self->insert($Node);
-	# }
-
-	# $io->close;
-
-	# # hack - fd_retrieve fails if not check for end of file sentinel
-	# open(my $fh, "<", $filepath);
-	# # binmode $fh;
-	# while ( my $Node = fd_retrieve($fh)) {
-	#     last if (ref($Node) eq 'SCALAR');
-	#     $self->insert($Node);
-	# }
-
-
-	# # Need to use eval becuase read errors are fatal
-	# eval { $self = retrieve($filepath)} ;
-
-	# # If error not because of bad file, die
-	# # perl storable
-	# if ($@ && $@ !~ /Magic number checking/){
-	#     die "Error on load Tree retrieve failed. $@ File: $filepath";
-	# }
-
-	# if ($@ or !blessed($self)){
-	#     carp "Bad db_file File: $filepath";
-	#     rename($filepath, "$filepath.old");
-	    
-	#     $self = NodeTree->new();
-	#     return($self);
-	# }
-
-	# # Changed name of atribute in Node - need to check if this restore file OK
-	# my ($Node) = $self->List;
-	# my $stats_r = $Node->stats;
-
-	# if (!defined $stats_r){
-	#     carp "Old db_file - no stats method  File: $filepath";
-	#     rename($filepath, "$filepath.old");
-	    
-	#     $self = NodeTree->new();
-	#     return($self);
-	# }
-
-	# my $pkg = blessed( $self );
-	# say "Loaded $pkg";
 
 
 	my $count = $self->count;

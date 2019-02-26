@@ -2,9 +2,13 @@
 #
 
 # ToDo
-# * Fix so if no db file, will seed one and start
-# * count changes & print
-
+# * Checkpoint save - make by time
+#
+# Fatal errors: /Volumes/MyBook/Video_4/_Inbox
+# * make smart enough to load subtree or dir if found?
+# * routeen run if no datafile in dir?
+#    
+#   top down, dumb search, find like, get prune to work
 use Modern::Perl; 		         # Implies strict, warnings
 # use autodie;
 # use File::Find;
@@ -12,7 +16,7 @@ use Getopt::Long;
 
 use lib '.';
 use ScanDirMD5;
-use NodeTree;
+# use NodeTree;
 use NodeHeap;
 
 use lib 'MooNode';
@@ -39,26 +43,30 @@ use open qw(:std :utf8);
 # use heap  0.515u 0.044s 0:00.56 98.2%	0+0k 0+0io 0pf+0w
 
 
+# empty tree - -f ~/Downloads
+#                 7.245u 5.715s 0:17.67 73.2%	0+0k 0+3io 0pf+0w
+# w/ iter dir     3.703u 2.473s 0:08.94 69.0%	0+0k 0+4io 34pf+0w
+
 
 my %size_count;
-
-our ($files_new, $files_delete, $files_change, $files_md5, $files_rename) = (0, 0, 0, 0, 0);
 my $files_change_total = 0;
+my $files_change = 0;
+my $files_md5_total = 0;
 
 
 our $debug = 0;
 our $verbose = 1;
 our $fast_scan = 0;
-our $fast_dir  = 0;
-our $tree=0;
+# our $fast_dir  = 0;
+# our $tree=0;
 our $md5_save_limit = 100;
 
 GetOptions (
     'debug=i'     => \$debug,
     'verbose=i'   => \$verbose,
     'fast'        => \$fast_scan,
-    'quick'       => \$fast_dir,
-    'tree'        => \$tree,
+#    'quick'       => \$fast_dir,
+#    'tree'        => \$tree,
 );
 
 if ($debug or $verbose >= 2){
@@ -67,8 +75,8 @@ if ($debug or $verbose >= 2){
     say "\tDebug: ", $debug;
     say "\tVerbose: ", $verbose;
     say "\tFast: ", $fast_scan;
-    say "\tQuick Dir: ", $fast_dir;
-    say "\tTree: ", $tree;
+#    say "\tQuick Dir: ", $fast_dir;
+#    say "\tTree: ", $tree;
 
     say " ";
 }
@@ -86,7 +94,20 @@ say " ";
 
 my $Tree_old;
 if (!-e "$dir/$db_tree_name"){
-    die "No exiisting tree datafile: $dir";
+    # die "No exiisting tree datafile: $dir";
+    warn "No exiisting tree datafile: $dir";
+
+    # Create new Dir node with forced changes
+    my @stats = lstat($dir);
+    $stats[9] = 0;		# Modify mtime
+    my $Dir = MooDir->new(filepath => $dir, 
+			stats => [ @stats ], update_stats => 0, 
+			update_dtime => 0);
+
+    # Insert into old tree
+    $Tree_old = NodeHeap->new;
+    $Tree_old->insert($Dir);
+
 } else {
     $Tree_old    = NodeHeap->load(dir => $dir, name => $db_tree_name);
     # $Tree_old    = NodeTree->load_packed(dir => $dir, name => $db_tree_name_packed);
@@ -109,11 +130,20 @@ my $i = 0;
 
 # While - if nothing in old queue then done 
 do {
+    $files_md5_total += $files_change{md5};
     $files_change = 0;
+    &files_change_clear;
+
     $i++;
-    say "Start Loop $i";
+    # say "Start Loop $i";
+    &files_change_clear;
 
     foreach my $Node ( $Tree_old->List ) {
+	my $count = $files_change{md5} + $files_md5_total;
+	if ($count >= 1 && $count % $md5_save_limit == 0){
+	    &save_checkpoint;
+	}
+
 	my @stats_new = lstat($Node->filepath);
 	if (! @stats_new){
 	    say "    Missing File: ", $Node->filename if ($verbose >= 3);
@@ -145,15 +175,26 @@ do {
 	$Tree_new->insert($Node);
     }
     
-    say " ";
     say "After Pass # $i - Changes: $files_change Old: ", scalar($Tree_old->count), " New: ", scalar($Tree_new->count);
+
+    $files_change = &files_change_total;
+    $files_change_total += $files_change;
+
+    # $total_changes = $total_changes + $changes;
+    # say("    Changes: $changes - New: $files_new Deleted: $files_delete", 
+    # 	" Change: $files_change MD5: $files_md5 Rename: $files_rename") 
+    # 	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+    say("    Changes: $files_change (", &files_change_string, ")") 
+	if ($verbose >= 2 or ($files_change > 0 && $verbose >= 1));
+
+
+
     say " ";
 
     # If old dir is empty, we have processed everything.
     # If we didn't make any changes this loop - there is nothing left to do
     # And keep a limit count in case we blow up.
 
-    $files_change_total += $files_change;
 
 } while ($Tree_old->List > 0 && $files_change > 0 && $i < 10);
 
@@ -166,9 +207,12 @@ my @Nodes = $Tree_old->List;
 if(@Nodes > 0){
     $files_change++;
     $files_change_total++;
+    $files_change{delete}++;
+
     say " ";
     say "Files Deleted: ", join(", ", map($_->filename, @Nodes));
 }
+say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_change_total > 0 && $verbose >= 1));
 
 if ($files_change_total > 0){
     $Tree_new->save(dir => $dir, name => $db_tree_name);
@@ -178,4 +222,16 @@ if ($files_change_total > 0){
 
 exit;
 
+#
+# Todo checkpoint save need to combine old and new lists and save
+#
+sub save_checkpoint {
+    my $Tree_save = NodeHeap->new();
+    
+    $Tree_save->insert($Tree_old->List);
+    $Tree_save->insert($Tree_new->List);
 
+    $Tree_save->save(dir => $dir, name => $db_tree_name);
+
+    say("Check Point Save: (", &files_change_string, ")") if ($verbose >= 1);
+}

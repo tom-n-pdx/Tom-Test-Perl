@@ -10,7 +10,8 @@
 
 package ScanDirMD5;
 use Exporter qw(import);
-our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5);
+our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5
+	    files_change_string files_change_total files_change_clear %files_change);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -20,7 +21,7 @@ use File::Basename;                     # Manipulate file paths
 use Carp;
 
 use lib '.';
-use FileUtility qw(%stats_names stats_delta_binary dir_list);
+use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter);
 
 use constant MD5_BAD => "x" x 32;
 
@@ -33,7 +34,43 @@ my %md5_check;
 our %md5_check_HoA;
 our %size_check_HoA;
 
-#
+
+
+
+
+our %files_change = (new => 0, delete => 0, change => 0, md5 => 0, rename => 0); 
+
+sub files_change_string {
+    my $string = "";
+    foreach my $change (sort keys %files_change){
+	$string .= $change.": ".$files_change{$change}." ";
+    }
+    chop($string);
+    return ($string);
+}
+
+sub files_change_total {
+    my $total = 0;
+    foreach my $change (keys %files_change){
+	$total += $files_change{$change};
+    }
+    return ($total);
+}
+
+sub files_change_clear {
+    foreach my $change (keys %files_change){
+	$files_change{$change} = 0;
+    }
+}
+
+
+
+
+
+
+
+
+
 # Access gloabl values to track file changes
 # Access global lists of files
 # Make size array local to md5 module, make file change stats local to md5 module
@@ -55,6 +92,7 @@ sub update_file_md5 {
 
     if ($changes){
 	$main::files_change++;
+	$main::files_change{change}++;
 	my @changes = FileUtility::stats_delta_array($changes);
 	# say "    File: ", $Node->filename if ($verbose == 2);
 	say "    ", $Node->filename, " Delta: ", join(", ", @changes) if ($verbose >= 2);
@@ -85,9 +123,11 @@ sub update_file_md5 {
 
     if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
 	if ($update_md5 or  $count >= 2){
-	    say "      Update MD5" if ($verbose == 2);
+	    say "      Update MD5 ", $Node->filename if ($verbose == 2);
 	    $Node->update_md5;
 	    $main::files_md5++;
+	    $main::files_change{md5}++;
+
 	}
     }
 
@@ -120,14 +160,25 @@ sub update_dir_md5 {
     # * convert to a iterator on dir list
 
     # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
-    my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
-								   inc_file => 1,inc_dir => $inc_dir, 
-								   use_ref => 1);
-    foreach ( 0..$#{$filepaths_r} ){
-	my $filepath  = @{$filepaths_r}[$_];
-	my $name      = @{$names_r}[$_];
-	my @stats     = @{ ${$stats_AoA_r}[$_] };
-	my $flags     = @{$flags_r}[$_];
+    # my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
+    # 								   inc_file => 1,inc_dir => $inc_dir, 
+    # 								   use_ref => 1);
+
+    my $dir_iter = dir_list_iter(dir => $Dir->filepath, inc_dir => $inc_dir);
+    
+    # my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
+    #								   inc_file => 1,inc_dir => $inc_dir, 
+    #								   use_ref => 1);
+    while ( 1 ) {
+	my ($name, $filepath, $flags, @stats) = $dir_iter->();
+	last unless $name;
+	
+	# foreach ( 0..$#{$filepaths_r} ){
+	# 	foreach ( 0..$#{$filepaths_r} ){
+	# 	my $filepath  = @{$filepaths_r}[$_];
+	# 	my $name      = @{$names_r}[$_];
+	# 	my @stats     = @{ ${$stats_AoA_r}[$_] };
+	# 	my $flags     = @{$flags_r}[$_];
 
 	my $hash      = $stats[0].'-'.$stats[1];
 
@@ -145,6 +196,7 @@ sub update_dir_md5 {
 		say "          Dir Update- Update filepath: ", $old_node->filename, " to ", $name;
 		$old_node->filepath($filepath);
 		$main::files_rename++;
+		$main::files_change{rename}++;
 
 		# If we renaamed a dir, force a change to stats to force dir update scan on next loop
 		if ($old_node->isdir){
@@ -158,38 +210,27 @@ sub update_dir_md5 {
 	# New file or dir
 	my $Node;
 
-	# New file - - create new, place in new list
+	# New file - create new, place in old list
+	$main::files_new++;
+	$main::files_change{new}++;
+
 	if (-f $filepath){
 	    say "          Dir Update- New File in Dir: ", $name if ($verbose >= 2);
-	    $main::files_new++;
+	    $stats[9] = 0;
 	    $Node = MooFile->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_md5 => 0);
 
-	    # Don't need to update but also updates things like md5
-	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, 
-			    update_md5 => $update_md5);
+	    # # Don't need to update but this also updates things like md5
+	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, 
+	    # 		    update_md5 => $update_md5);
 
-
-	    # $main::size_count{$Node->size}++;
-	    # my $count = $main::size_count{$Node->size};
-
-	    # if ( $Node->can('md5') && ! defined $Node->md5 && $Node->isreadable  &&
-	    # 	     ($update_md5 or ($count >= 2))){
-	    # 	$Node->update_md5;
-	    # 	say "          Dir Update- Calc MD5" if ($verbose >= 2);
-
-	    # 	$main::files_md5++;
-	    # }
-
-	    $Tree_new->insert($Node);
-
+	    $Tree_old->insert($Node);
 	} else {
 	    # New Dir
 	    # Create new, then put into old list to process on next loop
 	    say "          Dir Update- New Dir in Dir: ", $name if ($verbose >= 2);
-	    $main::files_new++;
 
 	    # Modify stats to force update
 	    $stats[9] = 0;
@@ -201,13 +242,12 @@ sub update_dir_md5 {
 	    $Tree_old->insert($Node);	    
 	}	    
 
-    }
+    } # End Loop thru Dir listing
 
 }
 
 
 # Fist check a full filname, then check for dir with list names?
-
 
 sub md5_db_exist {
     my $filepath;
@@ -215,14 +255,6 @@ sub md5_db_exist {
 
     return $mtime;
 }
-
-
-
-
-
-# my $dbfile;
-
-
 
 
 # sub check_dir_dupe {

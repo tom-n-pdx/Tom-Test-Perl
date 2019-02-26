@@ -6,7 +6,7 @@
 
 package FileUtility;
 use Exporter qw(import);
-our @EXPORT_OK = qw(dir_list rename_unique 
+our @EXPORT_OK = qw(dir_list dir_list_iter rename_unique 
 		    osx_check_flags_binary osx_flags_binary_string %osx_flags 
 		    stats_delta_binary %stats_names @stats_names);
 
@@ -127,6 +127,41 @@ sub dir_list {
 
     return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
 }
+
+
+sub dir_list_iter {
+    my %opt   = @_;
+
+    my $dir       = delete $opt{dir} or die("Missing 'dir' param");
+    my $inc_dot   = delete $opt{inc_dot} // 0;
+    my $inc_dir   = delete $opt{inc_dir} // 0;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+    opendir(my $dh, $dir);
+
+    return sub {
+	my ($name, $filepath, $flags, @stats);
+
+	while ($name = readdir $dh){
+	    $filepath = "$dir/$name";
+	    next if (! $inc_dot && $name =~ /^\./);
+	    next if (! $inc_dir && -d $filepath);
+
+	    @stats = lstat($filepath);
+	    $flags = osx_check_flags_binary($filepath);
+
+	    last;
+	};
+
+	
+	return($name, $filepath, $flags, @stats);
+    };
+}
+
+
+
+
+
 
 
 #
