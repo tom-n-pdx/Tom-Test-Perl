@@ -164,6 +164,10 @@ sub update_dir_md5 {
     # 								   inc_file => 1,inc_dir => $inc_dir, 
     # 								   use_ref => 1);
 
+    #
+    # Create director iterator
+    # Each use of the iterator will return one dir record
+    # 
     my $dir_iter = dir_list_iter(dir => $Dir->filepath, inc_dir => $inc_dir);
     
     # my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
@@ -189,6 +193,7 @@ sub update_dir_md5 {
 
 	# If in old list, check if we need to update path and leave in Old list to process on next iteration
 	# * If we rename a dir - need to force a change to ensure dir update on next loop
+	# * Can't move to new - we are inside loop with list already generated
 	#
 	my $old_node = $Tree_old->Exist(hash => $hash);
 	if (defined $old_node) {
@@ -207,38 +212,47 @@ sub update_dir_md5 {
 	    next;
 	}
 	
-	# New file or dir
-	my $Node;
 
-	# New file - create new, place in old list
+	# New file or dir - create new and process
+	#
 	$main::files_new++;
 	$main::files_change{new}++;
+	my $Node;
+	
+	# Force change in stats ti make sure next loop it's detected as changed and processed
+
 
 	if (-f $filepath){
+	    # New File
+	    # Create new, update, place on new list
+
 	    say "          Dir Update- New File in Dir: ", $name if ($verbose >= 2);
-	    $stats[9] = 0;
 	    $Node = MooFile->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_md5 => 0);
 
-	    # # Don't need to update but this also updates things like md5
-	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, 
-	    # 		    update_md5 => $update_md5);
+	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
 
-	    $Tree_old->insert($Node);
+	    $Tree_new->insert($Node);
 	} else {
 	    # New Dir
-	    # Create new, then put into old list to process on next loop
+	    # Create new, update, then place on new list
+	    # 
 	    say "          Dir Update- New Dir in Dir: ", $name if ($verbose >= 2);
 
-	    # Modify stats to force update
+	    # Force change to stats so will process on next loop
 	    $stats[9] = 0;
 	    $Node = MooDir->new(filepath => $filepath, 
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_dtime => 0);
 	
+	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
+
+	    # update_dir_md5(Dir => $Node, changes => 0x00, stats =>  \@stats, update_md5 => $update_md5,
+	    #		   Tree_old => $Tree_old, Tree_new => $Tree_new, inc_dir => $inc_dir);
+
 	    $Tree_old->insert($Node);	    
 	}	    
 

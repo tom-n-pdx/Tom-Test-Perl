@@ -27,7 +27,7 @@ package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
 
-use FileUtility qw(osx_check_flags_binary osx_flags_binary_string @stats_names);
+use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags @stats_names);
 use Fcntl qw(:mode);		# Get fields to parse stat bits
 use Scalar::Util qw(dualvar);
 use Carp;
@@ -242,7 +242,6 @@ sub type {
 }
 
 
-
 sub isreadable {
     my $self = shift(@_);
     my $mode = ${$self->stats}[2];
@@ -251,11 +250,13 @@ sub isreadable {
     return($perms);
 }
 
+
 sub iswriteable {
     my $self = shift(@_);
     my $mode = ${$self->stats}[2];
     
     my $perms =  ($mode & S_IWUSR) >> 7;
+    $perms = $perms && ! ($osx_flags{uchg} & $self->flags);
     return($perms);
 }
 

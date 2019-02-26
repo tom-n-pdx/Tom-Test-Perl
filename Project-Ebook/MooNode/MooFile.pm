@@ -78,13 +78,13 @@ sub update_md5 {
     my $digest;
 
     if (!$self->isreadable){
-	carp "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
+	warn "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
 	return $digest;
     }
 
     $digest = Digest::MD5::File::file_md5_hex($self->filepath);
     if (!defined $digest){
-	carp "ERROR md5 returned undefined value. filepath: ".$self->filepath;
+	warn "ERROR md5 returned undefined value. filepath: ".$self->filepath;
     } else {
 	$self->md5($digest);
     }

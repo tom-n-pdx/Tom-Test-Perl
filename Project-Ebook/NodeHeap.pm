@@ -23,6 +23,10 @@ package NodeHeap;
 use Moose;
 use namespace::autoclean;
 use Carp;
+use Exporter qw(import);
+our @EXPORT = qw(load_iter);
+
+
 #use YAML qw(LoadFile DumpFile);
 #use YAML::XS qw(LoadFile DumpFile);
 #use IO::YAML;
@@ -296,7 +300,8 @@ sub load {
     my $self = shift(@_);
 
     my %opt = @_;
-    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
+    # my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
+    my $dir     =  delete $opt{dir} // croak("Missing 'dir' param nor does Heap have name");
     my $name    =  delete $opt{name} // $db_name;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
@@ -329,6 +334,52 @@ sub load {
 
     return ($self);
 }
+
+#
+# Iterator version of load
+#
+# sub load_iter {
+#     my $self = shift(@_);
+
+#     my %opt = @_;
+#     my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
+#     my $name    =  delete $opt{name} // $db_name;
+#     die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+#     # $self = NodeHeap->new;
+#     my $filepath = $dir.'/'.$name;
+
+#     if (!-e $filepath) {
+# 	croak ("db_file does not exist");
+#     }
+
+#     open(my $fh, "<", $filepath);
+    
+
+#     return sub {
+# 	my $Node = fd_retrieve($fh);
+# 	if (ref($Node) eq 'SCALAR'){
+# 	    return(undef);
+# 	}
+# 	return($Node);
+#     }
+
+
+#     # while ( my $Node = fd_retrieve($fh)) {
+#     # last if (ref($Node) eq 'SCALAR');
+#     #	$self->insert($Node);
+#     # }
+
+
+#     # my $count = $self->count;
+#     # say "    Loaded $count records" if ($main::verbose >= 3);
+
+#     # $dbfile_mtime = (stat(_))[9];
+#     # return ($self);
+# }
+
+
 
 #
 # Save method using packed fixed record data

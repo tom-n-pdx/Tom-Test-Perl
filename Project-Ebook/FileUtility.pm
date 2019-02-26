@@ -149,7 +149,8 @@ sub dir_list_iter {
 
 	    @stats = lstat($filepath);
 	    $flags = osx_check_flags_binary($filepath);
-
+	    next if (! $inc_dot && ($flags & $osx_flags{hidden}));
+	    
 	    last;
 	};
 
