@@ -76,7 +76,7 @@ foreach my $dir (@ARGV){
 
     # Save Tree
     # $Files_tree->save(dir => $dir, name => $db_tree_name);
-    dbfile_save_md5(List => $Files_tree, dir => $dir, name => $db_tree_name);
+    dbfile_save_md5(List => $Files_tree, dir => $dir, type => "tree");
 
     # Save a copy into Datadir
     my $name = $dir;
@@ -84,7 +84,7 @@ foreach my $dir (@ARGV){
     $name =~ s!/!_!g;
     $name = "$name$db_tree_name"; 
 
-    dbfile_save_md5(List => $Files_tree, dir => $data_dir, type => 'tree', name => $name);
+    dbfile_save_md5(List => $Files_tree, dir => $data_dir, type => 'tree');
 
 }
 

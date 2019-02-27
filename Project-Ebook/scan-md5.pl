@@ -24,14 +24,9 @@ use Carp;
 # use Scalar::Util qw(blessed);
 #
 # Todo
-# * switch to heap?
-# * update tree if it exists if dir changes?
 # * combine / leverage smart scan core code
-# * Broken - assumes everything done in one loop and update_dir takes two
-#   Broken if no files in new dir?
 # * rewrite, leverage new md5 lib and how smart one is coded.
 # * Can this be a variant of smart scan?
-# * only save dupes when found more - move to md5 lib
 # * add --help option
 # * Cleanup debug prints & add a write to log?
 # !! try if move dir, name dir changes
@@ -60,7 +55,7 @@ my %size_count;
 our $total_changes = 0;
 
 
-my $db_name =  ".moo.db";
+# my $db_name =  ".moo.db";
 
 our $verbose = 1;
 our $fast_scan = 0;
@@ -233,9 +228,9 @@ sub scan_dir_md5 {
 	    # if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
 	    if ($files_change{md5} >= 1 && $files_change{md5} % $md5_save_limit == 0){
 		say "    Saved Checkpoint Datafile" if ($verbose >= 2);
-		$Files_new->save(name => $db_name);
+		# $Files_new->save(name => $db_name);
+		$Files_new->save;
 	    }
-
 
 	}
     } else {
@@ -243,15 +238,15 @@ sub scan_dir_md5 {
 	$Files_old = NodeTree->new(name => $dir);
 
 	# Trick. Create empty db_file and update Dir object, so when check later no changes to dir
-	say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
-     	`touch "$dir/$db_name"`;
+	# say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
+     	# `touch "$dir/$db_name"`;
      	$Dir_new = MooDir->new(filepath => $dir, update_dtime => 0);
 
 	# New Dir - Insert Dir object and then list dir and add files
 	$Files_new->insert($Dir_new);
 	update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
 			Tree_new => $Files_new, Tree_old => $Files_old, 
-			update_md5 => $update_md5);
+			update_md5 => $update_md5, inc_dir => 0);
 
 	# Force Update
 	$files_change{change}++;

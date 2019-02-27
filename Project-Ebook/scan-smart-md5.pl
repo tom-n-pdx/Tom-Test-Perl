@@ -125,7 +125,7 @@ if (!-e "$dir/$db_tree_name"){
     # $Tree_old    = NodeHeap->load(dir => $dir, name => $db_tree_name);
     # $Tree_old    = dbfile_load_md5(dir => $dir, name => $db_tree_name);
 
-    db_file_load_optimized_md5(dir => $dir, name => $db_tree_name, 
+    db_file_load_optimized_md5(dir => $dir, type => "tree", 
      			       Tree_new => $Tree_new, Tree_old => $Tree_old);
 }
 
@@ -222,7 +222,7 @@ say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_chang
 
 if ($files_change_total > 0){
     # $Tree_new->save(dir => $dir, name => $db_tree_name);
-    dbfile_save_md5(List => $Tree_new, dir => $dir, name => $db_tree_name);
+    dbfile_save_md5(List => $Tree_new, dir => $dir, type => "tree");
     say "Saved File";
 
     &save_dupes(dupes => \%size_count);

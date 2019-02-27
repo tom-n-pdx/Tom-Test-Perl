@@ -14,7 +14,7 @@ package ScanDirMD5;
 use Exporter qw(import);
 our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5
 	    files_change_string files_change_total files_change_clear %files_change
-	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 dbfile_load_optimized_md5);
+	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 db_file_load_optimized_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -23,6 +23,7 @@ use autodie;
 use File::Basename;                     # Manipulate file paths
 use Carp;
 use Scalar::Util qw(blessed);
+use Storable qw(store_fd fd_retrieve);
 
 use lib '.';
 use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter );
@@ -314,17 +315,35 @@ sub load_dupes {
     return;
 }
 
+#
+# Functions to deal with dbfiles
+#
+
+sub dbfile_name {
+    my %opt = @_;
+
+    my $type        = delete $opt{type} // "dir";
+
+    my $db_name = ".moo.db";
+
+    if ($type eq "tree"){
+	$db_name = ".moo.tree.db";
+    } 
+
+    return $db_name;
+}
 
 sub dbfile_exist_md5 {
     my %opt = @_;
 
+    my $dir         = delete $opt{dir}    // croak "Missing param 'Dir'";
+    
+    my $db_name     = delete $opt{name}   // dbfile_name(%opt);
+    my $type        = delete $opt{type};
 
-    my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
-    # my $type        = delete $opt{type}     // 'dir';
-    my $db_name     = delete $opt{name}     // '.moo.db';
+
     my $verbose     = delete $opt{verbose}  // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
-
 
     my $db_filepath = "$dir/$db_name";
     my $db_mtime = (stat($db_filepath))[9] // 0;
@@ -341,16 +360,15 @@ sub dbfile_load_md5 {
     my %opt = @_;
 
     my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
-    # my $type        = delete $opt{type}     // 'dir';
-    my $db_name     = delete $opt{name}     // '.moo.db';
+
+
+    my $db_name     = delete $opt{name} // dbfile_name(%opt);
+    my $type        = delete $opt{type};
+
     my $verbose     = delete $opt{verbose}  // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-
     my $db_filepath = "$dir/$db_name";
-
-    # my $List = ;
-
     my $List;
 
     # Firs try load as heap - if fail, try as tree
@@ -375,12 +393,16 @@ sub dbfile_load_md5 {
 sub dbfile_save_md5 {
     my %opt = @_;
 
-    my $List        = delete $opt{List}    // croak "Missing param 'List'";
+    my $List        = delete $opt{List}     // croak "Missing param 'List'";
     my $dir         = delete $opt{dir}      // croak "Missing param 'dir'";
+
+    my $db_name     = delete $opt{name}     // dbfile_name(%opt);
     my $type        = delete $opt{type}     // 'dir';
-    my $db_name     = delete $opt{name}     // '.moo.db';
+
     my $verbose     = delete $opt{verbose}  // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
+
+    my $filepath = "$dir/$db_name";
 
     # Save Tree
     $List->save(dir => $dir, name => $db_name);
@@ -389,7 +411,6 @@ sub dbfile_save_md5 {
 }
 
 
-# use Storable qw(store_fd fd_retrieve);
 #
 # Optimized Load File
 # * try before iterator version.
@@ -400,15 +421,15 @@ sub db_file_load_optimized_md5 {
     my %opt = @_;
 
     my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
-    # my $type        = delete $opt{type}     // 'dir';
-    my $db_name     = delete $opt{name}     // '.moo.db';
 
-    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
+    my $db_name     = delete $opt{name}     // dbfile_name(%opt);
+    my $type        = delete $opt{type};
+
+    my $Tree_new    = delete $opt{Tree_new} // croak "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old} // croak "Missing param 'Tree_old'";
 
     my $verbose     = delete $opt{verbose}  // $main::verbose;
     # die "Unknown params:", join ", ", keys %opt if %opt;
-
 
     my $db_filepath = "$dir/$db_name";
 
