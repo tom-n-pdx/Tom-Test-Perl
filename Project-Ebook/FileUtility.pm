@@ -3,6 +3,9 @@
 #
 # 
 # ToDo
+# * Dir has finder hints to make look like file - pickup
+#   /Users/tshott/Documents/Catalog_1.dcmd
+
 
 package FileUtility;
 use Exporter qw(import);
@@ -158,10 +161,6 @@ sub dir_list_iter {
 	return($name, $filepath, $flags, @stats);
     };
 }
-
-
-
-
 
 
 

@@ -308,7 +308,7 @@ sub load {
 
     $self = NodeHeap->new;
     # my $dbfile_mtime = 0;
-    my $filepath = $dir.'/'.$name;
+    my $filepath = "$dir/$name";
     # my $i = 1;
 
 
@@ -321,8 +321,6 @@ sub load {
 	    last if (ref($Node) eq 'SCALAR');
 	    $self->insert($Node);
 	}
-
-
 
 	my $count = $self->count;
 	say "    Loaded $count records" if ($main::verbose >= 3);

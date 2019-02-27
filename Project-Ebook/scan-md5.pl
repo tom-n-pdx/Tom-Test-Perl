@@ -9,6 +9,7 @@ use lib '.';
 use ScanDirMD5;
 # use open qw(:std :utf8);
 use NodeTree;
+use NodeHeap;
 use FileUtility qw(osx_check_flags_binary %osx_flags 
 		   dir_list 
 		   stats_delta_binary %stats_names);
@@ -16,6 +17,7 @@ use FileUtility qw(osx_check_flags_binary %osx_flags
 use lib 'MooNode';
 use MooDir;
 use MooFile;
+use Carp;
 
 # For Debug
 # use Data::Dumper qw(Dumper);           # Debug print
@@ -23,14 +25,17 @@ use MooFile;
 #
 # Todo
 # * switch to heap?
-# * rewrite, leverage new md5 lib and how smart one is coded.
-# * Can this be a variant of smart scan?
+# * update tree if it exists if dir changes?
+# * combine / leverage smart scan core code
 # * Broken - assumes everything done in one loop and update_dir takes two
 #   Broken if no files in new dir?
+# * rewrite, leverage new md5 lib and how smart one is coded.
+# * Can this be a variant of smart scan?
 # * only save dupes when found more - move to md5 lib
 # * add --help option
 # * Cleanup debug prints & add a write to log?
 # !! try if move dir, name dir changes
+
 
 # Notes Perf
 # 
@@ -43,6 +48,7 @@ use MooFile;
 # +hash md5        4.840u 3.690s 0:12.06 70.7%	0+0k 0+9io 0pf+0w
 #                  3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
 # + iter dir       5.032u 3.658s 0:12.22 71.0%	0+0k 0+10io 7pf+0w
+# use heap         3.925u 2.608s 0:09.51 68.5%	0+0k 0+1io 0pf+0w
 #
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
@@ -56,7 +62,6 @@ our $total_changes = 0;
 
 my $db_name =  ".moo.db";
 
-#our $debug = 0;
 our $verbose = 1;
 our $fast_scan = 0;
 our $fast_dir  = 0;
@@ -72,7 +77,6 @@ GetOptions (
     'tree'        => \$tree,
     'update'      => \$force_update,
 );
-
 our $update_md5 = ! $fast_scan;
 
 if ($verbose >= 2){
@@ -104,8 +108,7 @@ foreach my $dir (@ARGV){
 }
 
 say "Total Changes: $total_changes";
-
-&save_dupes(dupes => \%size_count);
+&save_dupes(dupes => \%size_count) if ($total_changes > 0);
 
 exit;
 
@@ -139,6 +142,7 @@ sub wanted {
 sub scan_dir_md5 {
     my %opt = @_;
     my $dir         =  delete $opt{dir} or die "Missing param to scan_dir_md5";
+
     my $update_md5  =  delete $opt{update_md5} // 0;
     my $fast_dir    =  delete $opt{fast_dir}   // 0;
     die "Unknown params:", join ", ", keys %opt if %opt;
@@ -148,18 +152,17 @@ sub scan_dir_md5 {
     say "  Checking $dir" if ($verbose >= 2);
 
     my $Dir_old;
-    my $Tree_old;
+    my $Files_old;
 
     my $Dir_new;
-    my $Tree_new = NodeTree->new(name => $dir);
+    my $Files_new = NodeHeap->new(name => $dir);
 
     #
     # Recode - can we combine two loops?
     # * simplify? one loop for dir & files  - loop through until done?
-    if (-e "$dir/$db_name"){
-	my $db_mtime = (stat(_))[9];
+    #
+    if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
 	say "\tdb_file exists " if ($verbose >= 3);
-
 	$Dir_new = MooDir->new(filepath => $dir, update_dtime => $fast_dir);	
 
 	if ($fast_dir && $db_mtime >= $Dir_new->dtime){
@@ -167,25 +170,20 @@ sub scan_dir_md5 {
 	    return( () );
 	}
 
-	$Tree_old = NodeTree->load(dir => $dir);
-	
+	$Files_old = dbfile_load_md5(dir => $dir);
+
 	# First process Dir, then Files
-	my @Dirs_old = $Tree_old->Search(dir => 1);
+	my @Dirs_old = $Files_old->Search(dir => 1);
 	if (@Dirs_old != 1){
 	    warn "db_file does not contain only one Dir record $dir";
-	    say "Dir: $dir Records: ", $Tree_old->count;
-	    
-	    if (-e "$dir/$db_name"){
-		rename("$dir/$db_name", "$dir/$db_name.old");
-	    }
-	    return;
+	    say "Dir: $dir Records: ", $Files_old->count;
+	}	    
 
-	}
 	$Dir_old = $Dirs_old[0];
 
 
 	# Delete from old list, update & insert in new list
-	$Tree_old->Delete($Dir_old);
+	$Files_old->Delete($Dir_old);
 
 	# Check for changes and mask atime changes - a dir name change will not change dir stats
 	my $changes = stats_delta_binary($Dir_new->stats, $Dir_old->stats) & ~$stats_names{atime};
@@ -199,14 +197,14 @@ sub scan_dir_md5 {
 		$files_change{rename}++;
 	    }
 	    update_dir_md5(Dir => $Dir_old, changes => $changes, stats => $Dir_new->stats, 
-			   Tree_new => $Tree_new, Tree_old => $Tree_old, 
+			   Tree_new => $Files_new, Tree_old => $Files_old, 
 			   update_md5 => $update_md5, inc_dir => 0);
 	}
-	$Tree_new->insert( $Dir_old );
+	$Files_new->insert( $Dir_old );
 
 
 	# Now scan through whats left in list
-	foreach my $Node ($Tree_old->List ){
+	foreach my $Node ($Files_old->List ){
 	    say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
 
 	    # If doesn't exist on disk - leave in old list for now
@@ -222,27 +220,27 @@ sub scan_dir_md5 {
 	    # Remove from Old List
 	    # Since some changes modify size, md5 - and they are indexed by that, we need
 	    # to remove from old List, update, then insert into new list
-	    $Tree_old->Delete($Node);
+	    $Files_old->Delete($Node);
 
 
 	    # Call even if no changes - may need md5 calculated
 	    update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, 
 			    update_md5 => $update_md5);
 
-	    $Tree_new->insert($Node);
+	    $Files_new->insert($Node);
 
 
 	    # if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
 	    if ($files_change{md5} >= 1 && $files_change{md5} % $md5_save_limit == 0){
 		say "    Saved Checkpoint Datafile" if ($verbose >= 2);
-		$Tree_new->save(name => $db_name);
+		$Files_new->save(name => $db_name);
 	    }
 
 
 	}
     } else {
 	# No db_file exists
-	$Tree_old = NodeTree->new(name => $dir);
+	$Files_old = NodeTree->new(name => $dir);
 
 	# Trick. Create empty db_file and update Dir object, so when check later no changes to dir
 	say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
@@ -250,18 +248,19 @@ sub scan_dir_md5 {
      	$Dir_new = MooDir->new(filepath => $dir, update_dtime => 0);
 
 	# New Dir - Insert Dir object and then list dir and add files
-	$Tree_new->insert($Dir_new);
+	$Files_new->insert($Dir_new);
 	update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
-			Tree_new => $Tree_new, Tree_old => $Tree_old, 
-			update_md5 => $update_md5)
+			Tree_new => $Files_new, Tree_old => $Files_old, 
+			update_md5 => $update_md5);
 
+	# Force Update
+	$files_change{change}++;
+	    
     }
-
 
     # Done scanning old files, check if any objs left - file must have been deleted, or moved to new dir
     # A renamed file we would have caught becuase the inode stayed the same and we did a update dir
-    my @Files = $Tree_old->List;
-    #$files_delete += scalar(@Files);
+    my @Files = $Files_old->List;
     $files_change{delete} += scalar(@Files);
 
     if (@Files >= 1 && $verbose >= 1){
@@ -276,7 +275,7 @@ sub scan_dir_md5 {
 
     if ($force_update or $changes > 0){ 
 	say "    Saved Datafile" if ($verbose >= 2);
-	$Tree_new->save(name => $db_name);
+	dbfile_save_md5(List => $Files_new, dir => $dir);
     }
     say "  Checking $dir" if ($verbose == 1 && $changes > 0);
     say("    Changes: $changes (", &files_change_string, ")") 

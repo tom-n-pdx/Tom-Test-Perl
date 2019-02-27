@@ -4,14 +4,17 @@
 #
 # ToDo
 # * add save / load dupes file function
+# * write db file name sub
+# * Make save db figure out tree name
+# * make save db tree save dup copy in data dir
 # * write debug pring functions, count lines, etc
-# * Move stats for tracking if files changed into this module
-# * Bug - if saved fast values, won't save full values until forced update
 
 package ScanDirMD5;
+
 use Exporter qw(import);
 our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5
-	    files_change_string files_change_total files_change_clear %files_change);
+	    files_change_string files_change_total files_change_clear %files_change
+	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 dbfile_load_optimized_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -19,28 +22,35 @@ use Digest::MD5::File;
 use autodie;
 use File::Basename;                     # Manipulate file paths
 use Carp;
+use Scalar::Util qw(blessed);
 
 use lib '.';
-use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter);
+use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter );
 
 use constant MD5_BAD => "x" x 32;
 
 
 
-our (%md5,        %mtime,        %size,        %filename);
-our (%md5_old,    %mtime_old,    %size_old,    %filename_old);
+# our (%md5,        %mtime,        %size,        %filename);
+# our (%md5_old,    %mtime_old,    %size_old,    %filename_old);
 
-my %md5_check;
-our %md5_check_HoA;
-our %size_check_HoA;
-
-
+# my %md5_check;
+# our %md5_check_HoA;
+# our %size_check_HoA;
 
 
+
+#
+# Routeen to track file changes across whole module
+# * Consider use accessor to inc, maybe add thread to print now and then
+#
 
 our %files_change = (new => 0, delete => 0, change => 0, md5 => 0, rename => 0); 
+our %files_change_total = %files_change;
 
 sub files_change_string {
+    my %opt = @_;
+
     my $string = "";
     foreach my $change (sort keys %files_change){
 	$string .= $change.": ".$files_change{$change}." ";
@@ -50,6 +60,8 @@ sub files_change_string {
 }
 
 sub files_change_total {
+    my %opt = @_;
+
     my $total = 0;
     foreach my $change (keys %files_change){
 	$total += $files_change{$change};
@@ -58,23 +70,18 @@ sub files_change_total {
 }
 
 sub files_change_clear {
+    my %opt = @_;
+
     foreach my $change (keys %files_change){
+	$files_change_total{$change} += $files_change{$change};
 	$files_change{$change} = 0;
     }
 }
 
 
-
-
-
-
-
-
-
-# Access gloabl values to track file changes
-# Access global lists of files
+# Accesses module values to track file changes
 # Make size array local to md5 module, make file change stats local to md5 module
-
+# 
 #
 # Don't need access to new and old lists
 #
@@ -91,8 +98,7 @@ sub update_file_md5 {
     die "Unknown params:", join ", ", keys %opt if %opt;
 
     if ($changes){
-	$main::files_change++;
-	$main::files_change{change}++;
+	$files_change{change}++;
 	my @changes = FileUtility::stats_delta_array($changes);
 	# say "    File: ", $Node->filename if ($verbose == 2);
 	say "    ", $Node->filename, " Delta: ", join(", ", @changes) if ($verbose >= 2);
@@ -117,7 +123,7 @@ sub update_file_md5 {
 	}
     }
 
-    # Even if no changs, need to maybe update md5
+    # Even if no changs, may need to update md5
     $main::size_count{$Node->size}++;
     my $count = $main::size_count{$Node->size};
 
@@ -125,8 +131,7 @@ sub update_file_md5 {
 	if ($update_md5 or  $count >= 2){
 	    say "      Update MD5 ", $Node->filename if ($verbose == 2);
 	    $Node->update_md5;
-	    $main::files_md5++;
-	    $main::files_change{md5}++;
+	    $files_change{md5}++;
 
 	}
     }
@@ -136,7 +141,6 @@ sub update_file_md5 {
 
 #
 # ToDo
-# * not use global values for Tree's
 # 
 sub update_dir_md5 {
     my %opt = @_;
@@ -159,31 +163,12 @@ sub update_dir_md5 {
     # ToDo
     # * convert to a iterator on dir list
 
-    # Loop through files in dir & process. Use extended version of dir_list so have stats & flags
-    # my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
-    # 								   inc_file => 1,inc_dir => $inc_dir, 
-    # 								   use_ref => 1);
-
-    #
-    # Create director iterator
-    # Each use of the iterator will return one dir record
-    # 
     my $dir_iter = dir_list_iter(dir => $Dir->filepath, inc_dir => $inc_dir);
-    
-    # my ($filepaths_r, $names_r, $stats_AoA_r, $flags_r) = dir_list(dir => $Dir->filepath, 
-    #								   inc_file => 1,inc_dir => $inc_dir, 
-    #								   use_ref => 1);
-    while ( 1 ) {
+
+    while (1) {
 	my ($name, $filepath, $flags, @stats) = $dir_iter->();
 	last unless $name;
 	
-	# foreach ( 0..$#{$filepaths_r} ){
-	# 	foreach ( 0..$#{$filepaths_r} ){
-	# 	my $filepath  = @{$filepaths_r}[$_];
-	# 	my $name      = @{$names_r}[$_];
-	# 	my @stats     = @{ ${$stats_AoA_r}[$_] };
-	# 	my $flags     = @{$flags_r}[$_];
-
 	my $hash      = $stats[0].'-'.$stats[1];
 
 	# If is already in new list, we know is unchanged, we can skip checking
@@ -200,8 +185,7 @@ sub update_dir_md5 {
 	    if ($old_node->filepath ne $filepath) {
 		say "          Dir Update- Update filepath: ", $old_node->filename, " to ", $name;
 		$old_node->filepath($filepath);
-		$main::files_rename++;
-		$main::files_change{rename}++;
+		$files_change{rename}++;
 
 		# If we renaamed a dir, force a change to stats to force dir update scan on next loop
 		if ($old_node->isdir){
@@ -212,16 +196,11 @@ sub update_dir_md5 {
 	    next;
 	}
 	
-
 	# New file or dir - create new and process
 	#
-	$main::files_new++;
-	$main::files_change{new}++;
+	$files_change{new}++;
 	my $Node;
 	
-	# Force change in stats ti make sure next loop it's detected as changed and processed
-
-
 	if (-f $filepath){
 	    # New File
 	    # Create new, update, place on new list
@@ -261,14 +240,215 @@ sub update_dir_md5 {
 }
 
 
+#
+# Save dupes file
+# Save a list of all sizes with more then one file already
+# 
+sub save_dupes {
+    my %opt = @_;
+    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
+    my $name      =  delete $opt{fast_scan} // "dupes.db";
+    my $verbose   =  delete $opt{verbose} // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+    
+    my @dupes = keys %{$dupes_ref};
+    @dupes = grep ( {$$dupes_ref{$_} >= 2} @dupes);
+
+    if ($verbose >= 3){
+	say " ";
+	say "Saving Dupe Sizes:";
+	foreach my $size (sort {$a <=> $b} @dupes){
+	    # next if $$dupes_ref{$size} <= 1;
+	    say "\t$size $$dupes_ref{$size}"
+	}
+    }
+
+    # save
+    open(my $fd, ">", "$dir/$name");
+    foreach my $size (sort {$a <=> $b} @dupes){
+	print $fd "$size\n";
+    }
+    close($fd);
+
+    return;
+}
+
+#
+# Load dupes file
+# If dupe file exists, loads and sets up hash 
+# 
+sub load_dupes {
+    my %opt = @_;
+    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
+    my $name      =  delete $opt{fast_scan} // "dupes.db";
+    my $verbose   =  delete $opt{verbose} // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+    
+    if (!-e "$dir/$name"){
+	warn "Dupes data file not found: $dir/$name";
+	return;
+    }
+
+    open(my $fd, "<", "$dir/$name");
+    while(my $value = <$fd>){
+	chomp($value);
+	$value = $value + 0;
+	$$dupes_ref{$value} = 100;
+    }
+    close($fd);
+
+
+    say " ";
+    say "Loaded Dupe Values: ", scalar(keys %{$dupes_ref}) if ($verbose >= 2);
+
+    if ($verbose >= 3){
+	say "Values:";
+	foreach my $size (keys %{$dupes_ref} ){
+	    say "\t$size $$dupes_ref{$size}";
+	}
+    }
+
+
+    return;
+}
+
+
+sub dbfile_exist_md5 {
+    my %opt = @_;
+
+
+    my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
+    # my $type        = delete $opt{type}     // 'dir';
+    my $db_name     = delete $opt{name}     // '.moo.db';
+    my $verbose     = delete $opt{verbose}  // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    my $db_filepath = "$dir/$db_name";
+    my $db_mtime = (stat($db_filepath))[9] // 0;
+
+
+    if (! $db_mtime){
+	warn "DB File does not exist: $db_filepath" if ($verbose >= 3);
+    }
+
+    return($db_mtime);
+}
+
+sub dbfile_load_md5 {
+    my %opt = @_;
+
+    my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
+    # my $type        = delete $opt{type}     // 'dir';
+    my $db_name     = delete $opt{name}     // '.moo.db';
+    my $verbose     = delete $opt{verbose}  // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    my $db_filepath = "$dir/$db_name";
+
+    # my $List = ;
+
+    my $List;
+
+    # Firs try load as heap - if fail, try as tree
+    eval { $List = NodeHeap->load(dir => $dir, name => $db_name)};
+
+    if ($@) {
+	warn "    INFO: Error on load dbfile as heap - trying older tree";
+	eval { $List = NodeTree->load(dir => $dir, name => $db_name)};
+
+	# Force Update
+	$files_change{change}++;
+
+	die "Error on load dbfile retrieve failed. $@ File: $db_filepath" if ($@);
+    }
+
+    # my $type = blessed($List);
+    # say "Loaded db type: $type";
+
+    return($List);
+}
+
+sub dbfile_save_md5 {
+    my %opt = @_;
+
+    my $List        = delete $opt{List}    // croak "Missing param 'List'";
+    my $dir         = delete $opt{dir}      // croak "Missing param 'dir'";
+    my $type        = delete $opt{type}     // 'dir';
+    my $db_name     = delete $opt{name}     // '.moo.db';
+    my $verbose     = delete $opt{verbose}  // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+    # Save Tree
+    $List->save(dir => $dir, name => $db_name);
+
+    return;
+}
+
+
+# use Storable qw(store_fd fd_retrieve);
+#
+# Optimized Load File
+# * try before iterator version.
+# * raw read from file. check starts. if file exists and stats unchanged put in new list, otherwise old. 
+# * Breaks OOP - repeats internal NodeHeap code
+#
+sub db_file_load_optimized_md5 {
+    my %opt = @_;
+
+    my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
+    # my $type        = delete $opt{type}     // 'dir';
+    my $db_name     = delete $opt{name}     // '.moo.db';
+
+    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
+
+    my $verbose     = delete $opt{verbose}  // $main::verbose;
+    # die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    my $db_filepath = "$dir/$db_name";
+
+
+    # Open datafile (must be heap) and handle a node at a time
+    open(my $fh, "<", $db_filepath);
+    while ( my $Node = fd_retrieve($fh)) {
+	last if (ref($Node) eq 'SCALAR');
+
+	my @stats = lstat($Node->filepath);
+
+	# If Files exists, and the stats are the same as before, put into new list - otherwise old
+	if (@stats){
+	    my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats) & ~$stats_names{atime};
+    
+	    # If no changs, insert into new list
+	    if (! $changes ){
+		$Tree_new->insert($Node);
+		next;
+	    }
+	}
+	
+	$Tree_old->insert($Node);
+    }
+    close($fh);
+    
+    return;
+}
+
+
+
+
 # Fist check a full filname, then check for dir with list names?
 
-sub md5_db_exist {
-    my $filepath;
-    my $mtime = 0;
+# sub md5_db_exist {
+#     my $filepath;
+#     my $mtime = 0;
 
-    return $mtime;
-}
+#     return $mtime;
+# }
 
 
 # sub check_dir_dupe {
@@ -423,142 +603,65 @@ my $fhtree;
 
 
 
-sub report_dupes {
+# sub report_dupes {
 
-    # sort by $nd5 then $filename
-    sub sort1 {
-	if ( $md5{$a} eq $md5{$b} ){
-	    return( $filename{$a} cmp $filename{$b} );
-	}
-	$md5{$a} cmp $md5{$b};
-    }
+#     # sort by $nd5 then $filename
+#     sub sort1 {
+# 	if ( $md5{$a} eq $md5{$b} ){
+# 	    return( $filename{$a} cmp $filename{$b} );
+# 	}
+# 	$md5{$a} cmp $md5{$b};
+#     }
     
-    say " ";
-    say "Dupe Sizes";
+#     say " ";
+#     say "Dupe Sizes";
 
-    foreach my $size (sort( {$b <=> $a} keys %size_check_HoA)) {
-	my @inodes = @{$size_check_HoA{$size}};
-	next if (@inodes <= 1);
+#     foreach my $size (sort( {$b <=> $a} keys %size_check_HoA)) {
+# 	my @inodes = @{$size_check_HoA{$size}};
+# 	next if (@inodes <= 1);
 
-	say "Size: $size Dupes: ", scalar(@inodes);    
+# 	say "Size: $size Dupes: ", scalar(@inodes);    
     
-	my $md5_old = "";
-	my $path_old = "";
+# 	my $md5_old = "";
+# 	my $path_old = "";
     
-	@inodes = sort( sort1  @inodes);    
-	foreach my $inode (@inodes) {
-	    my $filepath = $filename{$inode};
-	    my $md5      = $md5{$inode};
+# 	@inodes = sort( sort1  @inodes);    
+# 	foreach my $inode (@inodes) {
+# 	    my $filepath = $filename{$inode};
+# 	    my $md5      = $md5{$inode};
 
-	    my $dupe = scalar( @{$md5_check_HoA{$md5}});
-	    next if ($md5 ne MD5_BAD && $dupe <= 1);
+# #
+# 	    my $dupe = scalar( @{$md5_check_HoA{$md5}});
+# 	    next if ($md5 ne MD5_BAD && $dupe <= 1);
 
-	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);
+# 	    my ($name, $path, $suffix) = File::Basename::fileparse($filepath);
 
-	    if ($md5 eq $md5_old){
-		print " " x 32;
-	    } else {
-		print $md5;
-	    }
-	    $md5_old = $md5;
+# 	    if ($md5 eq $md5_old){
+# 		print " " x 32;
+# 	    } else {
+# 		print $md5;
+# 	    }
+# 	    $md5_old = $md5;
 	    
 
-	    if ($path ne $path_old) {
-		say " $path";
-		say " " x 32, "    $name";
-	    } else {
-		say "    $name";
-	    }
-	    $path_old = $path;	    
-	}
+# 	    if ($path ne $path_old) {
+# 		say " $path";
+# 		say " " x 32, "    $name";
+# 	    } else {
+# 		say "    $name";
+# 	    }
+# 	    $path_old = $path;	    
+# 	}
 	
-	say " ";
-    }
+# 	say " ";
+#     }
     
-}
+# }
 #
 #
 # Functions to save & load a dupes file
 #
 #
-
-#
-# Save dupes file
-# Save a list of all sizes with more then one file already
-# 
-sub save_dupes {
-    my %opt = @_;
-    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
-    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
-    my $name      =  delete $opt{fast_scan} // "dupes.db";
-    my $verbose   =  delete $opt{verbose} // $main::verbose;
-    die "Unknown params:", join ", ", keys %opt if %opt;
-    
-    my @dupes = keys %{$dupes_ref};
-    @dupes = grep ( {$$dupes_ref{$_} >= 2} @dupes);
-
-    if ($verbose >= 3){
-	say " ";
-	say "Saving Dupe Szes:";
-	foreach my $size (sort {$a <=> $b} @dupes){
-	    # next if $$dupes_ref{$size} <= 1;
-	    say "\t$size $$dupes_ref{$size}"
-	}
-    }
-
-    # save to temp file and rotate files
-    open(my $fd, ">", "$dir/$name");
-    foreach my $size (sort {$a <=> $b} @dupes){
-	print $fd "$size\n";
-    }
-    close($fd);
-
-    # rename("$dir/$name",      "$dir/$name.old") if -e "$dir/$name";
-    # rename("$dir/$name.tmp",  "$dir/$name");
-
-    return;
-}
-
-#
-# Load dupes file
-# If dupe file exists, loads and sets up hash 
-# 
-sub load_dupes {
-    my %opt = @_;
-    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
-    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
-    my $name      =  delete $opt{fast_scan} // "dupes.db";
-    my $verbose   =  delete $opt{verbose} // $main::verbose;
-    die "Unknown params:", join ", ", keys %opt if %opt;
-    
-    if (!-e "$dir/$name"){
-	warn "Dupes data file not found: $dir/$name";
-	return;
-    }
-
-    open(my $fd, "<", "$dir/$name");
-    while(my $value = <$fd>){
-	chomp($value);
-	$value = $value + 0;
-	$$dupes_ref{$value} = 100;
-    }
-    close($fd);
-
-
-    say " ";
-    say "Loaded Dupe Values: ", scalar(keys %{$dupes_ref}) if ($verbose >= 2);
-
-    if ($verbose >= 3){
-	say "Values:";
-	foreach my $size (keys %{$dupes_ref} ){
-	    say "\t$size $$dupes_ref{$size}";
-	}
-    }
-
-
-    return;
-}
-
 
 
 #
