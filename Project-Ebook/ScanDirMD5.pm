@@ -3,9 +3,7 @@
 #
 #
 # ToDo
-# * add save / load dupes file function
-# * write db file name sub
-# * Make save db figure out tree name
+# * figure out device change on files on Mac_Book
 # * make save db tree save dup copy in data dir
 # * write debug pring functions, count lines, etc
 
@@ -27,6 +25,8 @@ use Storable qw(store_fd fd_retrieve);
 
 use lib '.';
 use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter );
+use NodeTree;
+use NodeHeap;
 
 use constant MD5_BAD => "x" x 32;
 
@@ -48,6 +48,9 @@ use constant MD5_BAD => "x" x 32;
 
 our %files_change = (new => 0, delete => 0, change => 0, md5 => 0, rename => 0); 
 our %files_change_total = %files_change;
+
+
+my $data_dir = "/Users/tshott/Downloads/Lists_Disks/.moo";
 
 sub files_change_string {
     my %opt = @_;
@@ -79,6 +82,16 @@ sub files_change_clear {
     }
 }
 
+sub files_change_update {
+    my ($type, $file) = shift(@_);
+
+    foreach my $change (keys %files_change){
+	$files_change_total{$change} += $files_change{$change};
+	$files_change{$change} = 0;
+    }
+}
+
+
 
 # Accesses module values to track file changes
 # Make size array local to md5 module, make file change stats local to md5 module
@@ -109,9 +122,10 @@ sub update_file_md5 {
 
 	# Decide what needs to be changed based upon what stats changed
 	# if dev or blksize changes - is error - should not happen
-	if ($changes & ( $stats_names{dev} | $stats_names{ino} | $stats_names{blksize} )) {
-	    croak("Stats Delta Illegal stats change: ", join(", ", @changes));
-	}
+	# if ($changes & ( $stats_names{dev} | $stats_names{ino} | $stats_names{blksize} )) {
+	 if ($changes & ( $stats_names{ino} | $stats_names{blksize} )) {
+	     croak("Stats Delta Illegal stats change: ", join(", ", @changes));
+	 }
 
 	# If ctime - maybe flags changed
 	if ($changes & ( $stats_names{ctime})) {
@@ -146,23 +160,68 @@ sub update_file_md5 {
 sub update_dir_md5 {
     my %opt = @_;
 
-    my $Dir         = delete $opt{Dir}        // croak "Missing param 'Dir'";
-    my $changes     = delete $opt{changes}    // croak "Missing param 'changes'";
-    my $stats_new_r = delete $opt{stats}      // croak "Missing parm 'stats'";
+    my $Dir         = delete $opt{Dir}          // croak "Missing param 'Dir'";
+    my $changes     = delete $opt{changes}      // croak "Missing param 'changes'";
+    my $stats_new_r = delete $opt{stats}        // croak "Missing parm 'stats'";
     my @stats_new = @{$stats_new_r};
 
-    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
+    my $Tree_new    = delete $opt{Tree_new}     // croak "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old}     // croak "Missing param 'Tree_old'";
 
-    my $update_md5  = delete $opt{update_md5} // 1;
-    my $inc_dir     = delete $opt{inc_dir}    // 0;
-    my $verbose     = delete $opt{verbose}    // $main::verbose;
+    my $update_md5  = delete $opt{update_md5}   // 1;
+    my $inc_dir     = delete $opt{inc_dir}      // 0;
+    my $load_dbfile = delete $opt{load_dbfile}  // 0;
+    my $verbose     = delete $opt{verbose}      // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
     say "       Dir Update: ", $Dir->filepath if ($verbose >= 2);
 
-    # ToDo
-    # * convert to a iterator on dir list
+
+
+    my $dir = $Dir->filepath;
+
+    #
+    # Check if exisiting dbfile or dbtree file
+    #
+    # if ($load_dbfile && dbfile_exist_md5(dir => $dir, type => 'tree')){
+    # 	say "    Checking dir - found exiisting dbfile tree: ", $dir;
+
+    # 	my $Tree_exist = dbfile_load_md5(dir => $dir, type => "tree");
+    # 	say "      Loaded ", $Tree_exist->count, " recordsfrom existing dbfile tree";
+
+	
+    # 	# Need to merge tree - only exist new nodes - delete old file?
+    # 	my $count = 0;
+    # 	foreach my $Node ($Tree_exist->List){
+    # 	    if (! $Tree_new->Exist(hash => $Node->hash) && ! $Tree_old->Exist(hash => $Node->hash)){
+    # 		$Tree_old->insert($Node);
+    # 		$count++;
+    # 	    }
+    # 	}
+    # 	say "      Inserted ", $count, " new records from existing dbfile tree";
+
+    # 	return;
+    # }
+
+    # if ($load_dbfile && dbfile_exist_md5(dir => $dir, type => 'dir')){
+    # 	say "    Checking dir - found exiisting dbfile dir: ", $dir;
+
+    # 	my $Tree_exist = dbfile_load_md5(dir => $dir, type => "dir");
+    # 	say "      Loaded ", $Tree_exist->count, " records from existing dbfile dir";
+
+	
+    # 	# Need to merge tree - only exist new nodes - delete old file?
+    # 	my $count = 0;
+    # 	foreach my $Node ($Tree_exist->List){
+    # 	    if (! $Tree_new->Exist(hash => $Node->hash) && ! $Tree_old->Exist(hash => $Node->hash)){
+    # 		$Tree_old->insert($Node);
+    # 		$count++;
+    # 	    }
+    # 	}
+    # 	say "      Inserted ", $count, " new records from existing dbfile tree";
+
+    # 	return;
+    # }
 
     my $dir_iter = dir_list_iter(dir => $Dir->filepath, inc_dir => $inc_dir);
 
@@ -170,8 +229,8 @@ sub update_dir_md5 {
 	my ($name, $filepath, $flags, @stats) = $dir_iter->();
 	last unless $name;
 	
-	my $hash      = $stats[0].'-'.$stats[1];
-
+	#my $hash      = $stats[0].'-'.$stats[1];
+	my $hash      = $stats[1];
 	# If is already in new list, we know is unchanged, we can skip checking
 	if ($Tree_new->Exist(hash => $hash)) {
 	    next;
@@ -248,22 +307,18 @@ sub update_dir_md5 {
 sub save_dupes {
     my %opt = @_;
     my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
-    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
-    my $name      =  delete $opt{fast_scan} // "dupes.db";
+    my $dir       =  delete $opt{dir}   // $data_dir;
+    my $name      =  delete $opt{name}  // "dupes.db";
+
     my $verbose   =  delete $opt{verbose} // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
     
+
     my @dupes = keys %{$dupes_ref};
     @dupes = grep ( {$$dupes_ref{$_} >= 2} @dupes);
 
-    if ($verbose >= 3){
-	say " ";
-	say "Saving Dupe Sizes:";
-	foreach my $size (sort {$a <=> $b} @dupes){
-	    # next if $$dupes_ref{$size} <= 1;
-	    say "\t$size $$dupes_ref{$size}"
-	}
-    }
+    say "    Dupes Saving ", scalar(@dupes), " records" if ($verbose >= 1);
+
 
     # save
     open(my $fd, ">", "$dir/$name");
@@ -282,8 +337,10 @@ sub save_dupes {
 sub load_dupes {
     my %opt = @_;
     my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
-    my $dir       =  delete $opt{dir} // "/Users/tshott/Downloads/Lists_Disks";
-    my $name      =  delete $opt{fast_scan} // "dupes.db";
+
+    my $dir       =  delete $opt{dir} // $data_dir;
+    my $name      =  delete $opt{name} // "dupes.db";
+
     my $verbose   =  delete $opt{verbose} // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
     
@@ -386,9 +443,16 @@ sub dbfile_load_md5 {
 
     # my $type = blessed($List);
     # say "Loaded db type: $type";
+    my $count = $List->count;
+
+    warn "Loaded only 0 records Dir: $dir" if (! $count);
 
     return($List);
 }
+
+
+use File::Path::Expand;
+
 
 sub dbfile_save_md5 {
     my %opt = @_;
@@ -404,8 +468,19 @@ sub dbfile_save_md5 {
 
     my $filepath = "$dir/$db_name";
 
-    # Save Tree
+    # Save File
     $List->save(dir => $dir, name => $db_name);
+
+    return if ($type ne "tree");
+
+    # Save duplicate to data dir
+    my $name = expand_filename($dir);
+    $name =~ s!/!-!g;
+    $name = "$name$db_name";
+
+    # expand to full path
+    say "Data dir datafile name: $name";
+    $List->save(dir => $data_dir, name => $name);
 
     return;
 }
@@ -434,6 +509,8 @@ sub db_file_load_optimized_md5 {
     my $db_filepath = "$dir/$db_name";
 
 
+    # Add check if this is older tree file, not heap file
+    #
     # Open datafile (must be heap) and handle a node at a time
     open(my $fh, "<", $db_filepath);
     while ( my $Node = fd_retrieve($fh)) {
@@ -443,7 +520,7 @@ sub db_file_load_optimized_md5 {
 
 	# If Files exists, and the stats are the same as before, put into new list - otherwise old
 	if (@stats){
-	    my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats) & ~$stats_names{atime};
+	    my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats) & ~$stats_names{atime} & ~$stats_names{dev};
     
 	    # If no changs, insert into new list
 	    if (! $changes ){

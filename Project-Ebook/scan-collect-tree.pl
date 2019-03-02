@@ -33,7 +33,8 @@ use open qw(:std :utf8);
 #   + paramater to increase depth?
 #   + Can disable warning https://www.perlmonks.org/?node_id=324564
 #   + Try makng code refs into hash valus
-
+# * check tree date, skip records oldr then tree db?
+# * have assed update - load old tree, update it?
 # Perf - download tree - started using heap
 #               3.875u 2.796s 0:09.51 70.0%	0+0k 0+1io 0pf+0w
 
@@ -54,8 +55,8 @@ if ($debug or $verbose >= 2){
     say " ";
 }
 
-my $db_name =  ".moo.db";
-my $db_tree_name =  ".moo.tree.db";
+# my $db_name =  ".moo.db";
+# my $db_tree_name =  ".moo.tree.db";
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks";
 
 my $Files_tree;
@@ -82,10 +83,9 @@ foreach my $dir (@ARGV){
     my $name = $dir;
     $name =~ s!^/!!;
     $name =~ s!/!_!g;
-    $name = "$name$db_tree_name"; 
+    $name = "$name.tree.db"; 
 
     dbfile_save_md5(List => $Files_tree, dir => $data_dir, type => 'tree');
-
 }
 
 
@@ -121,6 +121,7 @@ sub dir_collect_md5 {
 	say "\tdb_file exists " if ($verbose >= 3);
 	my $Dir = MooDir->new(filepath => $dir, update_dtime => 1);	
 
+	# Do rescan
 	if ($db_mtime < $Dir->dtime){
 	    warn "May need re-scan, db_file older then dir changes Dir: $dir";
 	}

@@ -213,7 +213,7 @@ sub Exist {
     my %opt = @_;
     my $Node;
 
-    my $search_hash = delete $opt{hash}    // 0;
+    my $search_hash = delete $opt{hash}    // croak "Required parm 'hash' mising";
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
@@ -284,6 +284,7 @@ sub save {
     # Hack - bug when readng, need to write end of file mark
     my $sentinel = "EOF"; 
     store_fd(\$sentinel, $fh);
+    # print $fh, "\n";
 
     close($fh);
 

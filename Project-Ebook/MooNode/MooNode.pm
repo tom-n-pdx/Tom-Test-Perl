@@ -207,7 +207,8 @@ sub inode {
 sub hash {
     my $self = shift(@_);
     
-    my $hash = $self->dev.'-'.$self->inode;
+    # my $hash = $self->dev.'-'.$self->inode;
+    my $hash = $self->inode;
     return($hash);
 }
 

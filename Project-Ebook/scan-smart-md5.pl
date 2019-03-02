@@ -3,12 +3,16 @@
 
 # ToDo
 # * Checkpoint save - make work as alarm
-# !! Fatal errors: /Volumes/MyBook/Video_4/_Inbox
+# * alarm - user feedback
+# * need option no md5 at all
 # * Consider list iterator so don't create huge list of old nodes to process
+#   Optimized load somewhat better
 # * Make load file work as iterator
 #   Thread read / write in obj?
-#   If no heap for tree - look for dbfile on each new dir scan?
-#
+#   * Call a tree find - summerize - collct - files
+# !! Fatal errors: /Volumes/MyBook/Video_4/_Inbox
+
+
 use Modern::Perl; 		         # Implies strict, warnings
 # use autodie;
 # use File::Find;
@@ -64,16 +68,18 @@ my $files_change_total = 0;
 my $files_change = 0;
 
 my $checkpoint_last = time;
-my $checkpoint_limit = 60 * 10; # 10 mins (60 seconds X 10 mins)
+my $checkpoint_limit = 60 * 5; # 5 mins (60 seconds X 10 mins)
 # $checkpoint_limit = 60 * 2; # 
 
 
 our $verbose = 1;
 our $fast_scan = 0;
+our $fast_dir  = 0;
 
 GetOptions (
     'verbose=i'   => \$verbose,
     'fast'        => \$fast_scan,
+    'quick'       => \$fast_dir,
 );
 
 my $update_md5 = ! $fast_scan;
@@ -83,21 +89,23 @@ if ($verbose >= 2){
 
     say "\tVerbose: ", $verbose;
     say "\tFast: ", $fast_scan;
+    say "\tQuick: ", $fast_dir;
 
     say " ";
 }
 
 
 # For each tree, load old data & walk nodes
-my $db_name      =  ".moo.db";
-my $db_tree_name =  ".moo.tree.db";
+# my $db_name      =  ".moo.db";
+# my $db_tree_name =  ".moo.tree.db";
 
 # my $queue_load = Thread::Queue->new();
 
-# Load Dupes
-my %size_count;
-&load_dupes(dupes => \%size_count);
+my $collect_dbfile = 0;
 
+# Load Dupes
+our %size_count;
+&load_dupes(dupes => \%size_count);
 
 my $dir = shift(@ARGV);
 
@@ -107,7 +115,9 @@ say " ";
 my $Tree_old    = NodeHeap->new;
 my $Tree_new    = NodeHeap->new;
 
-if (!-e "$dir/$db_tree_name"){
+# if (!-e "$dir/$db_tree_name"){
+my $db_mtime = dbfile_exist_md5(dir => $dir, type => 'tree');
+if (! $db_mtime){
     warn "No exiisting tree datafile: $dir";
 
     # Create new Dir node with forced change
@@ -117,16 +127,21 @@ if (!-e "$dir/$db_tree_name"){
 			stats => [ @stats ], update_stats => 0, 
 			update_dtime => 0);
 
+    # Flag to look for older dbfile in dirs
+    $collect_dbfile = 1;
+
+
     # Insert into old tree
     $Tree_old = NodeHeap->new;
     $Tree_old->insert($Dir);
 
 } else {
-    # $Tree_old    = NodeHeap->load(dir => $dir, name => $db_tree_name);
-    # $Tree_old    = dbfile_load_md5(dir => $dir, name => $db_tree_name);
-
-    db_file_load_optimized_md5(dir => $dir, type => "tree", 
-     			       Tree_new => $Tree_new, Tree_old => $Tree_old);
+    if ($fast_dir) {
+	db_file_load_optimized_md5(dir => $dir, type => "tree", 
+				   Tree_new => $Tree_new, Tree_old => $Tree_old);
+    } else { 
+	$Tree_old = dbfile_load_md5(dir => $dir, type => "tree");
+    }
 }
 
 
@@ -136,8 +151,9 @@ say " ";
 
 #
 # Keep processing list until nothing changes or the old queue is empty
+# ToDo
+# * skip loop if all new already
 #
-
 
 # While - if nothing in old queue then done 
 my $i = 0;
@@ -163,30 +179,29 @@ do {
 	}
 
 	# Check changes and mask off atime changes
-	my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new) & ~$stats_names{atime};
-    
+	my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new) & ~$stats_names{atime} & ~$stats_names{dev};
+	# say "Changes: $changes" if ($changes);
+
+
 	# This is likely a file that has been renamed and a new file has the old name
 	if ($changes & $stats_names{ino}) {
 	    say "    Skipping Node - inode changed. Old Name", $Node->filename if ($verbose >= 2);
 	    next;
 	}
     
+	# Update file also updates dir basic info
 	# remove from old list, update values, insert into new list
 	$Tree_old->Delete($Node);
+	&update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5);
+	$Tree_new->insert($Node);
 
-	# need to always call update file since may need to do md5 calc even if no changes
-	# Update file also updates dir stats
-	# Need to check for dupes and touch file to force update
 	if ($changes) {
-	    &update_file_md5(Node => $Node,   changes => $changes, stats => \@stats_new, update_md5 => $update_md5);
-
 	    if ($Node->isdir) {
 		&update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5,
 				Tree_old => $Tree_old, Tree_new => $Tree_new, 
-				inc_dir => 1);
+				inc_dir => 1,  load_dbfile => $collect_dbfile);
 	    }
 	}
-	$Tree_new->insert($Node);
     }
     
     $files_change = &files_change_total;
@@ -206,7 +221,7 @@ do {
 } while ($files_change > 0 && $Tree_old->count > 0 && $i < 20);
 
 #
-# Check what was Deleted
+# Check what file / dirs were deleted
 # If still in old list, but we are done making changes, must have been deleted
 #
 my @Nodes = $Tree_old->List;
@@ -218,15 +233,15 @@ if(@Nodes > 0){
     say " ";
     say "Files Deleted: ", join(", ", map($_->filename, @Nodes));
 }
-say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_change_total > 0 && $verbose >= 1));
 
+
+say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_change_total > 0 && $verbose >= 1));
 if ($files_change_total > 0){
-    # $Tree_new->save(dir => $dir, name => $db_tree_name);
     dbfile_save_md5(List => $Tree_new, dir => $dir, type => "tree");
     say "Saved File";
 
-    &save_dupes(dupes => \%size_count);
 }
+&save_dupes(dupes => \%size_count);
 
 exit;
 
@@ -239,7 +254,10 @@ sub save_checkpoint {
     $Tree_save->insert($Tree_old->List);
     $Tree_save->insert($Tree_new->List);
 
-    $Tree_save->save(dir => $dir, name => $db_tree_name);
+    # ToDo
+    # * use save routeen 
+    # $Tree_save->save(dir => $dir,type => "tree");
+    dbfile_save_md5(List => $Tree_save, dir => $dir, type => "tree");
 
     say("Check Point Save: (", &files_change_string, ")") if ($verbose >= 1);
 }

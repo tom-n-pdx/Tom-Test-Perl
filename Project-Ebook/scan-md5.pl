@@ -44,18 +44,16 @@ use Carp;
 #                  3.951u 2.802s 0:09.76 69.1%	0+0k 0+50io 0pf+0w
 # + iter dir       5.032u 3.658s 0:12.22 71.0%	0+0k 0+10io 7pf+0w
 # use heap         3.925u 2.608s 0:09.51 68.5%	0+0k 0+1io 0pf+0w
+#                  3.864u 3.204s 0:09.34 75.5%	0+0k 0+0io 0pf+0w  optimized incremental load
 #
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
 #                  0.483u 0.050s 0:00.54 98.1%	0+0k 0+1io 29pf+0w
 
-my %size_count;
- 
 our $total_changes = 0;
 
 
-# my $db_name =  ".moo.db";
 
 our $verbose = 1;
 our $fast_scan = 0;
@@ -87,7 +85,11 @@ if ($verbose >= 2){
 }
 
 # If existing file of dupe sizes, load
+my %size_count;
 &load_dupes(dupes => \%size_count);
+
+my $Files_old = NodeHeap->new;
+my $Files_new = NodeHeap->new;
 
 #
 # Scan each arg as dir, using dir or tree scan.
@@ -97,8 +99,9 @@ foreach my $dir (@ARGV){
 	say "Scanning Tree: $dir" if ($verbose >= 0); 
 	find(\&wanted,  $dir);
     } else {
-	say "Scanning Dir: $dir" if ($verbose >=0 ); 
-	scan_dir_md5(dir=>$dir, update_md5=> $update_md5, fast_dir => $fast_dir);
+ 	say "Scanning Dir: $dir" if ($verbose >= 0 ); 
+	scan_dir_md5(dir=>$dir, update_md5=> $update_md5, fast_dir => $fast_dir, 
+		   Tree_old => $Files_old, Tree_new => $Files_new);
     }
 }
 
@@ -124,10 +127,12 @@ sub wanted {
     if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
 	return;
     }
-    scan_dir_md5(dir=>$dir, update_md5=>$update_md5, fast_dir=>$fast_dir);
+    scan_dir_md5(dir => $dir, update_md5 => $update_md5, fast_dir => $fast_dir, 
+		 Tree_old => $Files_old, Tree_new => $Files_new);
 
     return;
 }
+
 
 #
 #
@@ -136,131 +141,86 @@ sub wanted {
 #
 sub scan_dir_md5 {
     my %opt = @_;
-    my $dir         =  delete $opt{dir} or die "Missing param to scan_dir_md5";
+    my $dir         = delete $opt{dir} or die "Missing param to scan_dir_md5";
 
-    my $update_md5  =  delete $opt{update_md5} // 0;
-    my $fast_dir    =  delete $opt{fast_dir}   // 0;
+    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
+    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
+
+    my $update_md5  = delete $opt{update_md5} // 0;
+    my $fast_dir    = delete $opt{fast_dir}   // 0;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
     &files_change_clear;
-
     say "  Checking $dir" if ($verbose >= 2);
 
     my $Dir_old;
-    my $Files_old;
+    my $Files_old = NodeHeap->new(name => $dir);
 
-    my $Dir_new;
+    my $Dir_new   = MooDir->new(filepath => $dir, update_dtime => 1);
     my $Files_new = NodeHeap->new(name => $dir);
 
-    #
-    # Recode - can we combine two loops?
-    # * simplify? one loop for dir & files  - loop through until done?
-    #
+
+    # Check if existing db file or not
     if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
 	say "\tdb_file exists " if ($verbose >= 3);
-	$Dir_new = MooDir->new(filepath => $dir, update_dtime => $fast_dir);	
 
 	if ($fast_dir && $db_mtime >= $Dir_new->dtime){
 	    say "\tQuick Dir scan enabled, No Files chaged, Skip scan" if ($verbose >= 2);
-	    return( () );
+	    return;
 	}
 
 	$Files_old = dbfile_load_md5(dir => $dir);
 
-	# First process Dir, then Files
-	my @Dirs_old = $Files_old->Search(dir => 1);
-	if (@Dirs_old != 1){
-	    warn "db_file does not contain only one Dir record $dir";
-	    say "Dir: $dir Records: ", $Files_old->count;
-	}	    
-
-	$Dir_old = $Dirs_old[0];
-
-
-	# Delete from old list, update & insert in new list
-	$Files_old->Delete($Dir_old);
-
-	# Check for changes and mask atime changes - a dir name change will not change dir stats
-	my $changes = stats_delta_binary($Dir_new->stats, $Dir_old->stats) & ~$stats_names{atime};
-	
-	if ($changes or $Dir_old->filepath ne $dir){
-	    update_file_md5(Node => $Dir_old, changes => $changes, stats => $Dir_new->stats, update_md5 => $update_md5);
-
-	    if ($Dir_old->filepath ne $Dir_new->filepath){
-		$Dir_old->filepath($Dir_new->filepath);
-		say "    Dir rename";
-		$files_change{rename}++;
-	    }
-	    update_dir_md5(Dir => $Dir_old, changes => $changes, stats => $Dir_new->stats, 
-			   Tree_new => $Files_new, Tree_old => $Files_old, 
-			   update_md5 => $update_md5, inc_dir => 0);
-	}
-	$Files_new->insert( $Dir_old );
-
-
-	# Now scan through whats left in list
-	foreach my $Node ($Files_old->List ){
-	    say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
-
-	    # If doesn't exist on disk - leave in old list for now
-	    my @stats_new = lstat($Node->filepath); # If no stats, file does not exist
-	    next if (! @stats_new);
-
-	    # Check changes and mask off atime changes
-	    my $changes = stats_delta_binary($Node->stats,  \@stats_new) & ~$stats_names{atime};
-
-	    # If the inode has changed, this is not the same file
-	    next if ($changes & $stats_names{ino});
-
-	    # Remove from Old List
-	    # Since some changes modify size, md5 - and they are indexed by that, we need
-	    # to remove from old List, update, then insert into new list
-	    $Files_old->Delete($Node);
-
-
-	    # Call even if no changes - may need md5 calculated
-	    update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, 
-			    update_md5 => $update_md5);
-
-	    $Files_new->insert($Node);
-
-
-	    # if ($files_md5 >= 1 && ($files_md5 % $md5_save_limit == 0)){
-	    if ($files_change{md5} >= 1 && $files_change{md5} % $md5_save_limit == 0){
-		say "    Saved Checkpoint Datafile" if ($verbose >= 2);
-		# $Files_new->save(name => $db_name);
-		$Files_new->save;
-	    }
-
-	}
     } else {
-	# No db_file exists
-	$Files_old = NodeTree->new(name => $dir);
+	# No Db file - Insert Dir object into old list. force change to dir stats to make sure is processed
+	my @stats = @{$Dir_new->stats};
+	$stats[9] = 0;
+	$Dir_new->stats( [@stats] );
 
-	# Trick. Create empty db_file and update Dir object, so when check later no changes to dir
-	# say "\tdb_file does not exists - create empty one." if ($verbose >= 2);
-     	# `touch "$dir/$db_name"`;
-     	$Dir_new = MooDir->new(filepath => $dir, update_dtime => 0);
+	$Files_old->insert($Dir_new);
+    }	    
 
-	# New Dir - Insert Dir object and then list dir and add files
-	$Files_new->insert($Dir_new);
-	update_dir_md5(Dir => $Dir_new, stats => $Dir_new->stats, changes => 0,
-			Tree_new => $Files_new, Tree_old => $Files_old, 
-			update_md5 => $update_md5, inc_dir => 0);
+    # 
+    # Now, old list loaded - loop through files in dir
+    #
+    foreach my $Node ($Files_old->List ){
+	say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
 
-	# Force Update
-	$files_change{change}++;
-	    
+	# If doesn't exist on disk - leave in old list for now
+	my @stats = lstat($Node->filepath); # If no stats, file does not exist
+	next if (! @stats);
+
+	# Check changes and mask off atime changes
+	my $changes = stats_delta_binary($Node->stats,  \@stats) & ~$stats_names{atime} & ~$stats_names{dev};
+
+	# If the inode has changed, this is not the same file
+	next if ($changes & $stats_names{ino});
+
+	# Remove from Old List
+	# Since some changes modify size, md5 - and they are indexed by that, we need
+	# to remove from old List, update, then insert into new list
+
+	$Files_old->Delete($Node);
+	update_file_md5(Node => $Node, changes => $changes, stats => \@stats, update_md5 => $update_md5);
+	$Files_new->insert($Node);
+
+	# If changes & dir - need to do more work
+	if ($changes && $Node->isdir) {
+	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats, update_md5 => $update_md5,
+ 				Tree_old => $Files_old, Tree_new => $Files_new, 
+				inc_dir => 0);
+	}	
     }
+    
 
     # Done scanning old files, check if any objs left - file must have been deleted, or moved to new dir
     # A renamed file we would have caught becuase the inode stayed the same and we did a update dir
-    my @Files = $Files_old->List;
-    $files_change{delete} += scalar(@Files);
+    my @Files_deleted = $Files_old->List;
+    $files_change{delete} += scalar(@Files_deleted);
 
-    if (@Files >= 1 && $verbose >= 1){
+    if (@Files_deleted >= 1 && $verbose >= 1){
     	say "    Deleted files:";
-    	foreach my $File (@Files){
+    	foreach my $File (@Files_deleted){
     	    say "      ", $File->filename;
     	}
     }
