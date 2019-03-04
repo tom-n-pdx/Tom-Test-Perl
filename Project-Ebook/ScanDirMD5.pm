@@ -165,8 +165,8 @@ sub update_dir_md5 {
     my $stats_new_r = delete $opt{stats}        // croak "Missing parm 'stats'";
     my @stats_new = @{$stats_new_r};
 
-    my $Tree_new    = delete $opt{Tree_new}     // croak "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old}     // croak "Missing param 'Tree_old'";
+    my $Files_new    = delete $opt{Files_new}     // croak "Missing param 'Files_new'";
+    my $Files_old    = delete $opt{Files_old}     // croak "Missing param 'Files_old'";
 
     my $update_md5  = delete $opt{update_md5}   // 1;
     my $inc_dir     = delete $opt{inc_dir}      // 0;
@@ -186,15 +186,15 @@ sub update_dir_md5 {
     # if ($load_dbfile && dbfile_exist_md5(dir => $dir, type => 'tree')){
     # 	say "    Checking dir - found exiisting dbfile tree: ", $dir;
 
-    # 	my $Tree_exist = dbfile_load_md5(dir => $dir, type => "tree");
-    # 	say "      Loaded ", $Tree_exist->count, " recordsfrom existing dbfile tree";
+    # 	my $Files_exist = dbfile_load_md5(dir => $dir, type => "tree");
+    # 	say "      Loaded ", $Files_exist->count, " recordsfrom existing dbfile tree";
 
 	
     # 	# Need to merge tree - only exist new nodes - delete old file?
     # 	my $count = 0;
-    # 	foreach my $Node ($Tree_exist->List){
-    # 	    if (! $Tree_new->Exist(hash => $Node->hash) && ! $Tree_old->Exist(hash => $Node->hash)){
-    # 		$Tree_old->insert($Node);
+    # 	foreach my $Node ($Files_exist->List){
+    # 	    if (! $Files_new->Exist(hash => $Node->hash) && ! $Files_old->Exist(hash => $Node->hash)){
+    # 		$Files_old->insert($Node);
     # 		$count++;
     # 	    }
     # 	}
@@ -206,15 +206,15 @@ sub update_dir_md5 {
     # if ($load_dbfile && dbfile_exist_md5(dir => $dir, type => 'dir')){
     # 	say "    Checking dir - found exiisting dbfile dir: ", $dir;
 
-    # 	my $Tree_exist = dbfile_load_md5(dir => $dir, type => "dir");
-    # 	say "      Loaded ", $Tree_exist->count, " records from existing dbfile dir";
+    # 	my $Files_exist = dbfile_load_md5(dir => $dir, type => "dir");
+    # 	say "      Loaded ", $Files_exist->count, " records from existing dbfile dir";
 
 	
     # 	# Need to merge tree - only exist new nodes - delete old file?
     # 	my $count = 0;
-    # 	foreach my $Node ($Tree_exist->List){
-    # 	    if (! $Tree_new->Exist(hash => $Node->hash) && ! $Tree_old->Exist(hash => $Node->hash)){
-    # 		$Tree_old->insert($Node);
+    # 	foreach my $Node ($Files_exist->List){
+    # 	    if (! $Files_new->Exist(hash => $Node->hash) && ! $Files_old->Exist(hash => $Node->hash)){
+    # 		$Files_old->insert($Node);
     # 		$count++;
     # 	    }
     # 	}
@@ -229,10 +229,13 @@ sub update_dir_md5 {
 	my ($name, $filepath, $flags, @stats) = $dir_iter->();
 	last unless $name;
 	
-	#my $hash      = $stats[0].'-'.$stats[1];
-	my $hash      = $stats[1];
+	#
+	# Dangerious - does not depend on obj hash method
+	#
+	my $hash      = $stats[0].'-'.$stats[1];
+	# my $hash      = $stats[1];
 	# If is already in new list, we know is unchanged, we can skip checking
-	if ($Tree_new->Exist(hash => $hash)) {
+	if ($Files_new->Exist(hash => $hash)) {
 	    next;
 	}
 
@@ -240,7 +243,7 @@ sub update_dir_md5 {
 	# * If we rename a dir - need to force a change to ensure dir update on next loop
 	# * Can't move to new - we are inside loop with list already generated
 	#
-	my $old_node = $Tree_old->Exist(hash => $hash);
+	my $old_node = $Files_old->Exist(hash => $hash);
 	if (defined $old_node) {
 	    if ($old_node->filepath ne $filepath) {
 		say "          Dir Update- Update filepath: ", $old_node->filename, " to ", $name;
@@ -273,7 +276,7 @@ sub update_dir_md5 {
 
 	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
 
-	    $Tree_new->insert($Node);
+	    $Files_new->insert($Node);
 	} else {
 	    # New Dir
 	    # Create new, update, then place on new list
@@ -290,9 +293,9 @@ sub update_dir_md5 {
 	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
 
 	    # update_dir_md5(Dir => $Node, changes => 0x00, stats =>  \@stats, update_md5 => $update_md5,
-	    #		   Tree_old => $Tree_old, Tree_new => $Tree_new, inc_dir => $inc_dir);
+	    #		   Files_old => $Files_old, Files_new => $Files_new, inc_dir => $inc_dir);
 
-	    $Tree_old->insert($Node);	    
+	    $Files_old->insert($Node);	    
 	}	    
 
     } # End Loop thru Dir listing
@@ -384,7 +387,7 @@ sub dbfile_name {
     my $db_name = ".moo.db";
 
     if ($type eq "tree"){
-	$db_name = ".moo.tree.db";
+	$db_name = ".tree.moo.db";
     } 
 
     return $db_name;
@@ -413,13 +416,12 @@ sub dbfile_exist_md5 {
     return($db_mtime);
 }
 
-sub dbfile_load_md5 {
+sub dbfile_load_md5  {
     my %opt = @_;
 
     my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
 
-
-    my $db_name     = delete $opt{name} // dbfile_name(%opt);
+    my $db_name     = delete $opt{name}     // dbfile_name(%opt);
     my $type        = delete $opt{type};
 
     my $verbose     = delete $opt{verbose}  // $main::verbose;
@@ -445,7 +447,7 @@ sub dbfile_load_md5 {
     # say "Loaded db type: $type";
     my $count = $List->count;
 
-    warn "Loaded only 0 records Dir: $dir" if (! $count);
+    warn "Loaded only 0 records Dir: $dir/$db_name" if (! $count);
 
     return($List);
 }
@@ -500,8 +502,8 @@ sub db_file_load_optimized_md5 {
     my $db_name     = delete $opt{name}     // dbfile_name(%opt);
     my $type        = delete $opt{type};
 
-    my $Tree_new    = delete $opt{Tree_new} // croak "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old} // croak "Missing param 'Tree_old'";
+    my $Files_new    = delete $opt{Files_new} // croak "Missing param 'Files_new'";
+    my $Files_old    = delete $opt{Files_old} // croak "Missing param 'Files_old'";
 
     my $verbose     = delete $opt{verbose}  // $main::verbose;
     # die "Unknown params:", join ", ", keys %opt if %opt;
@@ -524,12 +526,12 @@ sub db_file_load_optimized_md5 {
     
 	    # If no changs, insert into new list
 	    if (! $changes ){
-		$Tree_new->insert($Node);
+		$Files_new->insert($Node);
 		next;
 	    }
 	}
 	
-	$Tree_old->insert($Node);
+	$Files_old->insert($Node);
     }
     close($fh);
     

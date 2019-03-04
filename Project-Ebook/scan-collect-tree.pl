@@ -25,7 +25,8 @@ use MooFile;
 use Data::Dumper qw(Dumper);           # Debug print
 use Scalar::Util qw(blessed);
 # use utf8;
-use open qw(:std :utf8);
+# use open qw(:std :utf8);
+use FileUtility qw(osx_flags_binary_string osx_check_flags_binary %osx_flags);
 
 #
 # Todo
@@ -93,19 +94,32 @@ exit;
 
 
 sub wanted {
-    return unless (-d $File::Find::name);   # if not dir, skip
-    return unless (-r $File::Find::name);   # if not unreadable skip
-    return unless (-w $File::Find::name);   # if not unreadable skip
-
     my $dir = $File::Find::name;
-    return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
+
+    return unless (-d $dir);   # if not dir, skip
+    return unless (-r _);      # if not unreadable skip
+    return unless (-w _);      # if not unreadable skip
 
 
-    # Skip dirs that are hidden or protected
-    my $flags = FileUtility::osx_check_flags_binary($dir);
-    if ($flags & ($FileUtility::osx_flags{"hidden"} | $FileUtility::osx_flags{uchg}) ){
+
+    # Prune Dot Dirs
+    if ($dir =~ m!/\.!){  
+	$File::Find::prune = 1;
+	say "Prune . Dir: $dir ($_)" if ($verbose >= 2);
 	return;
     }
+
+
+    # Prunce Dirs that are hidden or protected
+    my $flags = FileUtility::osx_check_flags_binary($dir);
+
+    if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
+	$File::Find::prune = 1;
+	my $str   = osx_flags_binary_string($flags);
+	say "Prune flagged $str Dir: $dir" if ($verbose >= 2);
+	return;
+    }
+
 
     dir_collect_md5($dir);
 
@@ -115,6 +129,8 @@ sub wanted {
 sub dir_collect_md5 {
      my $dir  = shift(@_);
      my $Files_dir;
+
+     # say "Collect $dir";
 
      # Check if exiisting datafile
      if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){

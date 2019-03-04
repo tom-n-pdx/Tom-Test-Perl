@@ -4,6 +4,8 @@
 # Base file subclase for files.
 # 
 # ToDo
+# * Make version of heap
+# * make sav work via db fle ave
 # * write pack restore
 # * debug packed store maybe a character off in dirs
 # * Make exist work on objects
@@ -23,7 +25,6 @@ package NodeTree;
 use Moose;
 use namespace::autoclean;
 use Carp;
-# use feature "switch";
 
 # use Data::Dumper qw(Dumper);           # Debug print
 
@@ -154,21 +155,17 @@ sub Search {
     my $search_dir  = delete $opt{dir}     // 0;
     my $search_file = delete $opt{file}    // 0;
     my $search_path = delete $opt{path}    // 0;
+    my $search_size = delete $opt{size}    // 0;
+
     my $verbose     = delete $opt{verbose} // $main::verbose;
     croak "Unknown params:", join ", ", keys %opt if %opt;
 
-    if ( ! $search_dir && ! $search_file && ! $search_path){
+    if ( ! $search_dir && ! $search_file && ! $search_path && ! $search_size){
 	croak ("Illegal set of search options: Dir: $search_dir File: $search_file Path: $search_path");
     }
 
     my @Nodes;
 
-    # Search By Hash
-    # if ( $search_hash->isa('MooNode') ){
-    # 	$search_hash = $search_hash->hash;
-    # }
-    # say ("DEBUG: Searching by hash value = ", $search_hash) if ($verbose >= 3 && $search_hash);
-    
     # Search By Dir
     say ("DEBUG: Searching by dir value = ", $search_dir) if ($verbose >= 3 && $search_dir);
     
@@ -178,15 +175,23 @@ sub Search {
     # Search By Path
     say ("DEBUG: Searching by path value = ", $search_path) if ($verbose >= 3 && $search_path);
 
+    # Search By Size
+    if ($search_size){
+	say ("DEBUG: Searching by size value = ", $search_size) if ($verbose >= 3);
+
+	@Nodes = HoA_list($self->size_HoA, $search_size);
+	return (@Nodes);
+    }
     my @keys = sort keys %{$self->nodes};
     foreach my $key (@keys){
 	my $Node =  ${$self->nodes}{$key};
 	# next if ($search_hash && $Node->hash ne $search_hash);
 	next if ($search_path && $Node->path ne $search_path);
+	next if ($search_size && $Node->size ne $search_size);
 
 	# Bug
-	next if ($search_dir  && ! $Node->isdir);
-	next if ($search_file && ! $Node->isfile);
+	# next if ($search_dir  && ! $Node->isdir);
+	# next if ($search_file && ! $Node->isfile);
 	
 	push(@Nodes, $Node);
     }
@@ -245,16 +250,48 @@ sub summerize {
 # * Consider deleting HoA before save, rebuild after load
 # * Consider using text based save
 
-use Storable;
+use Storable qw(store_fd fd_retrieve);
 #
 # Save Obj to file. Use Perl Storable format 
 # Do not use rotate file since it will change mtime for the dir.
 #
 sub save {
     my $self = shift(@_);
+    my %opt = @_;   
+
+    my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
+    my $name    =  delete $opt{name} // $db_name;
+    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+    
+    my $filepath = $dir.'/'.$name;
+
+    my @List = $self->List;
+    say("DEBUG: Store Heap Records: ", scalar(@List), " Name: ", $filepath) if ($main::verbose >= 3);
+
+
+    open(my $fh, ">:utf8", $filepath);
+
+    foreach my $Obj (@List){
+	store_fd($Obj, $fh);
+    }
+    # Hack - bug when readng, need to write end of file mark
+    my $sentinel = "EOF"; 
+    store_fd(\$sentinel, $fh);
+
+    close($fh);
+
+    my $count = $self->count;
+    say "    Saved $count records" if ($main::verbose >= 3);
+
+}
+
+#
+# Old Save as one big obj
+#
+sub save_old {
+    my $self = shift(@_);
  
     my %opt = @_;   
-    # my $dir   =  delete $opt{dir} or croak("Missing 'dir' param nor does Tree have name");
     my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Tree have name");
     my $name    =  delete $opt{name} // $db_name;
     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
@@ -442,7 +479,46 @@ sub load_packed {
 # ToDo
 # * If named when enter method  -should have same name after load?
 #
+
+
 sub load {
+    my $self = shift(@_);
+
+    my %opt = @_;
+    my $dir     =  delete $opt{dir} // croak("Missing 'dir' param nor does Heap have name");
+    my $name    =  delete $opt{name} // $db_name;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    $self = NodeTree->new;
+    # my $dbfile_mtime = 0;
+    my $filepath = "$dir/$name";
+    # my $i = 1;
+
+
+    if (-e $filepath) {
+	# say "DEBUG: Open $filepath";
+
+	open(my $fh, "<", $filepath);
+	# # binmode $fh;
+	while ( my $Node = fd_retrieve($fh)) {
+	    last if (ref($Node) eq 'SCALAR');
+	    $self->insert($Node);
+	}
+
+	my $count = $self->count;
+	say "    Loaded $count records" if ($main::verbose >= 3);
+
+	# $dbfile_mtime = (stat(_))[9];
+    } else {
+	$self = NodeTree->new();
+    }
+
+    return ($self);
+}
+
+
+sub load_old {
     my $self = shift(@_);
 
     my %opt = @_;

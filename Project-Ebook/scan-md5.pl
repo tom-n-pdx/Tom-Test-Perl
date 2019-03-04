@@ -7,10 +7,9 @@ use Getopt::Long;
 
 use lib '.';
 use ScanDirMD5;
-# use open qw(:std :utf8);
 use NodeTree;
 use NodeHeap;
-use FileUtility qw(osx_check_flags_binary %osx_flags 
+use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags 
 		   dir_list 
 		   stats_delta_binary %stats_names);
 
@@ -24,13 +23,10 @@ use Carp;
 # use Scalar::Util qw(blessed);
 #
 # Todo
-# * combine / leverage smart scan core code
-# * rewrite, leverage new md5 lib and how smart one is coded.
-# * Can this be a variant of smart scan?
 # * add --help option
 # * Cleanup debug prints & add a write to log?
 # !! try if move dir, name dir changes
-
+# * Move size dupe data to module
 
 # Notes Perf
 # 
@@ -52,7 +48,6 @@ use Carp;
 #                  0.483u 0.050s 0:00.54 98.1%	0+0k 0+1io 29pf+0w
 
 our $total_changes = 0;
-
 
 
 our $verbose = 1;
@@ -100,8 +95,12 @@ foreach my $dir (@ARGV){
 	find(\&wanted,  $dir);
     } else {
  	say "Scanning Dir: $dir" if ($verbose >= 0 ); 
+
+	$Files_old = NodeHeap->new(name => $dir);
+	$Files_new = NodeHeap->new(name => $dir);
+
 	scan_dir_md5(dir=>$dir, update_md5=> $update_md5, fast_dir => $fast_dir, 
-		   Tree_old => $Files_old, Tree_new => $Files_new);
+		   Files_old => $Files_old, Files_new => $Files_new);
     }
 }
 
@@ -115,20 +114,34 @@ exit;
 # File find wanted sub. For any file that is a readable and writeable dir 
 # 
 sub wanted {
-    return unless (-d $File::Find::name);   # if not dir, skip
-    return unless (-r _);   # if not readable skip
-    return unless (-w _);   # if not writeable skip
+    my $dir = $File::Find::name;
 
-    my  $dir = $File::Find::name;
-    return if ($dir =~ m!/\.!);             # Hack, can't get prune to work - do not check dot file dirs
+    return unless (-d $dir);   # if not dir, skip
+    return unless (-r _);      # if not unreadable skip
+    return unless (-w _);      # if not unreadable skip
+
+
+    if ($dir =~ m!/\.!){  
+	$File::Find::prune = 1;
+	say "Prune . Dir: $dir ($_)" if ($verbose >= 2);
+	return;
+    }
 
     # Skip dirs with hidden or write protected flags set
     my $flags = osx_check_flags_binary($dir);
+
     if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
+	$File::Find::prune = 1;
+	my $str   = osx_flags_binary_string($flags);
+	say "Prune flagged $str Dir: $dir" if ($verbose >= 2);
 	return;
     }
+
+    $Files_old = NodeHeap->new(name => $dir);
+    $Files_new = NodeHeap->new(name => $dir);
+
     scan_dir_md5(dir => $dir, update_md5 => $update_md5, fast_dir => $fast_dir, 
-		 Tree_old => $Files_old, Tree_new => $Files_new);
+		 Files_old => $Files_old, Files_new => $Files_new);
 
     return;
 }
@@ -143,8 +156,8 @@ sub scan_dir_md5 {
     my %opt = @_;
     my $dir         = delete $opt{dir} or die "Missing param to scan_dir_md5";
 
-    my $Tree_new    = delete $opt{Tree_new}   // croak "Missing param 'Tree_new'";
-    my $Tree_old    = delete $opt{Tree_old}   // croak "Missing param 'Tree_old'";
+    my $Files_new    = delete $opt{Files_new}   // croak "Missing param 'Files_new'";
+    my $Files_old    = delete $opt{Files_old}   // croak "Missing param 'Files_old'";
 
     my $update_md5  = delete $opt{update_md5} // 0;
     my $fast_dir    = delete $opt{fast_dir}   // 0;
@@ -154,11 +167,7 @@ sub scan_dir_md5 {
     say "  Checking $dir" if ($verbose >= 2);
 
     my $Dir_old;
-    my $Files_old = NodeHeap->new(name => $dir);
-
     my $Dir_new   = MooDir->new(filepath => $dir, update_dtime => 1);
-    my $Files_new = NodeHeap->new(name => $dir);
-
 
     # Check if existing db file or not
     if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
@@ -207,7 +216,7 @@ sub scan_dir_md5 {
 	# If changes & dir - need to do more work
 	if ($changes && $Node->isdir) {
 	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats, update_md5 => $update_md5,
- 				Tree_old => $Files_old, Tree_new => $Files_new, 
+ 				Files_old => $Files_old, Files_new => $Files_new, 
 				inc_dir => 0);
 	}	
     }

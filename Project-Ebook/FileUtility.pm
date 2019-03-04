@@ -10,7 +10,7 @@
 package FileUtility;
 use Exporter qw(import);
 our @EXPORT_OK = qw(dir_list dir_list_iter rename_unique 
-		    osx_check_flags_binary osx_flags_binary_string %osx_flags 
+		    osx_check_flags_binary osx_flags_binary_string osx_flags_binary_string %osx_flags 
 		    stats_delta_binary %stats_names @stats_names);
 
 
@@ -77,17 +77,17 @@ sub dir_list {
 
     if (!-e $dir){
 	carp("Dir $dir does not exist");
-	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filenames);
     }
 
     if (!-r _){
 	carp("Dir $dir is not readble");
-	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filenames);
     }
     
     if (! -d _) {
 	carp("Dir $dir is not a dir");
-	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
+	return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filenames);
     }
 
     
@@ -128,7 +128,7 @@ sub dir_list {
 	}
     }
 
-    return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filepaths);
+    return ($use_ref ? (\@filepaths, \@filenames, \@stats_AoA, \@flags_AoA) : @filenames);
 }
 
 

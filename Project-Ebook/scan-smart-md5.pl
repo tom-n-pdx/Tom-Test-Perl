@@ -112,8 +112,8 @@ my $dir = shift(@ARGV);
 say "Updating Tree: $dir";
 say " ";
 
-my $Tree_old    = NodeHeap->new;
-my $Tree_new    = NodeHeap->new;
+my $Files_old    = NodeHeap->new;
+my $Files_new    = NodeHeap->new;
 
 # if (!-e "$dir/$db_tree_name"){
 my $db_mtime = dbfile_exist_md5(dir => $dir, type => 'tree');
@@ -132,21 +132,21 @@ if (! $db_mtime){
 
 
     # Insert into old tree
-    $Tree_old = NodeHeap->new;
-    $Tree_old->insert($Dir);
+    $Files_old = NodeHeap->new;
+    $Files_old->insert($Dir);
 
 } else {
     if ($fast_dir) {
 	db_file_load_optimized_md5(dir => $dir, type => "tree", 
-				   Tree_new => $Tree_new, Tree_old => $Tree_old);
+				   Files_new => $Files_new, Files_old => $Files_old);
     } else { 
-	$Tree_old = dbfile_load_md5(dir => $dir, type => "tree");
+	$Files_old = dbfile_load_md5(dir => $dir, type => "tree");
     }
 }
 
 
 say " ";
-say "Start Old: ", $Tree_old->count, " New: ", $Tree_new->count;
+say "Start Old: ", $Files_old->count, " New: ", $Files_new->count;
 say " ";
 
 #
@@ -163,7 +163,7 @@ do {
     $i++;
 
     # ToDo
-    foreach my $Node ( $Tree_old->List ) {
+    foreach my $Node ( $Files_old->List ) {
 
 	# Checkpoint save
 	if (time > $checkpoint_last + $checkpoint_limit){
@@ -190,15 +190,15 @@ do {
 	}
     
 	# Update file also updates dir basic info
-	# remove from old list, update values, insert into new list
-	$Tree_old->Delete($Node);
+	# remove from old list, update values, insert into new list. Call update evn if new changes since migh need to calc MD5
+	$Files_old->Delete($Node);
 	&update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5);
-	$Tree_new->insert($Node);
+	$Files_new->insert($Node);
 
 	if ($changes) {
 	    if ($Node->isdir) {
 		&update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5,
-				Tree_old => $Tree_old, Tree_new => $Tree_new, 
+				Files_old => $Files_old, Files_new => $Files_new, 
 				inc_dir => 1,  load_dbfile => $collect_dbfile);
 	    }
 	}
@@ -206,7 +206,7 @@ do {
     
     $files_change = &files_change_total;
     $files_change_total += $files_change;
-    say "After Pass # $i - $files_change Old: ", $Tree_old->count, " New: ", $Tree_new->count;
+    say "After Pass # $i - $files_change Old: ", $Files_old->count, " New: ", $Files_new->count;
 
 
     say("    Changes: $files_change (", &files_change_string, ")") 
@@ -218,13 +218,13 @@ do {
     # If we didn't make any changes this loop - there is nothing left to do even if files left in old list
     # And keep a limit count in case we blow up. Limit is also how deep in tree we can go
 
-} while ($files_change > 0 && $Tree_old->count > 0 && $i < 20);
+} while ($files_change > 0 && $Files_old->count > 0 && $i < 20);
 
 #
 # Check what file / dirs were deleted
 # If still in old list, but we are done making changes, must have been deleted
 #
-my @Nodes = $Tree_old->List;
+my @Nodes = $Files_old->List;
 
 if(@Nodes > 0){
     $files_change_total   += scalar(@Nodes);
@@ -237,7 +237,7 @@ if(@Nodes > 0){
 
 say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_change_total > 0 && $verbose >= 1));
 if ($files_change_total > 0){
-    dbfile_save_md5(List => $Tree_new, dir => $dir, type => "tree");
+    dbfile_save_md5(List => $Files_new, dir => $dir, type => "tree");
     say "Saved File";
 
 }
@@ -249,15 +249,15 @@ exit;
 # Todo checkpoint save need to combine old and new lists and save
 #
 sub save_checkpoint {
-    my $Tree_save = NodeHeap->new();
+    my $Files_save = NodeHeap->new();
     
-    $Tree_save->insert($Tree_old->List);
-    $Tree_save->insert($Tree_new->List);
+    $Files_save->insert($Files_old->List);
+    $Files_save->insert($Files_new->List);
 
     # ToDo
     # * use save routeen 
-    # $Tree_save->save(dir => $dir,type => "tree");
-    dbfile_save_md5(List => $Tree_save, dir => $dir, type => "tree");
+    # $Files_save->save(dir => $dir,type => "tree");
+    dbfile_save_md5(List => $Files_save, dir => $dir, type => "tree");
 
     say("Check Point Save: (", &files_change_string, ")") if ($verbose >= 1);
 }

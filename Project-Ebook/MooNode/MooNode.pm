@@ -4,6 +4,7 @@
 # Base file subclase for files.
 # 
 # ToDo
+# * add a volume method
 # * add buld args check? No extra args. Use std args check across code
 # * string version mtime, dtime  -use duelvalue
 # * read labels / set
@@ -207,8 +208,8 @@ sub inode {
 sub hash {
     my $self = shift(@_);
     
-    # my $hash = $self->dev.'-'.$self->inode;
-    my $hash = $self->inode;
+    my $hash = $self->dev.'-'.$self->inode;
+    # my $hash = $self->inode;
     return($hash);
 }
 

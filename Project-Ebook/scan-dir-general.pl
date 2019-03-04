@@ -64,9 +64,11 @@ say "Fix: $fix";
 foreach my $dir_check (@ARGV){
     say "Scanning: $dir_check";
 
-    my @filepaths = dir_list(dir => $dir_check);
+    #my @filepaths = dir_list(dir => $dir_check);
+    my @names = dir_list(dir => $dir_check);
 
-    foreach my $filepath (@filepaths){
+    foreach (@names){
+	my $filepath = "$dir_check/$_";
 	my ($name, $path, $ext) = File::Basename::fileparse($filepath, qr/\.[^.]*/);
 
 	my($status, $message, $ext_new) = check_file_ext($ext);
@@ -78,6 +80,7 @@ foreach my $dir_check (@ARGV){
 	my $name_new;
 	($status, $message, $name_new) = check_file_name2($name);
 	if ($status > 0 && $status >= $status_print){
+	    say " ";
 	    say "$name";
 	    print "Fixed name Problem ($status) $message";
 	}
