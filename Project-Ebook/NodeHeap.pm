@@ -66,7 +66,9 @@ has 'nodes',
     
 #
 # Insert Node Obj(s) into tree
-# 
+# ToDo
+# * Make work with a heap object
+#
 sub insert {
     my $self = shift( @_);
     my @Objs = @_;
@@ -83,6 +85,59 @@ sub insert {
     }
     return;
 }
+
+
+#
+# Merge node object into tree
+# If new item does not exisit, just insert.
+# If does exist, insert if time newer.
+#
+sub merge {
+    my $self = shift( @_);
+    my @Objs = @_;
+    my $verbose = $main::verbose;
+    my %obj_count = (new => 0, update => 0, old => 0);
+    
+    foreach my $Obj_new (@Objs){
+	croak "not a node object" if (! $Obj_new->isa('MooNode'));
+
+	my $hash = $Obj_new->hash;
+	my $Obj_old = $self->Exist(hash => $hash);
+
+	if (! defined $Obj_old){
+	    # If not in existing tree, just insert
+	    ${$self->nodes}{$hash} = $Obj_new;
+	    $obj_count{new}++;
+
+	} else {
+	    # If exisist & newer, insert
+	    if ($Obj_new->time_max > $Obj_old->time_max){
+		${$self->nodes}{$hash} = $Obj_new;
+		$obj_count{update}++;
+	    } else {
+		$obj_count{old}++;
+	    }
+	}
+    }
+
+    
+    if ($verbose >= 2 || ( ($obj_count{new} + $obj_count{update}) >= 1 && $verbose >= 1)){
+	print "\tMerged Data: ";
+
+	foreach (sort keys %obj_count){
+	    print "$_: $obj_count{$_} ";
+	}
+	print "\n";
+    }
+
+    return;
+}
+
+
+
+
+
+
 
 # Uses inodes - fix to use objects
 sub Delete {
@@ -201,7 +256,7 @@ sub Exist {
 
 #
 # Return one Obj
-#
+# OK if delete just returned item, otherwise screws up iterator
 sub Each {
     my $self   = shift(@_);
     my %opt = @_;
@@ -213,8 +268,6 @@ sub Each {
     
     return($Node);
 }
-
-
 
 
 

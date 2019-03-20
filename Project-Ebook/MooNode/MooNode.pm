@@ -35,6 +35,7 @@ use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags
 	           volume_name);
 use Fcntl qw(:mode);		# Get fields to parse stat bits
 use Scalar::Util qw(dualvar);
+use List::Util qw(min max);	        # Import min()
 use Carp;
 use constant MD5_BAD => "x" x 32;
 
@@ -226,6 +227,14 @@ sub hash {
     my $hash = $self->volume_id.'-'.$self->inode;
 
     return($hash);
+}
+
+sub time_max {
+    my $self = shift(@_);
+
+    my $time = max( @{$self->stats}[8, 9, 10]);
+
+    return($time);
 }
 
 

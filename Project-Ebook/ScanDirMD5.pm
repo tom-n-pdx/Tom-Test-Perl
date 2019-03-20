@@ -12,7 +12,7 @@ package ScanDirMD5;
 use Exporter qw(import);
 our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5
 	    files_change_string files_change_total_string files_change_total files_change_clear %files_change
-	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 db_file_load_optimized_md5 dbfile_clear_md5);
+	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 db_file_load_optimized_md5 dbfile_clear_md5 ignore_dir_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -235,7 +235,12 @@ sub update_dir_md5 {
     while (1) {
 	my ($name, $filepath, $flags, @stats) = $dir_iter->();
 	last unless $name;
-	
+
+	# If SKIP, Hidden, etc - ignore file
+	if ( ignore_dir_md5($filepath) ){
+	    say "\tPrune File $filepath" if ($verbose >= 3);
+	    next;
+	}
 	#
 	# Dangerious - does not depend on obj hash method
 	#
@@ -789,6 +794,29 @@ my $fhtree;
 #     }
     
 # }
+
+
+#
+# Configuration Subs
+#
+
+
+sub ignore_dir_md5 {
+    my $filepath = shift(@_);
+    my $ignore   = 0;
+    
+    $ignore = 1 if ($filepath =~ m!SKIP!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/perl5!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/bin/JDownloader 2.0!);
+    $ignore = 1 if ($filepath =~ m!_gsdata_!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/Library!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/Pictures!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/Music!);
+    $ignore = 1 if ($filepath =~ m!/Users/tshott/Workspace!);
+    return $ignore;
+}
+
+
 #
 #
 # Functions to save & load a dupes file

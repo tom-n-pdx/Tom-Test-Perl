@@ -22,7 +22,16 @@ use MooDir;
 use MooFile;
 use MooNode;
 
-our $verbose = 2;
+
+#
+# Performace
+# 
+# 23.687u 1.543s 0:25.95 97.1%	0+0k 0+322io 1pf+0w     start, dumb load, dumb insert
+# 19.159u 1.398s 0:21.03 97.6%	0+0k 0+693io 0pf+0w     merge both all and ebook
+# 20.939u 1.233s 0:22.65 97.8%	0+0k 0+490io 0pf+0w     use each to process nodes
+
+
+our $verbose = 0;
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks/.moo";
 
 my %size;
@@ -31,8 +40,8 @@ my %size;
 # my $Files = NodeHeap->new;
 # my $Ebook = NodeHeap->new;
 
-my $Files = NodeTree->new;
-my $Ebook = NodeTree->new;
+my $Files = NodeHeap->new;
+my $Ebook = NodeHeap->new;
 
 my @names = dir_list(dir => $data_dir);
 
@@ -42,25 +51,21 @@ my $count_total = 0;
 foreach (@names){
     next unless /\.tree\.moo\.db$/;
 
-    say " ";
-
     my $Tree = dbfile_load_md5(dir => $data_dir, name => $_);
 
     my $count = $Tree->count;
     $count_total += $count;
     say "Datafile: $_ Loaded $count records";
 
-    foreach my $Node ($Tree->List){
+    while (my $Node = $Tree->Each){
 	next unless $Node->isfile;
+
 	$size{$Node->size}++;
+	$Files->merge($Node);
 
-	if (! $Files->Exist(hash => $Node->hash)){
-	    $Files->insert($Node);
-
-	    # Add to book list
-	    if ($Node->basename =~ /\(ebook/i || $ebook_ext{lc($Node->ext)} // 0){ # || $Node->path =~ /ebook/i ){
-		$Ebook->insert($Node);
-	    }
+	# Add to book list
+	if ($Node->basename =~ /\(ebook/i || $ebook_ext{lc($Node->ext)} // 0){ # || $Node->path =~ /ebook/i ){
+	    $Ebook->merge($Node);
 	}
     }
 }

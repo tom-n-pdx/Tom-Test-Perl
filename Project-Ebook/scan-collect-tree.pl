@@ -70,15 +70,18 @@ my $Files_tree;
 foreach my $dir (@ARGV){
     say "Scanning Tree: $dir" if ($verbose >= 0); 
 
-    # Clear tree
-    $Files_tree = NodeHeap->new();
+    if ( dbfile_exist_md5(dir => $dir, type => 'tree') ){
+	$Files_tree = dbfile_load_md5(dir => $dir, type => 'tree');
+    } else {
+	$Files_tree = NodeHeap->new();
+    }
+
     find(\&wanted,  $dir);
     
     my $count = $Files_tree->count;
     say "Total $count records saved" if ($verbose >= 1);
 
     # Save Tree
-    # $Files_tree->save(dir => $dir, name => $db_tree_name);
     dbfile_save_md5(List => $Files_tree, dir => $dir, type => "tree");
 
 }
@@ -115,10 +118,9 @@ sub wanted {
     }
 
 
-    # Prunce dirs with SKIP in filename
-    if ($filename =~ /SKIP/){
+    if (ignore_dir_md5($filepath)){
     	$File::Find::prune = 1;
-    	say "Prune SKIP Dir: $filepath" if ($verbose >= 2);
+    	say "Prune based upon config Dir: $filepath" if ($verbose >= 2);
     	return;
     }
 
@@ -136,7 +138,7 @@ sub dir_collect_md5 {
 
      # Check if exiisting datafile
      if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
-	say "\tdb_file exists " if ($verbose >= 3);
+	say "\tdb_file exists " if ($verbose >= 4);
 	my $Dir = MooDir->new(filepath => $dir, update_dtime => 1);	
 
 	# Do rescan
@@ -151,20 +153,25 @@ sub dir_collect_md5 {
 	warn "WARN: ", scalar(@Nodes), " loaded from file, Dir: $dir" if (@Nodes < 1);
 	say "Loaded ", scalar(@Nodes), " from file, Dir: $dir" if ($verbose >= 2);
 
-	# Insert into global list
-	foreach my $Node (@Nodes){
+	$Files_tree->merge(@Nodes);
 
-	    # Debug code to figure out the duplicate insert problem
-	    if (my $Node_old = $Files_tree->Exist(hash => $Node->hash)){
-		if ( @{$Node->stats}[3] <= 1){
-		    say "Inserting Dupe Node";
-		    say "\t", $Node->filepath, " Nlinks: ", @{$Node->stats}[3];
-		    say "\t", $Node_old->filepath, " Nlinks: ", @{$Node_old->stats}[3];
-		}
-	    } else {
-		$Files_tree->insert($Node);
-	    }
-	}
+	# Insert into global list
+	# foreach my $Node (@Nodes){
+
+	#     # Debug code to figure out the duplicate insert problem
+	#     if (my $Node_old = $Files_tree->Exist(hash => $Node->hash)){
+	# 	if ( @{$Node->stats}[3] <= 1){
+	# 	    say "Inserting Dupe Node";
+	# 	    say "\t", $Node->filepath, " Nlinks: ", @{$Node->stats}[3];
+	# 	    say "\t", $Node_old->filepath, " Nlinks: ", @{$Node_old->stats}[3];
+	# 	}
+	#     } else {
+	# 	$Files_tree->insert($Node);
+	#     }
+	# }
+
+
+
     } else {
 	warn("May need re-scan, no db_file Dir: $dir");
     }

@@ -31,6 +31,7 @@ use MooFile;
 #   How merge? If tree older then base tree - skip
 #   Carry age update down 
 # * Configure scan info
+# * Move save file sizes to lib
 
 # Notes Perf
 # 
@@ -49,6 +50,7 @@ use MooFile;
 #                  5.319u 3.941s 0:13.26 69.7%	0+0k 0+5io 0pf+0w  collect tree and save
 #                  4.123u 3.039s 0:09.88 72.3%	0+0k 0+0io 37pf+0w use each in loop process nodes in dir
 #                  4.104u 3.035s 0:10.00 71.3%	0+0k 0+0io 0pf+0w  optimize load on file
+#                  3.554u 2.151s 0:08.36 68.1%	0+0k 253+0io 0pf+0w unoptimized file load, no tree save, no tree merge
 #
 #
 #
@@ -58,31 +60,32 @@ use MooFile;
 
 our $total_changes = 0;
 
-our $verbose  = 1;
-our $calc_md5 = 1;
-our $fast_dir = 0;
-our $tree = 0;
-our $force_update = 0;
+our $verbose    = 1;
+
+our $calc_md5   = 1;
+our $force_save = 0;
+
+our $tree       = 0;
+our $save_tree  = 0;
 
 our $md5_save_limit = 100;
 
 GetOptions (
     'verbose=i'   => \$verbose,
     'md5=i'       => \$calc_md5,
-    'quick'       => \$fast_dir,
+    'update'      => \$force_save,
     'tree'        => \$tree,
-    'update'      => \$force_update,
+    'save'        => \$save_tree,
 );
-# our $update_md5 = ! $fast_scan;
 
 if ($verbose >= 2){
     say "Options";
 
-    say "\tVerbose: ",  $verbose;
-    say "\tCalc MD5: ", $calc_md5;
-    say "\tQuick Dir: ",$fast_dir;
-    say "\tTree: ",     $tree;
-    say "\tUpdate: ",   $force_update;
+    say "\tVerbose:   ",  $verbose;
+    say "\tCalc MD5:  ", $calc_md5;
+    say "\tUpdate:    ", $force_save;
+    say "\tTree:      ",     $tree;
+    say "\tSave Tree: ", $save_tree; 
 
     say " ";
 }
@@ -99,13 +102,21 @@ my $Files_tree;
 #
 foreach my $dir (@ARGV){
     if ($tree){
+
+	# Clear Tree
+	$Files_tree =  NodeHeap->new;
 	say "Scanning Tree: $dir" if ($verbose >= 0); 
 
 	find(\&wanted,  $dir);
+
+	if ($save_tree){
+	    dbfile_save_md5(List => $Files_tree, dir => $dir, type => "tree");
+	    say "Saved Tree Records: ", $Files_tree->count if ($verbose >= 1); 
+	}
 	
     } else {
  	say "Scanning Dir: $dir" if ($verbose >= 0 ); 
-	$Files_new = scan_dir_md5(dir=>$dir, calc_md5=> $calc_md5, fast_dir => $fast_dir);
+	$Files_new = scan_dir_md5(dir=>$dir, calc_md5=> $calc_md5, force_save => $force_save);
     }
 }
 
@@ -146,14 +157,18 @@ sub wanted {
 	return;
     }
 
-    # Prunce dirs with SKIP in filename
-    if ($filename =~ /SKIP/){
+    if (ignore_dir_md5($filepath)){
     	$File::Find::prune = 1;
-    	say "Prune SKIP Dir: $filepath" if ($verbose >= 2);
+    	say "Prune based upon config Dir: $filepath" if ($verbose >= 2);
     	return;
     }
 
-    $Files_new = scan_dir_md5(dir => $filepath, calc_md5 => $calc_md5, fast_dir => $fast_dir);
+
+    $Files_new = scan_dir_md5(dir => $filepath, calc_md5 => $calc_md5);
+
+    if ($save_tree){
+	$Files_tree->insert($Files_new->List);
+    }
 
     return;
 }
@@ -166,32 +181,37 @@ sub wanted {
 #
 sub scan_dir_md5 {
     my %opt = @_;
-    my $dir         = delete $opt{dir} or die "Missing param to scan_dir_md5";
-
-    my $calc_md5    = delete $opt{calc_md5} // 0;
-    my $fast_dir    = delete $opt{fast_dir} // 0;
+    my $dir           = delete $opt{dir} or die "Missing param to scan_dir_md5";
+    my $calc_md5      = delete $opt{calc_md5}   // 0;
+    my $force_save    = delete $opt{force_save} // 0;
+    my $verbose       = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
+
+    say "\tChecking $dir" if ($verbose >= 2);
 
     my $Files_old = NodeHeap->new;
     my $Files_new = NodeHeap->new;
 
-    say "  Checking $dir" if ($verbose >= 2);
+    # If force update, make an extra change 
+    if ($force_save) {
+	$files_change{change} += 1;
+	say "\tForcing dbsave" if ($verbose >= 3);
+    }
 
     my $Dir = MooDir->new(filepath => $dir, update_dtime => 0);
 
     # Check if existing dir db file or not
-    if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
+    if ( dbfile_exist_md5(dir => $dir) ){
 	say "\tdb_file exists " if ($verbose >= 3);
-
 	$Files_old = dbfile_load_md5(dir => $dir);
-
     } else {
-	# Trick - create empty datafile and update Dir stats so on next time scan datafile older then Dir
+	# Trick - create empty datafile and update Dir stats so on next time scan datafile older then Dir, and force a save
 	dbfile_clear_md5(dir => $dir);
 	$Dir->update_stats;
+	$files_change{change} += 1;
     }
     
-    # OK - if there was no db_file, or a problem reading it in, we'll get here and count will be zero
+    # Check if Dir exists in datafile
     my $Dir_old = $Files_old->Exist(hash => $Dir->hash);
  
     # If Dir does not exisit in old list - maybe inode changed, maybe did not load a good datafile
@@ -203,10 +223,11 @@ sub scan_dir_md5 {
     	say "\tDir rename" if ($verbose >= 1);
     	$Dir_old->need_update(1);
     	$Dir_old->filepath($Dir->filepath);
+	$files_change{rename} += 1;
     }	
 
     # 
-    # Now, old list loaded - loop through files in dir
+    # Loop thru old files and see if any changes
     #
     while (my $Node = $Files_old->Each){
 	say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
@@ -224,7 +245,8 @@ sub scan_dir_md5 {
 
 	# Remove from Old List
 	# Since some changes modify size, md5 - and they are indexed by that, we need
-	# to remove from old List, update, then insert into new list
+	# to remove from old List, update, then insert into new list. A delete of last Each Node won't cause problems
+        #   with using Each itterator
 
 	$Files_old->Delete($Node);
 	update_file_md5(Node => $Node, changes => $changes, stats => \@stats, calc_md5 => $calc_md5);
@@ -254,8 +276,8 @@ sub scan_dir_md5 {
     my $changes = &files_change_total;
     $total_changes = $total_changes + $changes;
 
-    if ($force_update or $changes > 0){ 
-	say "    Saved Datafile" if ($verbose >= 2);
+    if ($changes > 0){ 
+	say "    Saved Datafile Records: ", $Files_new->count if ($verbose >= 2);
 	dbfile_save_md5(List => $Files_new, dir => $dir);
     }
     say "  Checking $dir" if ($verbose == 1 && $changes > 0);

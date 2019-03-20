@@ -52,7 +52,7 @@ use Carp;
 # * add --help option
 #
 # Perf
-# time ./scan-smart-md5.pl -f ~/Downloads
+# time ./scan-smart-md5.pl -m 1 -v 2 ~/Downloads
 #           0.513u 0.048s 0:00.57 96.4%	0+0k 0+3io 0pf+0w
 #           0.470u 0.045s 0:00.52 98.0%	0+0k 0+0io 0pf+0w
 #           1.607u 0.150s 0:01.77 98.8%	0+0k 0+0io 0pf+0w
@@ -61,6 +61,7 @@ use Carp;
 #           0.455u 0.040s 0:00.50 98.0%	0+0k 0+0io 0pf+0w
 #           0.477u 0.044s 0:00.52 98.0%	0+0k 0+0io 0pf+0w -    - in new dir, put new in old list
 #           0.548u 0.060s 0:00.61 98.3%	0+0k 0+3io 0pf+0w      load dir into new, do check on file
+#           0.634u 0.058s 0:00.70 97.1%	0+0k 0+4io 0pf+0w      not optimized load
 #
 #
 # empty tree - -f ~/Downloads
