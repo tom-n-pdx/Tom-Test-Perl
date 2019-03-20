@@ -28,7 +28,7 @@ my $Files;
 
 my @names;
 my %disk = (Video_4 => 0, Video_6 => 0, Video_7 => 0, Video_8 => 0, Video_10 => 0, 
-	    Video_11 => 0, NewBoot => 0, Torrent => 0);
+	    Video_11 => 0, Video_12 => 0, Video_13 => 0, NewBoot => 0, "/Users/tshott" => 0);
 
 # $Files = dbfile_load_md5(dir => $data_dir, name => "ebook.moo.db");
 $Files = NodeTree->load(dir => $data_dir, name => "files.moo.db");
@@ -48,7 +48,7 @@ foreach my $size (sort {$b <=> $a} keys %{$Files->size_HoA}){
 
 say "Found ", scalar(@size), " dupes";
 
-# @size = sort( {$b <=> $a} @size);
+@size = sort( {$b <=> $a} @size);
 @size = grep( {$_ >= (100 * 1e6)} @size); # Filter bigger then 200 Meg
 
 my @filter;
@@ -59,7 +59,7 @@ foreach (@size){
 	    $disk{$disk} += $_ if $Node->path =~ /$disk/;
 	}
 
-	if ($Node->path =~ /Video_10/i){
+	if ($Node->path =~ /Video_13/i){
 	    push(@filter, $_);
 	}
 	
@@ -68,7 +68,7 @@ foreach (@size){
 # @filter = @size;
 
 
-@filter = @filter[0..min(15, $#filter)];
+@filter = @filter[0..min(20, $#filter)];
 
 foreach (@filter){
     say " ";

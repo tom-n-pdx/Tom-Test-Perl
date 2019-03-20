@@ -1,5 +1,11 @@
 #!/usr/bin/env perl
 #
+# ToDo
+# * Read dir to check
+# * offer options to fix
+# * include general fix?
+
+
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 # use Getopt::Long;
@@ -36,8 +42,7 @@ say "Total Records Loaded: ", $Files->count;
 
 # Load books to check into new tree
 my $book_dir;
-$book_dir = "/Users/tshott/Downloads/_ebook/_temp_interview";
-$book_dir = "/Users/tshott/Downloads/_ebook/_temp_artech";
+$book_dir = "/Users/tshott/Downloads/_ebook/_temp";
 
 @names = dir_list(dir => $book_dir);
 

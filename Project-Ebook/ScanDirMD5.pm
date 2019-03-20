@@ -11,8 +11,8 @@ package ScanDirMD5;
 
 use Exporter qw(import);
 our @EXPORT = qw(load_dupes save_dupes update_file_md5 update_dir_md5
-	    files_change_string files_change_total files_change_clear %files_change
-	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 db_file_load_optimized_md5);
+	    files_change_string files_change_total_string files_change_total files_change_clear %files_change
+	    dbfile_exist_md5 dbfile_load_md5 dbfile_save_md5 db_file_load_optimized_md5 dbfile_clear_md5);
 
 use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
@@ -24,21 +24,11 @@ use Scalar::Util qw(blessed);
 use Storable qw(store_fd fd_retrieve);
 
 use lib '.';
-use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter );
+use FileUtility qw(%stats_names stats_delta_binary dir_list dir_list_iter volume_id);
 use NodeTree;
 use NodeHeap;
 
 use constant MD5_BAD => "x" x 32;
-
-
-
-# our (%md5,        %mtime,        %size,        %filename);
-# our (%md5_old,    %mtime_old,    %size_old,    %filename_old);
-
-# my %md5_check;
-# our %md5_check_HoA;
-# our %size_check_HoA;
-
 
 
 #
@@ -63,6 +53,19 @@ sub files_change_string {
     return ($string);
 }
 
+
+sub files_change_total_string {
+    my %opt = @_;
+
+    my $string = "";
+    foreach my $change (sort keys %files_change_total){
+	$string .= $change.": ".$files_change_total{$change}." ";
+    }
+    chop($string);
+    return ($string);
+}
+
+
 sub files_change_total {
     my %opt = @_;
 
@@ -73,6 +76,7 @@ sub files_change_total {
     return ($total);
 }
 
+
 sub files_change_clear {
     my %opt = @_;
 
@@ -81,6 +85,7 @@ sub files_change_clear {
 	$files_change{$change} = 0;
     }
 }
+
 
 sub files_change_update {
     my ($type, $file) = shift(@_);
@@ -107,11 +112,11 @@ sub update_file_md5 {
     my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
     my @stats_new   = @{$stats_new_r};
 
-    my $update_md5  = delete $opt{update_md5} // 1;
+    my $calc_md5    = delete $opt{calc_md5} // 1;
     my $verbose     = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-    if ($changes){
+    if ($changes || $Node->need_update){
 	$files_change{change}++;
 	my @changes = FileUtility::stats_delta_array($changes);
 	# say "    File: ", $Node->filename if ($verbose == 2);
@@ -136,6 +141,8 @@ sub update_file_md5 {
 	if ( ($changes & ( $stats_names{mtime} | $stats_names{size})) && $Node->can('md5') && defined $Node->md5){
 	    $Node->md5(undef);
 	}
+
+	$Node->need_update(0);
     }
 
     # Even if no changs, may need to update md5
@@ -143,12 +150,12 @@ sub update_file_md5 {
     my $count = $main::size_count{$Node->size};
 
     if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
-	if ($update_md5 or  $count >= 2){
-	    say "      Update MD5 ", $Node->filename if ($verbose == 2);
-	    $Node->update_md5;
-	    $files_change{md5}++;
+    	if ( ($calc_md5 >= 2) or  ($calc_md5 >= 1 && $count >= 2)){
+    	    say "          Update MD5 ", $Node->filename if ($verbose >= 2);
+    	    $Node->update_md5;
+    	    $files_change{md5}++;
 
-	}
+    	}
     }
 
     return;
@@ -165,10 +172,10 @@ sub update_dir_md5 {
     my $stats_new_r = delete $opt{stats}        // croak "Missing parm 'stats'";
     my @stats_new = @{$stats_new_r};
 
-    my $Files_new    = delete $opt{Files_new}     // croak "Missing param 'Files_new'";
-    my $Files_old    = delete $opt{Files_old}     // croak "Missing param 'Files_old'";
+    my $Files_new    = delete $opt{Files_new}   // croak "Missing param 'Files_new'";
+    my $Files_old    = delete $opt{Files_old}   // croak "Missing param 'Files_old'";
 
-    my $update_md5  = delete $opt{update_md5}   // 1;
+    my $calc_md5    = delete $opt{calc_md5}     // 1;
     my $inc_dir     = delete $opt{inc_dir}      // 0;
     my $load_dbfile = delete $opt{load_dbfile}  // 0;
     my $verbose     = delete $opt{verbose}      // $main::verbose;
@@ -177,8 +184,8 @@ sub update_dir_md5 {
     say "       Dir Update: ", $Dir->filepath if ($verbose >= 2);
 
 
-
     my $dir = $Dir->filepath;
+    $Dir->need_update(0);
 
     #
     # Check if exisiting dbfile or dbtree file
@@ -232,8 +239,9 @@ sub update_dir_md5 {
 	#
 	# Dangerious - does not depend on obj hash method
 	#
-	my $hash      = $stats[0].'-'.$stats[1];
-	# my $hash      = $stats[1];
+	my $volume_id = volume_id($filepath);
+	#my $hash      = $stats[0].'-'.$stats[1];
+	my $hash      = $volume_id.'-'.$stats[1];
 	# If is already in new list, we know is unchanged, we can skip checking
 	if ($Files_new->Exist(hash => $hash)) {
 	    next;
@@ -252,8 +260,9 @@ sub update_dir_md5 {
 
 		# If we renaamed a dir, force a change to stats to force dir update scan on next loop
 		if ($old_node->isdir){
-		    $stats[9] = 0; # clear mtime
-		    $old_node->stats(\@stats);
+		    # $stats[9] = 0; # clear mtime
+		    # $old_node->stats(\@stats);
+		    $old_node->need_update(1);
 		}
 	    }
 	    next;
@@ -274,25 +283,26 @@ sub update_dir_md5 {
 				    flags => $flags,     update_flags => 0,
 				    update_md5 => 0);
 
-	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
+	    update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, calc_md5 => $calc_md5);
 
 	    $Files_new->insert($Node);
 	} else {
 	    # New Dir
-	    # Create new, update, then place on new list
+	    # Create new, update, then place on old list so will be processed
 	    # 
 	    say "          Dir Update- New Dir in Dir: ", $name if ($verbose >= 2);
 
 	    # Force change to stats so will process on next loop
-	    $stats[9] = 0;
-	    $Node = MooDir->new(filepath => $filepath, 
+	    # $stats[9] = 0;
+	    $Node = MooDir->new(filepath => $filepath,   need_update => 1,
 				    stats => [ @stats ], update_stats => 0, 
 				    flags => $flags,     update_flags => 0,
 				    update_dtime => 0);
-	
-	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, update_md5 => $update_md5);
+	    
 
-	    # update_dir_md5(Dir => $Node, changes => 0x00, stats =>  \@stats, update_md5 => $update_md5,
+	    # update_file_md5(Node => $Node, changes => 0x00, stats => \@stats, calc_md5 => $calc_md5);
+
+	    # update_dir_md5(Dir => $Node, changes => 0x00, stats =>  \@stats, calc_md5 => $calc_md5,
 	    #		   Files_old => $Files_old, Files_new => $Files_new, inc_dir => $inc_dir);
 
 	    $Files_old->insert($Node);	    
@@ -439,15 +449,21 @@ sub dbfile_load_md5  {
 
 	# Force Update
 	$files_change{change}++;
-
-	die "Error on load dbfile retrieve failed. $@ File: $db_filepath" if ($@);
+	
+	if ($@){
+	    warn "Error on load dbfile retrieve failed - removing dbfile. $@ File: $db_filepath";
+	    $List = NodeHeap->new;
+	}
     }
 
     # my $type = blessed($List);
     # say "Loaded db type: $type";
     my $count = $List->count;
 
-    warn "Loaded only 0 records Dir: $dir/$db_name" if (! $count);
+    if (! $count){
+	warn "Loaded only 0 records Dir: $dir/$db_name" if (! $count);
+	rename($db_filepath, $db_filepath.'.old');
+    }
 
     return($List);
 }
@@ -539,7 +555,23 @@ sub db_file_load_optimized_md5 {
 }
 
 
+sub dbfile_clear_md5 {
+    my %opt = @_;
 
+    my $dir         = delete $opt{dir}      // croak "Missing param 'Dir'";
+
+    my $db_name     = delete $opt{name}     // dbfile_name(%opt);
+    my $type        = delete $opt{type};
+
+    my $verbose     = delete $opt{verbose}  // $main::verbose;
+    die "Unknown params:", join ", ", keys %opt if %opt;
+
+    my $db_filepath = "$dir/$db_name";
+
+    `touch $db_filepath`;
+
+    return;
+}
 
 # Fist check a full filname, then check for dir with list names?
 

@@ -27,12 +27,19 @@ use Time::localtime;            # Printing stat values in human readable time
 package MooNode v0.1.2;
 use Moose;
 use namespace::autoclean;
+use MooseX::Storage;
+with Storage('format' => 'JSON', 'io' => 'File');
 
-use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags @stats_names);
+use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags 
+		   @stats_names
+	           volume_name);
 use Fcntl qw(:mode);		# Get fields to parse stat bits
 use Scalar::Util qw(dualvar);
 use Carp;
 use constant MD5_BAD => "x" x 32;
+
+# sub TO_JSON { return { %{ shift() } }; }
+
 
 has 'filepath',			# full name of file including path
     is => 'rw', 
@@ -42,6 +49,13 @@ has 'filepath',			# full name of file including path
 has 'stats',			# stat array - not live version, last time updated or created. 
     is => 'rw',                 # maybe undefined value.
     isa => 'ArrayRef[Int]';
+
+
+has 'need_update',              # Flag if thi node needs to be updated
+    traits => [ 'DoNotSerialize' ],
+    is => 'rw',
+    isa => 'Int',
+    default => 0;
 
 
 # Extended attributes OS X
@@ -130,7 +144,7 @@ sub update_stats {
     my $filepath =  $self->filepath;
  
     # Do NOT follow sym link
-    $self->stats( [ lstat($filepath) ] );
+    $self->stats( [ stat($filepath) ] );
 
 }
 
@@ -208,8 +222,9 @@ sub inode {
 sub hash {
     my $self = shift(@_);
     
-    my $hash = $self->dev.'-'.$self->inode;
-    # my $hash = $self->inode;
+    # my $hash = $self->dev.'-'.$self->inode;
+    my $hash = $self->volume_id.'-'.$self->inode;
+
     return($hash);
 }
 
@@ -229,6 +244,13 @@ sub isfile {
     my $mode = ${$self->stats}[2];
     
     return(S_ISREG($mode));
+}
+
+sub issym {
+    my $self = shift(@_);
+    my $mode = ${$self->stats}[2];
+    
+    return(S_ISLNK($mode));
 }
 
 sub type {
@@ -314,6 +336,31 @@ sub basename {
     my $self = shift(@_);
     my  ($name, $path, $ext) = File::Basename::fileparse($self->filepath, qr/\.[^.]*/);
     return($name);
+}
+
+sub volume {
+    my $self = shift(@_);
+    my $filepath = $self->filepath;
+    my $volume = "/";
+
+    #if ( $filepath =~ m!/Volumes/([^/]*)! ){
+    #	$volume = $1;
+    #}
+
+    $volume = volume_name($filepath);
+
+    return($volume);
+}
+
+sub volume_id {
+    my $self = shift(@_);
+    my $filepath = $self->filepath;
+    my $volume_id = 0x00;
+
+
+    $volume_id = FileUtility::volume_id($filepath);
+
+    return($volume_id);
 }
 
 #

@@ -4,6 +4,7 @@ use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
 use Getopt::Long;
+use Carp;
 
 use lib '.';
 use ScanDirMD5;
@@ -16,7 +17,7 @@ use FileUtility qw(osx_check_flags_binary osx_flags_binary_string %osx_flags
 use lib 'MooNode';
 use MooDir;
 use MooFile;
-use Carp;
+
 
 # For Debug
 # use Data::Dumper qw(Dumper);           # Debug print
@@ -25,8 +26,11 @@ use Carp;
 # Todo
 # * add --help option
 # * Cleanup debug prints & add a write to log?
-# !! try if move dir, name dir changes
-# * Move size dupe data to module
+# * Add a alarm based status update write
+# * Merge tree
+#   How merge? If tree older then base tree - skip
+#   Carry age update down 
+# * Configure scan info
 
 # Notes Perf
 # 
@@ -41,6 +45,11 @@ use Carp;
 # + iter dir       5.032u 3.658s 0:12.22 71.0%	0+0k 0+10io 7pf+0w
 # use heap         3.925u 2.608s 0:09.51 68.5%	0+0k 0+1io 0pf+0w
 #                  3.864u 3.204s 0:09.34 75.5%	0+0k 0+0io 0pf+0w  optimized incremental load
+#                  3.745u 2.580s 0:09.17 68.9%	0+0k 0+3io 67pf+0w
+#                  5.319u 3.941s 0:13.26 69.7%	0+0k 0+5io 0pf+0w  collect tree and save
+#                  4.123u 3.039s 0:09.88 72.3%	0+0k 0+0io 37pf+0w use each in loop process nodes in dir
+#                  4.104u 3.035s 0:10.00 71.3%	0+0k 0+0io 0pf+0w  optimize load on file
+#
 #
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
@@ -49,10 +58,9 @@ use Carp;
 
 our $total_changes = 0;
 
-
-our $verbose = 1;
-our $fast_scan = 0;
-our $fast_dir  = 0;
+our $verbose  = 1;
+our $calc_md5 = 1;
+our $fast_dir = 0;
 our $tree = 0;
 our $force_update = 0;
 
@@ -60,18 +68,18 @@ our $md5_save_limit = 100;
 
 GetOptions (
     'verbose=i'   => \$verbose,
-    'fast'        => \$fast_scan,
+    'md5=i'       => \$calc_md5,
     'quick'       => \$fast_dir,
     'tree'        => \$tree,
     'update'      => \$force_update,
 );
-our $update_md5 = ! $fast_scan;
+# our $update_md5 = ! $fast_scan;
 
 if ($verbose >= 2){
     say "Options";
 
     say "\tVerbose: ",  $verbose;
-    say "\tFast: ",     $fast_scan;
+    say "\tCalc MD5: ", $calc_md5;
     say "\tQuick Dir: ",$fast_dir;
     say "\tTree: ",     $tree;
     say "\tUpdate: ",   $force_update;
@@ -81,10 +89,10 @@ if ($verbose >= 2){
 
 # If existing file of dupe sizes, load
 my %size_count;
-&load_dupes(dupes => \%size_count);
+&load_dupes(dupes => \%size_count, verbose => $verbose - 1);
 
-my $Files_old = NodeHeap->new;
-my $Files_new = NodeHeap->new;
+my $Files_new;
+my $Files_tree;
 
 #
 # Scan each arg as dir, using dir or tree scan.
@@ -92,19 +100,17 @@ my $Files_new = NodeHeap->new;
 foreach my $dir (@ARGV){
     if ($tree){
 	say "Scanning Tree: $dir" if ($verbose >= 0); 
+
 	find(\&wanted,  $dir);
+	
     } else {
  	say "Scanning Dir: $dir" if ($verbose >= 0 ); 
-
-	$Files_old = NodeHeap->new(name => $dir);
-	$Files_new = NodeHeap->new(name => $dir);
-
-	scan_dir_md5(dir=>$dir, update_md5=> $update_md5, fast_dir => $fast_dir, 
-		   Files_old => $Files_old, Files_new => $Files_new);
+	$Files_new = scan_dir_md5(dir=>$dir, calc_md5=> $calc_md5, fast_dir => $fast_dir);
     }
 }
 
-say "Total Changes: $total_changes";
+say "Total Changes: $total_changes (", &files_change_total_string, ")"; 
+
 &save_dupes(dupes => \%size_count) if ($total_changes > 0);
 
 exit;
@@ -114,34 +120,40 @@ exit;
 # File find wanted sub. For any file that is a readable and writeable dir 
 # 
 sub wanted {
-    my $dir = $File::Find::name;
+    my $filename = $_;
+    my $dir      = $File::Find::dir;
+    my $filepath = $File::Find::name;
 
-    return unless (-d $dir);   # if not dir, skip
-    return unless (-r _);      # if not unreadable skip
-    return unless (-w _);      # if not unreadable skip
+    return unless (-d $filepath); # if not dir, skip
+    return unless (-r _);         # if not unreadable skip
+    return unless (-w _);         # if not unreadable skip
 
 
-    if ($dir =~ m!/\.!){  
-	$File::Find::prune = 1;
-	say "Prune . Dir: $dir ($_)" if ($verbose >= 2);
-	return;
+    # Prune Dot file dirs
+    if ($filepath =~ m!/\.!){  
+    	$File::Find::prune = 1;
+    	say "Prune . Name: $filename Dir:$dir" if ($verbose >= 2);
+    	return;
     }
 
-    # Skip dirs with hidden or write protected flags set
-    my $flags = osx_check_flags_binary($dir);
+    # Prune dirs with hidden or write protected flags set
+    my $flags = osx_check_flags_binary($filepath);
 
     if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
 	$File::Find::prune = 1;
 	my $str   = osx_flags_binary_string($flags);
-	say "Prune flagged $str Dir: $dir" if ($verbose >= 2);
+	say "Prune flagged $str Dir: $filepath" if ($verbose >= 2);
 	return;
     }
 
-    $Files_old = NodeHeap->new(name => $dir);
-    $Files_new = NodeHeap->new(name => $dir);
+    # Prunce dirs with SKIP in filename
+    if ($filename =~ /SKIP/){
+    	$File::Find::prune = 1;
+    	say "Prune SKIP Dir: $filepath" if ($verbose >= 2);
+    	return;
+    }
 
-    scan_dir_md5(dir => $dir, update_md5 => $update_md5, fast_dir => $fast_dir, 
-		 Files_old => $Files_old, Files_new => $Files_new);
+    $Files_new = scan_dir_md5(dir => $filepath, calc_md5 => $calc_md5, fast_dir => $fast_dir);
 
     return;
 }
@@ -156,51 +168,56 @@ sub scan_dir_md5 {
     my %opt = @_;
     my $dir         = delete $opt{dir} or die "Missing param to scan_dir_md5";
 
-    my $Files_new    = delete $opt{Files_new}   // croak "Missing param 'Files_new'";
-    my $Files_old    = delete $opt{Files_old}   // croak "Missing param 'Files_old'";
-
-    my $update_md5  = delete $opt{update_md5} // 0;
-    my $fast_dir    = delete $opt{fast_dir}   // 0;
+    my $calc_md5    = delete $opt{calc_md5} // 0;
+    my $fast_dir    = delete $opt{fast_dir} // 0;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-    &files_change_clear;
+    my $Files_old = NodeHeap->new;
+    my $Files_new = NodeHeap->new;
+
     say "  Checking $dir" if ($verbose >= 2);
 
-    my $Dir_old;
-    my $Dir_new   = MooDir->new(filepath => $dir, update_dtime => 1);
+    my $Dir = MooDir->new(filepath => $dir, update_dtime => 0);
 
-    # Check if existing db file or not
+    # Check if existing dir db file or not
     if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
 	say "\tdb_file exists " if ($verbose >= 3);
-
-	if ($fast_dir && $db_mtime >= $Dir_new->dtime){
-	    say "\tQuick Dir scan enabled, No Files chaged, Skip scan" if ($verbose >= 2);
-	    return;
-	}
 
 	$Files_old = dbfile_load_md5(dir => $dir);
 
     } else {
-	# No Db file - Insert Dir object into old list. force change to dir stats to make sure is processed
-	my @stats = @{$Dir_new->stats};
-	$stats[9] = 0;
-	$Dir_new->stats( [@stats] );
-
-	$Files_old->insert($Dir_new);
-    }	    
+	# Trick - create empty datafile and update Dir stats so on next time scan datafile older then Dir
+	dbfile_clear_md5(dir => $dir);
+	$Dir->update_stats;
+    }
+    
+    # OK - if there was no db_file, or a problem reading it in, we'll get here and count will be zero
+    my $Dir_old = $Files_old->Exist(hash => $Dir->hash);
+ 
+    # If Dir does not exisit in old list - maybe inode changed, maybe did not load a good datafile
+    if (! $Dir_old){
+    	say "\tDir does not exisit in db_file" if ($verbose >= 2);
+    	$Dir->need_update(1);
+    	$Files_old->insert($Dir);
+    } elsif ($Dir_old->filepath ne $Dir->filepath){
+    	say "\tDir rename" if ($verbose >= 1);
+    	$Dir_old->need_update(1);
+    	$Dir_old->filepath($Dir->filepath);
+    }	
 
     # 
     # Now, old list loaded - loop through files in dir
     #
-    foreach my $Node ($Files_old->List ){
+    while (my $Node = $Files_old->Each){
 	say "    ", $Node->type, " ", $Node->filename if ($verbose >= 3);
 
 	# If doesn't exist on disk - leave in old list for now
-	my @stats = lstat($Node->filepath); # If no stats, file does not exist
+	my @stats = stat($Node->filepath);   # If no stats, file does not exist
 	next if (! @stats);
 
-	# Check changes and mask off atime changes
+	# Check changes and mask off atime or dev changes
 	my $changes = stats_delta_binary($Node->stats,  \@stats) & ~$stats_names{atime} & ~$stats_names{dev};
+	my $need_update = $changes || $Node->need_update;
 
 	# If the inode has changed, this is not the same file
 	next if ($changes & $stats_names{ino});
@@ -210,14 +227,14 @@ sub scan_dir_md5 {
 	# to remove from old List, update, then insert into new list
 
 	$Files_old->Delete($Node);
-	update_file_md5(Node => $Node, changes => $changes, stats => \@stats, update_md5 => $update_md5);
+	update_file_md5(Node => $Node, changes => $changes, stats => \@stats, calc_md5 => $calc_md5);
 	$Files_new->insert($Node);
 
-	# If changes & dir - need to do more work
-	if ($changes && $Node->isdir) {
-	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats, update_md5 => $update_md5,
- 				Files_old => $Files_old, Files_new => $Files_new, 
-				inc_dir => 0);
+	# If changes & dir - need to do more work. do not include subdirs
+	if ( $Node->isdir && $need_update){
+	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats, calc_md5 => $calc_md5,
+			    Files_old => $Files_old, Files_new => $Files_new, 
+			    inc_dir => 0);
 	}	
     }
     
@@ -244,8 +261,9 @@ sub scan_dir_md5 {
     say "  Checking $dir" if ($verbose == 1 && $changes > 0);
     say("    Changes: $changes (", &files_change_string, ")") 
 	if ($verbose >= 2 or ($changes > 0 && $verbose >= 1));
+    &files_change_clear;
 
-    return;
+    return $Files_new;
 }
 
 

@@ -2,6 +2,10 @@
 #
 
 # ToDo
+# Bugs
+# * Fix problem with dev changing for drive when offline
+# * Add switch no md5
+# * Fix if a dir become invisable - delete all files under dir
 # * Checkpoint save - make work as alarm
 # * alarm - user feedback
 # * need option no md5 at all
@@ -9,8 +13,10 @@
 #   Optimized load somewhat better
 # * Make load file work as iterator
 #   Thread read / write in obj?
-#   * Call a tree find - summerize - collct - files
+# * Call a tree find - summerize - collcet - files
 # !! Fatal errors: /Volumes/MyBook/Video_4/_Inbox
+# * Bug - if make dir Hidden, does not kill subdirs
+# * Make able update part of tree - all md5 for Dir e.g.
 
 
 use Modern::Perl; 		         # Implies strict, warnings
@@ -73,22 +79,20 @@ my $checkpoint_limit = 60 * 5; # 5 mins (60 seconds X 10 mins)
 
 
 our $verbose = 1;
-our $fast_scan = 0;
-our $fast_dir  = 0;
+our $calc_md5 = 1;
+our $fast_dir = 0;
 
 GetOptions (
     'verbose=i'   => \$verbose,
-    'fast'        => \$fast_scan,
+    'md5=i'       => \$calc_md5,
     'quick'       => \$fast_dir,
 );
-
-my $update_md5 = ! $fast_scan;
 
 if ($verbose >= 2){
     say "Options";
 
     say "\tVerbose: ", $verbose;
-    say "\tFast: ", $fast_scan;
+    say "\tCalc MD5: ", $calc_md5;
     say "\tQuick: ", $fast_dir;
 
     say " ";
@@ -120,10 +124,9 @@ my $db_mtime = dbfile_exist_md5(dir => $dir, type => 'tree');
 if (! $db_mtime){
     warn "No exiisting tree datafile: $dir";
 
-    # Create new Dir node with forced change
+    # Add Dir & force need update
     my @stats = lstat($dir);
-    $stats[9] = 0;		# Modify mtime
-    my $Dir = MooDir->new(filepath => $dir, 
+    my $Dir = MooDir->new(filepath => $dir,  need_update  => 1,
 			stats => [ @stats ], update_stats => 0, 
 			update_dtime => 0);
 
@@ -137,7 +140,7 @@ if (! $db_mtime){
 
 } else {
     if ($fast_dir) {
-	db_file_load_optimized_md5(dir => $dir, type => "tree", 
+	db_file_load_optimized_md5(dir => $dir,   type => "tree", 
 				   Files_new => $Files_new, Files_old => $Files_old);
     } else { 
 	$Files_old = dbfile_load_md5(dir => $dir, type => "tree");
@@ -180,28 +183,26 @@ do {
 
 	# Check changes and mask off atime changes
 	my $changes = FileUtility::stats_delta_binary($Node->stats,  \@stats_new) & ~$stats_names{atime} & ~$stats_names{dev};
-	# say "Changes: $changes" if ($changes);
-
+	my $need_update = $changes || $Node->need_update;
 
 	# This is likely a file that has been renamed and a new file has the old name
 	if ($changes & $stats_names{ino}) {
-	    say "    Skipping Node - inode changed. Old Name", $Node->filename if ($verbose >= 2);
+	    say "    Skipping Node - inode changed. Old Name", $Node->filename if ($verbose >= 3);
 	    next;
 	}
     
 	# Update file also updates dir basic info
 	# remove from old list, update values, insert into new list. Call update evn if new changes since migh need to calc MD5
 	$Files_old->Delete($Node);
-	&update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5);
+	&update_file_md5(Node => $Node, changes => $changes, stats => \@stats_new, calc_md5 => $calc_md5);
 	$Files_new->insert($Node);
 
-	if ($changes) {
-	    if ($Node->isdir) {
-		&update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats_new, update_md5 => $update_md5,
-				Files_old => $Files_old, Files_new => $Files_new, 
-				inc_dir => 1,  load_dbfile => $collect_dbfile);
-	    }
+	if ( $need_update && $Node->isdir) {
+	    &update_dir_md5(Dir => $Node, changes => $changes, stats => \@stats_new, calc_md5 => $calc_md5,
+			    Files_old => $Files_old, Files_new => $Files_new, 
+			    inc_dir => 1,  load_dbfile => $collect_dbfile);
 	}
+
     }
     
     $files_change = &files_change_total;

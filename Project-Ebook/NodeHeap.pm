@@ -4,15 +4,24 @@
 # Base file subclase for files.
 # 
 # ToDo
-# * write pack restore
-# * debug packed store maybe a character off in dirs
 # * Make exist work on objects
 # !! Make remove work on Objects
 # * itterator method to cycle over whole tree
-# * lock save / rstore file?
-# * add a dump method for debug
 # * add a pop / shift method.
-
+# * each
+# * Insert work on heap too - merge?
+# * push / pop
+# * exisit work w/o hash
+# * Keep state var - keys?
+#
+# Load/Save
+# * lock save / rstore file?
+# * Better save format
+# * Make load more robust
+# * Better sorage for items.
+# * add a dump method for debug
+# * iterator load
+# * make work older objs loaded
 
 # Standard uses's
 use Modern::Perl; 		# Implies strict, warnings
@@ -21,18 +30,16 @@ use autodie;			# Easier write open  /close code
 
 package NodeHeap;
 use Moose;
+use MooseX::Storage;
+with Storage('format' => 'JSON', 'io' => 'File');
 use namespace::autoclean;
 use Carp;
+
+
 use Exporter qw(import);
-our @EXPORT = qw(load_iter);
+# our @EXPORT = qw(load_iter);
 
-
-#use YAML qw(LoadFile DumpFile);
-#use YAML::XS qw(LoadFile DumpFile);
-#use IO::YAML;
-#use YAML::Tiny;
-#use utf8;
-use open qw(:std :utf8);
+# use open qw(:std :utf8);
 
 # use Data::Dumper qw(Dumper);           # Debug print
 
@@ -42,13 +49,13 @@ our $db_name_packed =  ".moo.dbp";
 use constant MD5_BAD => "x" x 32;
 
 #
-# Has optional Dir name
+# Has optional name
 #
 has 'name',
     is  => 'rw',
     isa => 'Str';
 
-# A list of the files in collection. Hashed by hash method of object. 
+# A hash of the objs in collection. Hashed by hash method of object. 
 # Will work on any datatype that can generate a hash and has a size
 #
 has 'nodes',
@@ -56,48 +63,22 @@ has 'nodes',
     isa => 'HashRef',
     default => sub { { } };
     
-# A hash of the size of the nodes in the collection - hash of arrays of refs to node objs
-#
-# has 'size_HoA',
-#     is => 'rw',
-#     isa => 'HashRef',
-#     default => sub { { } };
     
-# A hash of the size of the nodes in the collection - hash of arrays of refs to node objs
-# 
-# has 'md5_HoA',
-#     is => 'rw',
-#     isa => 'HashRef',
-#     default => sub { { } };
-#    
 #
 # Insert Node Obj(s) into tree
-#
+# 
 sub insert {
     my $self = shift( @_);
-    my @Objs =  @_;
+    my @Objs = @_;
     
     foreach my $Obj (@Objs){
-	croak "not a node object" if ! $Obj->isa('MooNode');
+	croak "not a node object" if (! $Obj->isa('MooNode'));
 
 	my $hash = $Obj->hash;
 	if (defined ${$self->nodes}{$hash} ){
 	    carp "WARN: Inserting dupe node. hash=$hash";
 	} else {
 	    ${$self->nodes}{$hash} = $Obj;
-
-	    # Now insert into Size_HoA
-	    # my $size = $Obj->size;
-	    # &HoA_push($self->size_HoA , $size, $hash);
-	    # &HoA_push($self->size_HoA , $size, $Obj);
-
-	    # If object is file also insert into MD5 HoA if has a MD5
-	    # if ($Obj->can('md5') && defined $Obj->md5) {
-	    # 	my $md5 = $Obj->md5;
-	    # 	# &HoA_push($self->md5_HoA , $md5, $hash);
-	    # 	&HoA_push($self->md5_HoA , $md5, $Obj);
-	    # }
-
 	}
     }
     return;
@@ -118,19 +99,12 @@ sub Delete {
 	   next;
        }
        push(@Deleted, $Obj);
-
-       # Delete from size_HoA
-       # &HoA_remove($self->size_HoA , $Obj->size, $hash) if defined $Obj->size;       
-
-       # If obj has MD5 value - remove from MD5_HoA
-       # if ($Obj->can('md5') && defined $Obj->md5){
-       # 	   &HoA_remove($self->md5_HoA , $Obj->md5, $hash);
-       # }
        
    }
    
    return(@Deleted);
 }
+
 
 sub count {
    my $self   = shift( @_);
@@ -138,6 +112,7 @@ sub count {
    
    return($count);
 }
+
 
 sub List {
     my $self = shift(@_);
@@ -150,6 +125,7 @@ sub List {
 
     return(@Nodes);
 }
+
 
 #
 # Generic seach - implement default which is by hash
@@ -224,6 +200,25 @@ sub Exist {
 
 
 #
+# Return one Obj
+#
+sub Each {
+    my $self   = shift(@_);
+    my %opt = @_;
+
+    my $verbose     = delete $opt{verbose} // $main::verbose;
+    croak "Unknown params:", join ", ", keys %opt if %opt;
+
+    my ($hash, $Node) = each(  %{$self->nodes}  );
+    
+    return($Node);
+}
+
+
+
+
+
+#
 # Need a check and summary function to detect errors
 #
 sub summerize {
@@ -294,15 +289,13 @@ sub save {
 }
 
 #
-# ToDo
-# * If named when enter method  -should have same name after load?
+#
 #
 sub load {
     my $self = shift(@_);
 
     my %opt = @_;
-    # my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
-    my $dir     =  delete $opt{dir} // croak("Missing 'dir' param nor does Heap have name");
+    my $dir     =  delete $opt{dir}  // croak("Missing 'dir' param");
     my $name    =  delete $opt{name} // $db_name;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
@@ -334,50 +327,6 @@ sub load {
     return ($self);
 }
 
-#
-# Iterator version of load
-#
-# sub load_iter {
-#     my $self = shift(@_);
-
-#     my %opt = @_;
-#     my $dir     =  delete $opt{dir} // $self->name or croak("Missing 'dir' param nor does Heap have name");
-#     my $name    =  delete $opt{name} // $db_name;
-#     die "Unknown params:", join ", ", keys %opt if %opt;
-
-
-#     # $self = NodeHeap->new;
-#     my $filepath = $dir.'/'.$name;
-
-#     if (!-e $filepath) {
-# 	croak ("db_file does not exist");
-#     }
-
-#     open(my $fh, "<", $filepath);
-    
-
-#     return sub {
-# 	my $Node = fd_retrieve($fh);
-# 	if (ref($Node) eq 'SCALAR'){
-# 	    return(undef);
-# 	}
-# 	return($Node);
-#     }
-
-
-#     # while ( my $Node = fd_retrieve($fh)) {
-#     # last if (ref($Node) eq 'SCALAR');
-#     #	$self->insert($Node);
-#     # }
-
-
-#     # my $count = $self->count;
-#     # say "    Loaded $count records" if ($main::verbose >= 3);
-
-#     # $dbfile_mtime = (stat(_))[9];
-#     # return ($self);
-# }
-
 
 
 #
@@ -402,152 +351,152 @@ sub load {
 my $dbtree_template1 = "A4 A2 A33 A9 (A11)13 A312";         # length 512
 
 
-#
-# Do not rotate files - but for debug  -rotate
-# If we saved on a per dir bases as we loaded dir files, then we'd generate less cwd records for tree
+# #
+# # Do not rotate files - but for debug  -rotate
+# # If we saved on a per dir bases as we loaded dir files, then we'd generate less cwd records for tree
 
-sub save_packed {
-    my $self = shift(@_);
+# sub save_packed {
+#     my $self = shift(@_);
  
-    my %opt = @_;   
-    my $dir     =  delete $opt{dir}  // $self->name or croak("Missing 'dir' param nor does Heap have name");
-    my $name    =  delete $opt{name} // $db_name_packed;
-    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+#     my %opt = @_;   
+#     my $dir     =  delete $opt{dir}  // $self->name or croak("Missing 'dir' param nor does Heap have name");
+#     my $name    =  delete $opt{name} // $db_name_packed;
+#     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
     
-    my $filepath = $dir.'/'.$name;
-    say("Debug: Store Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
+#     my $filepath = $dir.'/'.$name;
+#     say("Debug: Store Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
 
-    # Do not rotate Files, cause Dir mtime to change
-    #rename($filepath, "$filepath.old") if (-e $filepath);
-    open(my $fh, ">", $filepath);
-    print $fh "# moo.tree.pdb version 1.2\n";
+#     # Do not rotate Files, cause Dir mtime to change
+#     #rename($filepath, "$filepath.old") if (-e $filepath);
+#     open(my $fh, ">", $filepath);
+#     print $fh "# moo.tree.pdb version 1.2\n";
 
-    my $str;
-    my @Nodes = $self->List;
+#     my $str;
+#     my @Nodes = $self->List;
 
-    # Need to sort @Nodes by diectory path to minimize the number of cwd records wrote. Will work fine without
-    # Need better sort - this one is wrong
+#     # Need to sort @Nodes by diectory path to minimize the number of cwd records wrote. Will work fine without
+#     # Need better sort - this one is wrong
 
 
-    # By sorting by full filepath, end up with dir's before files in dir
-    @Nodes = sort({$a->filepath cmp $b->filepath} @Nodes);
+#     # By sorting by full filepath, end up with dir's before files in dir
+#     @Nodes = sort({$a->filepath cmp $b->filepath} @Nodes);
 
-    my $old_path = "";
-    foreach my $Node (@Nodes) {
-	# If this record  path is different from the current path - need to write an extra cwd record to change
-	# assumed dir. Unless this IS a dir record. Means we'll print two lines on this itteration of loop.
-	# If we are lucky and Nodes ordered in right order - we will never issue a cwd record
-	#
+#     my $old_path = "";
+#     foreach my $Node (@Nodes) {
+# 	# If this record  path is different from the current path - need to write an extra cwd record to change
+# 	# assumed dir. Unless this IS a dir record. Means we'll print two lines on this itteration of loop.
+# 	# If we are lucky and Nodes ordered in right order - we will never issue a cwd record
+# 	#
 
-	if ($Node->isa('MooDir')){
-	    $old_path = $Node->filepath;
-	} else {
-	    if ($Node->path ne $old_path){
-		$str = _packed_cwd_str($Node);
-		print $fh "$str\n";
-		$old_path = $Node->path;
-	    }
-	}
+# 	if ($Node->isa('MooDir')){
+# 	    $old_path = $Node->filepath;
+# 	} else {
+# 	    if ($Node->path ne $old_path){
+# 		$str = _packed_cwd_str($Node);
+# 		print $fh "$str\n";
+# 		$old_path = $Node->path;
+# 	    }
+# 	}
 
-	$str = $Node->packed_str;
-    	print $fh "$str\n";
-    }
+# 	$str = $Node->packed_str;
+#     	print $fh "$str\n";
+#     }
 
-    close($fh);
-    return;
-}
+#     close($fh);
+#     return;
+# }
 
-sub _packed_cwd_str {
-    my $Node = shift(@_);
+# sub _packed_cwd_str {
+#     my $Node = shift(@_);
     
-    my $type    = "Cwd";
-    my $extend  = " ";
-    my $md5     = MD5_BAD;
-    my $flags   = $Node->flags;
-    my @stats   = @{$Node->stats};
-    my $name    = $Node->path;
-    warn("Name > space 329 $name") if (length($name) > 329);
+#     my $type    = "Cwd";
+#     my $extend  = " ";
+#     my $md5     = MD5_BAD;
+#     my $flags   = $Node->flags;
+#     my @stats   = @{$Node->stats};
+#     my $name    = $Node->path;
+#     warn("Name > space 329 $name") if (length($name) > 329);
 
-    my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
+#     my $str = pack($dbtree_template1, $type, $extend, $md5, $flags, @stats, $name);
 
-    return($str);
-}
+#     return($str);
+# }
 
-sub load_packed {
-    my $self = shift(@_);
+# sub load_packed {
+#     my $self = shift(@_);
  
-    my %opt = @_;   
-    my $dir     =  delete $opt{dir}     // $self->name or croak("Missing 'dir' param nor does Heap have name");
-    my $name    =  delete $opt{name}    // $db_name_packed;
-    my $verbose =  delete $opt{verbose} // $main::verbose;
-    croak("Unknown params:".join( ", ", keys %opt)) if %opt;
+#     my %opt = @_;   
+#     my $dir     =  delete $opt{dir}     // $self->name or croak("Missing 'dir' param nor does Heap have name");
+#     my $name    =  delete $opt{name}    // $db_name_packed;
+#     my $verbose =  delete $opt{verbose} // $main::verbose;
+#     croak("Unknown params:".join( ", ", keys %opt)) if %opt;
 
-    # Check file exists
-    my $filepath = $dir.'/'.$name;
-    say("Debug: Load Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
-    if (! -e $filepath){
-	croak("Tried to load non-existent packed db file $filepath");
-    }
+#     # Check file exists
+#     my $filepath = $dir.'/'.$name;
+#     say("Debug: Load Packed Heap Name: ", $filepath) if ($main::verbose >= 3);
+#     if (! -e $filepath){
+# 	croak("Tried to load non-existent packed db file $filepath");
+#     }
 
-    $self = NodeHeap->new();
+#     $self = NodeHeap->new();
 
 
-    # Open file, loop read
-    open(my $fh, "<", $filepath);
+#     # Open file, loop read
+#     open(my $fh, "<", $filepath);
  
-    $_ = <$fh>;
-    say "Reading lines from packed db file: $_" if ($verbose >= 3);
+#     $_ = <$fh>;
+#     say "Reading lines from packed db file: $_" if ($verbose >= 3);
     
 
-    my $cwd = "";
-    while (<$fh>){
-	my ($type, $extend, $md5, $flags, @stats) = unpack($dbtree_template1, $_);
-	my $name = pop(@stats);
+#     my $cwd = "";
+#     while (<$fh>){
+# 	my ($type, $extend, $md5, $flags, @stats) = unpack($dbtree_template1, $_);
+# 	my $name = pop(@stats);
 
-	my $Node;
-	my $null;
+# 	my $Node;
+# 	my $null;
 
-	# say "$type $extend $md5 $flags ", join(";", @stats), "  - $name";
+# 	# say "$type $extend $md5 $flags ", join(";", @stats), "  - $name";
 
-      SWITCH: 
-      	for ($type) {
-      	    if (/^File/) { $Node = MooFile->new(filepath => "$cwd/$name", 
-      						stats => \@stats, update_stats => 0, 
-      						flags => $flags,  update_flags => 0,
-					        update_md5 => 0);
+#       SWITCH: 
+#       	for ($type) {
+#       	    if (/^File/) { $Node = MooFile->new(filepath => "$cwd/$name", 
+#       						stats => \@stats, update_stats => 0, 
+#       						flags => $flags,  update_flags => 0,
+# 					        update_md5 => 0);
 
-			   $Node->md5($md5) if ($md5 ne MD5_BAD);
+# 			   $Node->md5($md5) if ($md5 ne MD5_BAD);
 
-     			   last SWITCH; }
+#      			   last SWITCH; }
 
-      	    if (/^Node/) { $Node = MooNode->new(filepath  => "$cwd/$name", 
-      						stats => \@stats, update_stats => 0, 
-      						flags => $flags,  update_flags => 0);
-      			   last SWITCH; }
+#       	    if (/^Node/) { $Node = MooNode->new(filepath  => "$cwd/$name", 
+#       						stats => \@stats, update_stats => 0, 
+#       						flags => $flags,  update_flags => 0);
+#       			   last SWITCH; }
 
-      	    if (/^Dir/)  { $cwd = $name; 
-      			   $Node = MooDir->new(filepath  => "$cwd",
-      			   		       stats => \@stats, update_stats => 0, 
-      			   		       flags => $flags,  update_flags => 0,
-      			   		       update_dtime => 0);
+#       	    if (/^Dir/)  { $cwd = $name; 
+#       			   $Node = MooDir->new(filepath  => "$cwd",
+#       			   		       stats => \@stats, update_stats => 0, 
+#       			   		       flags => $flags,  update_flags => 0,
+#       			   		       update_dtime => 0);
 
-      			   last SWITCH; }
+#       			   last SWITCH; }
 
-      	    if (/^Cwd/) { $cwd = $name;
-      			  last SWITCH; }	
+#       	    if (/^Cwd/) { $cwd = $name;
+#       			  last SWITCH; }	
 	    
-       	    croak("Unnown type: $type");
-      	}
-	$self->insert($Node) if (defined $Node);
+#        	    croak("Unnown type: $type");
+#       	}
+# 	$self->insert($Node) if (defined $Node);
 
-    }
+#     }
 
-    # Close file
-    close($fh);
+#     # Close file
+#     close($fh);
 
-    # Return data
-    return($self);
-}
+#     # Return data
+#     return($self);
+# }
 
 
 #
@@ -566,10 +515,6 @@ sub HoA_push {
     return( scalar( @{ $$HoA_ref{$hash} }));
 }
 
-
-#
-# HoA utility functions
-#
 
 sub HoA_list {
     my $HoA_ref  = shift(@_);

@@ -25,6 +25,7 @@ package NodeTree;
 use Moose;
 use namespace::autoclean;
 use Carp;
+use Storable qw(store_fd fd_retrieve retrieve);
 
 # use Data::Dumper qw(Dumper);           # Debug print
 
@@ -250,7 +251,6 @@ sub summerize {
 # * Consider deleting HoA before save, rebuild after load
 # * Consider using text based save
 
-use Storable qw(store_fd fd_retrieve);
 #
 # Save Obj to file. Use Perl Storable format 
 # Do not use rotate file since it will change mtime for the dir.

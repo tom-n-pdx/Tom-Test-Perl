@@ -28,12 +28,15 @@ my $data_dir = "/Users/tshott/Downloads/Lists_Disks/.moo";
 my %size;
 
 # Store as Heap - but later will load into Tree
-my $Files = NodeHeap->new;
-my $Ebook = NodeHeap->new;
+# my $Files = NodeHeap->new;
+# my $Ebook = NodeHeap->new;
+
+my $Files = NodeTree->new;
+my $Ebook = NodeTree->new;
 
 my @names = dir_list(dir => $data_dir);
 
-my %ebook_ext = (".pdf" => 1, ".chm" => 1, ".epub" => 1, ".mobi" => 1);
+my %ebook_ext = (".pdf" => 1, ".chm" => 1, ".epub" => 1, ".mobi" => 1, ".djvu" => 1, ".azw3" => 1);
 my $count_total = 0;
 
 foreach (@names){
@@ -51,13 +54,14 @@ foreach (@names){
 	next unless $Node->isfile;
 	$size{$Node->size}++;
 
-	$Files->insert($Node);
+	if (! $Files->Exist(hash => $Node->hash)){
+	    $Files->insert($Node);
 
-	# Add to book list
-	if ($ebook_ext{$Node->ext} // 0){
-	    $Ebook->insert($Node);
+	    # Add to book list
+	    if ($Node->basename =~ /\(ebook/i || $ebook_ext{lc($Node->ext)} // 0){ # || $Node->path =~ /ebook/i ){
+		$Ebook->insert($Node);
+	    }
 	}
-
     }
 }
 

@@ -42,6 +42,7 @@ use FileUtility qw(osx_flags_binary_string osx_check_flags_binary %osx_flags);
 
 our $debug = 0;
 our $verbose = 1;
+our $errors = 0;
 
 GetOptions (
     'debug=i'     => \$debug,
@@ -80,13 +81,6 @@ foreach my $dir (@ARGV){
     # $Files_tree->save(dir => $dir, name => $db_tree_name);
     dbfile_save_md5(List => $Files_tree, dir => $dir, type => "tree");
 
-    # Save a copy into Datadir
-    my $name = $dir;
-    $name =~ s!^/!!;
-    $name =~ s!/!_!g;
-    $name = "$name.tree.db"; 
-
-    dbfile_save_md5(List => $Files_tree, dir => $data_dir, type => 'tree');
 }
 
 
@@ -94,34 +88,42 @@ exit;
 
 
 sub wanted {
-    my $dir = $File::Find::name;
+    my $filename = $_;
+    my $dir      = $File::Find::dir;
+    my $filepath = $File::Find::name;
 
-    return unless (-d $dir);   # if not dir, skip
-    return unless (-r _);      # if not unreadable skip
-    return unless (-w _);      # if not unreadable skip
+    return unless (-d $filepath); # if not dir, skip
+    return unless (-r _);         # if not unreadable skip
+    return unless (-w _);         # if not writable skip
 
 
-
-    # Prune Dot Dirs
-    if ($dir =~ m!/\.!){  
-	$File::Find::prune = 1;
-	say "Prune . Dir: $dir ($_)" if ($verbose >= 2);
-	return;
+    # Prune Dot file dirs
+    if ($filepath =~ m!/\.!){  
+    	$File::Find::prune = 1;
+    	say "Prune . Name: $filename Dir:$dir" if ($verbose >= 2);
+    	return;
     }
 
-
-    # Prunce Dirs that are hidden or protected
-    my $flags = FileUtility::osx_check_flags_binary($dir);
+    # Prune dirs with hidden or write protected flags set
+    my $flags = osx_check_flags_binary($filepath);
 
     if ($flags & ($osx_flags{hidden} | $osx_flags{uchg}) ){
 	$File::Find::prune = 1;
 	my $str   = osx_flags_binary_string($flags);
-	say "Prune flagged $str Dir: $dir" if ($verbose >= 2);
+	say "Prune flagged $str Dir: $filepath" if ($verbose >= 2);
 	return;
     }
 
 
-    dir_collect_md5($dir);
+    # Prunce dirs with SKIP in filename
+    if ($filename =~ /SKIP/){
+    	$File::Find::prune = 1;
+    	say "Prune SKIP Dir: $filepath" if ($verbose >= 2);
+    	return;
+    }
+
+
+    dir_collect_md5($filepath);
 
     return;
 }
@@ -130,7 +132,7 @@ sub dir_collect_md5 {
      my $dir  = shift(@_);
      my $Files_dir;
 
-     # say "Collect $dir";
+     say "Collect $dir" if ($verbose >= 3);
 
      # Check if exiisting datafile
      if ( my $db_mtime = dbfile_exist_md5(dir => $dir) ){
@@ -146,16 +148,26 @@ sub dir_collect_md5 {
 	my @Nodes = $Files_dir->List;
 
 	# Error check
-	 warn "WARN: ", scalar(@Nodes), " loaded from file, Dir: $dir" if (@Nodes < 1);
-	 say "Loaded ", scalar(@Nodes), " from file, Dir: $dir" if ($verbose >= 2);
+	warn "WARN: ", scalar(@Nodes), " loaded from file, Dir: $dir" if (@Nodes < 1);
+	say "Loaded ", scalar(@Nodes), " from file, Dir: $dir" if ($verbose >= 2);
 
+	# Insert into global list
+	foreach my $Node (@Nodes){
 
-	 # Insert into global list
-	 $Files_tree->insert(@Nodes);
-
-     } else {
-	 warn("May need re-scan, no db_file Dir: $dir");
-     }
+	    # Debug code to figure out the duplicate insert problem
+	    if (my $Node_old = $Files_tree->Exist(hash => $Node->hash)){
+		if ( @{$Node->stats}[3] <= 1){
+		    say "Inserting Dupe Node";
+		    say "\t", $Node->filepath, " Nlinks: ", @{$Node->stats}[3];
+		    say "\t", $Node_old->filepath, " Nlinks: ", @{$Node_old->stats}[3];
+		}
+	    } else {
+		$Files_tree->insert($Node);
+	    }
+	}
+    } else {
+	warn("May need re-scan, no db_file Dir: $dir");
+    }
 
      return ($Files_dir);
 }

@@ -5,13 +5,16 @@
 # ToDo
 # * Dir has finder hints to make look like file - pickup
 #   /Users/tshott/Documents/Catalog_1.dcmd
-
+# * Check where sym links dropped - do not follow
+# * Replicated code in dir list & iterator - refactor
+# * Bug - md5 fails on a file with space in filename
 
 package FileUtility;
 use Exporter qw(import);
 our @EXPORT_OK = qw(dir_list dir_list_iter rename_unique 
 		    osx_check_flags_binary osx_flags_binary_string osx_flags_binary_string %osx_flags 
-		    stats_delta_binary %stats_names @stats_names);
+		    stats_delta_binary %stats_names @stats_names
+	            volume_name volume_id);
 
 
 # Standard uses's
@@ -98,7 +101,8 @@ sub dir_list {
 
     foreach my $name (@filenames_temp){
     	my $filepath  = "$dir/$name";
-    	my @stats     = lstat($filepath);
+	next if (-l $filepath);	      			                     # Skip sym links, avoid loops
+    	my @stats     = stat($filepath);
 
 	next if ($name eq '.' or $name eq '..');                             # remove . and .. 
 	next if (!$inc_dot && $name =~ /^\./);                               # remove dot files
@@ -147,10 +151,13 @@ sub dir_list_iter {
 
 	while ($name = readdir $dh){
 	    $filepath = "$dir/$name";
+
 	    next if (! $inc_dot && $name =~ /^\./);
 	    next if (! $inc_dir && -d $filepath);
+	    next if (-l $filepath);	      			                             # Skip sym links, avoid loops
 
-	    @stats = lstat($filepath);
+	    @stats = stat($filepath);
+
 	    $flags = osx_check_flags_binary($filepath);
 	    next if (! $inc_dot && ($flags & $osx_flags{hidden}));
 	    
@@ -175,8 +182,8 @@ sub rename_unique {
     my $filename_old = shift(@_);
     my $filename_new = shift(@_);
 
-    say "Filename Old: $filename_old";
-    say "Filename New: $filename_new";
+    # say "Filename Old: $filename_old";
+    # say "Filename New: $filename_new";
 
     if (!-e $filename_old){
 	croak "Starting file does not exisit: $filename_old";
@@ -373,6 +380,37 @@ sub osx_flags_binary_string {
     }
     return($string);
 }
+
+sub volume_name {
+    my $filepath = shift(@_);
+    my $volume = "/";
+    
+    if ( $filepath =~ m!/Volumes/([^/]*)! ){
+	$volume = $1;
+    }
+
+    return $volume;
+}
+
+
+our %volume_id = ( '/' => 0, NewBoot => 2, Mac_Ebook =>3, MyBook => 4, Mac_Ebook => 5, 
+		   Video_6 => 6, Video_7 => 7, Video_8 => 8, Video_10 => 10, 
+		   Video_11 => 11, Video_12 => 12, Video_13 => 13);
+
+
+
+sub volume_id {
+    my $filepath = shift(@_);
+    my $volume_id = 0x01;
+
+    if ( $filepath =~ m!/Volumes/([^/]*)! ){
+	$volume_id = $volume_id{$1} || die "Unmapped Volume: $filepath";
+    }
+
+    return($volume_id);
+}
+
+
 
 # End of Module
 1;

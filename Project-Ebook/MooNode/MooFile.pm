@@ -60,7 +60,6 @@ sub BUILD {
 	}
     }
 
-
     # option to not generate md5 but default is to create signature
     if ($update_md5){
 	$self->update_md5;
@@ -72,19 +71,24 @@ sub BUILD {
 #
 # BUG: ocassional undefined MD5 value returned
 # * if file is unreadable - will not fail - but produce warning
-#
+# * fails if filepath contains trailing space
 sub update_md5 {
     my ($self)=shift(@_);
     my $digest;
 
+    
     if (!$self->isreadable){
 	warn "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
 	return $digest;
     }
+    # Bug - does not handle filenames with embedded trailing space
+    
+    # my $filepath = $self->filepath;
+    # $filepath =~s/\ /\\ /;
 
     $digest = Digest::MD5::File::file_md5_hex($self->filepath);
     if (!defined $digest){
-	warn "ERROR md5 returned undefined value. filepath: ".$self->filepath;
+	warn "ERROR md5 returned undefined value. filepath: '".$self->filepath."'";
     } else {
 	$self->md5($digest);
     }
