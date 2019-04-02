@@ -1,6 +1,10 @@
 Notes on Ebook Project
 
 * ToDo
+  + Make NodeTree sub type Nodeheap
+  ! Rescan Video 8 - lots errors  
+
+
 
 * Ideas 
 

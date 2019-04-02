@@ -14,10 +14,14 @@ use Digest::MD5::File;
 # use Scalar::Util qw(looks_like_number);
 # use Data::Dumper qw(Dumper);           # Debug print
 
+use lib '.';
+
 package MooFile;
 use Moose;
 use namespace::autoclean;
 use Carp;
+use FileUtility qw(media_type);
+
 use constant MD5_BAD => "x" x 32;
 
 extends 'MooNode';
@@ -76,7 +80,6 @@ sub update_md5 {
     my ($self)=shift(@_);
     my $digest;
 
-    
     if (!$self->isreadable){
 	warn "WARN: tried to get md5 sig from unredable file file: ".$self->filepath;
 	return $digest;
@@ -95,6 +98,16 @@ sub update_md5 {
 
     return $digest;
 }
+
+sub media {
+    my $self = shift(@_);
+
+    my $media = media_type($self->ext);
+    
+    return($media);
+}
+
+
 
 #
 # Extend isequal to include check for md5 if present

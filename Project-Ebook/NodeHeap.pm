@@ -77,11 +77,11 @@ sub insert {
 	croak "not a node object" if (! $Obj->isa('MooNode'));
 
 	my $hash = $Obj->hash;
-	if (defined ${$self->nodes}{$hash} ){
-	    carp "WARN: Inserting dupe node. hash=$hash";
-	} else {
-	    ${$self->nodes}{$hash} = $Obj;
-	}
+	#if (defined ${$self->nodes}{$hash} ){
+	    # carp "WARN: Inserting dupe node. hash=$hash";
+	#} else {
+	${$self->nodes}{$hash} = $Obj;
+	# }
     }
     return;
 }
@@ -106,13 +106,15 @@ sub merge {
 
 	if (! defined $Obj_old){
 	    # If not in existing tree, just insert
-	    ${$self->nodes}{$hash} = $Obj_new;
+	    # ${$self->nodes}{$hash} = $Obj_new;
+	    $self->insert($Obj_new);
 	    $obj_count{new}++;
 
 	} else {
 	    # If exisist & newer, insert
 	    if ($Obj_new->time_max > $Obj_old->time_max){
-		${$self->nodes}{$hash} = $Obj_new;
+		# ${$self->nodes}{$hash} = $Obj_new;
+		$self->insert($Obj_new);
 		$obj_count{update}++;
 	    } else {
 		$obj_count{old}++;
@@ -323,7 +325,8 @@ sub save {
     say("DEBUG: Store Heap Records: ", scalar(@List), " Name: ", $filepath) if ($main::verbose >= 3);
 
 
-    open(my $fh, ">:utf8", $filepath);
+    # open(my $fh, ">:utf8", $filepath);
+    open(my $fh, ">", $filepath);
     # binmode $fh;
 
     foreach my $Obj (@List){
@@ -360,10 +363,12 @@ sub load {
 
 
     if (-e $filepath) {
-	# say "DEBUG: Open $filepath";
+	# say "DEBUG: $filepath";
 
+	# open(my $fh, "<:utf8", $filepath);
+	# open(my $fh, "<:encoding(UTF-8)", $filepath);
 	open(my $fh, "<", $filepath);
-	# # binmode $fh;
+	# binmode $fh;
 	while ( my $Node = fd_retrieve($fh)) {
 	    last if (ref($Node) eq 'SCALAR');
 	    $self->insert($Node);

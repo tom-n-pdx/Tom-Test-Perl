@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -CA
 #
 # Generic check of files in dir for odd things - any type files - not specific to ebooks
 #
@@ -12,7 +12,6 @@ use autodie;			# Easier write open  /close code
 
 use List::Util qw(min max);	# Import min()
 use Getopt::Long;
-
 use Unicode::Normalize;
 
 

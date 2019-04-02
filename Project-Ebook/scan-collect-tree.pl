@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -CA
 #
 # Scan tree and merge all dir data files into one tree datafile.
 # In any dir, checks for a db_file and merges it into tree.
@@ -11,6 +11,8 @@ use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
 use File::Find;
 use Getopt::Long;
+use open ':encoding(UTF-8)';
+
 
 use lib '.';
 use ScanDirMD5;

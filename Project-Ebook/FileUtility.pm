@@ -14,7 +14,8 @@ use Exporter qw(import);
 our @EXPORT_OK = qw(dir_list dir_list_iter rename_unique 
 		    osx_check_flags_binary osx_flags_binary_string osx_flags_binary_string %osx_flags 
 		    stats_delta_binary %stats_names @stats_names
-	            volume_name volume_id);
+	            volume_name volume_id
+	            media_type);
 
 
 # Standard uses's
@@ -23,6 +24,7 @@ our @EXPORT_OK = qw(dir_list dir_list_iter rename_unique
 # use Fcntl qw(:DEFAULT :flock);
 use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
+use Encode qw(decode_utf8);
 
 use Carp qw(croak carp);
 use File::Basename;             # Manipulate file paths
@@ -100,7 +102,15 @@ sub dir_list {
     closedir $dh;
 
     foreach my $name (@filenames_temp){
+	$name = decode_utf8($name);
+
     	my $filepath  = "$dir/$name";
+	# DEBUG Code - utf8 probelms
+	if (! -e $filepath){
+	    die "Dir List Itr contains fil that does not exisit $filepath";
+	}
+
+
 	next if (-l $filepath);	      			                     # Skip sym links, avoid loops
     	my @stats     = stat($filepath);
 
@@ -150,13 +160,22 @@ sub dir_list_iter {
 	my ($name, $filepath, $flags, @stats);
 
 	while ($name = readdir $dh){
+	    $name = decode_utf8($name);
+
 	    $filepath = "$dir/$name";
+	    # DEBUG Code - utf8 probelms
+	    if (! -e $filepath){
+		die "Dir List Itr contains fil that does not exisit $filepath";
+	    }
 
 	    next if (! $inc_dot && $name =~ /^\./);
 	    next if (! $inc_dir && -d $filepath);
 	    next if (-l $filepath);	      			                             # Skip sym links, avoid loops
 
 	    @stats = stat($filepath);
+	    if (! @stats){
+		croak "stats undfined in dir itr list for $filepath";
+	    }
 
 	    $flags = osx_check_flags_binary($filepath);
 	    next if (! $inc_dot && ($flags & $osx_flags{hidden}));
@@ -191,9 +210,11 @@ sub rename_unique {
 
     my $version = 9;
     my ($name, $path, $ext) = File::Basename::fileparse($filename_new, qr/\.[^.]*/);
-    while (-e $filename_new){
-	$version++;
-	$filename_new = "$path${name}_v$version$ext";
+    if (-e $filename_new){
+	while (-e $filename_new){
+	    $version++;
+	    $filename_new = "$path${name}_v$version$ext";
+	}
     }
     rename($filename_old, $filename_new) unless (-e $filename_new);
     # say "Unique Rename $filename_old -> $filename_new";
@@ -308,7 +329,7 @@ sub osx_check_flags {
     # -l long -d don't diplay dir -1 make sure one colume -O show os x flags
     my $cmd = 'ls -1lOd';
 
-    my @flags;
+    my @flags = ();
 
     my $text = $filepath;
     $text =~ s/'/'"'"'/g;              # Escape ' in filename
@@ -348,7 +369,7 @@ sub osx_check_flags_binary {
     my $string = `$cmd '$text' `;
 
     if ($? != 0){
-	warn("Error executing ls on $filepath");
+	warn("osx_check flags - Error executing ls on $filepath $?");
 	return($flags_binary);
     }
 
@@ -393,8 +414,9 @@ sub volume_name {
 }
 
 
-our %volume_id = ( '/' => 0, NewBoot => 2, Mac_Ebook =>3, MyBook => 4, Mac_Ebook => 5, 
-		   Video_6 => 6, Video_7 => 7, Video_8 => 8, Video_10 => 10, 
+our %volume_id = ( '/' => 0,       NewBoot  => 2,   
+		   Mac_Ebook =>3,  MyBook   => 4,
+		   Video_6 => 6,   Video_7  => 7,  Video_8 => 8,   Video_10 => 10, 
 		   Video_11 => 11, Video_12 => 12, Video_13 => 13);
 
 
@@ -412,5 +434,40 @@ sub volume_id {
 
 
 
+my %media_ext = (csv  => 'doc',       txt  => 'doc',      docx => 'doc',     pptx => 'doc',    xlsx => 'doc',   log  => 'doc',
+                                      nfo  => 'doc',      xml  => 'doc',     doc  => 'doc',    ppt  => 'doc',   rtf  => 'doc', 
+                                      torrent => 'doc',   xls  => 'doc',     isi  => 'doc',    opf  => 'doc',   dat  => 'doc',
+                                      bib  => 'doc',      gdoc => 'doc',     accdb => 'doc',   pdat => 'doc',   xlsb => 'doc', 
+                                      dea  => 'doc',      session => 'doc',  potx => 'doc',
+		                      gslides => 'doc',   gsheet => 'doc',
+		 pdf  => 'ebook',     epub => 'ebook',    chm  => 'ebook',   mht  => 'ebook',  html => 'ebook', azw3 => 'ebook',   
+		                      mobi => 'ebook',    djvu => 'ebook',   htm  => 'ebook',  azw4 => 'ebook', azw  => 'ebook', 
+                                      djv  => 'ebook',    ps   => 'ebook',   maff => 'ebook', 
+		 r    => 'code',      R    => 'code',     Rmd  => 'code',    rd   => 'code',   Rproj=> 'code',  Rout => 'code',
+		                      Rhtml => 'code',    Rnw  => 'code',    RData => 'code',  Rc   => 'code',  Rcmd => 'code', 
+		                      c    => 'code',     js   => 'code',    h    => 'code',   nlogo => 'code',
+		 jpg  => 'image',     png  => 'image',    gif  => 'image',   bmp  => 'image',  jpeg => 'image',  tif => 'image',
+                                      ico  => 'image',    
+		 mp3  => 'audio',     flac => 'audio',    asf  => 'audio',   m4a  => 'audio',  cbr  => 'audio', 
+		 srt  => 'subtitle',  cue  => 'subtitle', sub  => 'image',   idx  => 'subtitle', 
+		 mp4  => 'video',     avi  => 'video',    mkv  => 'video',   wmv  => 'video',  mpg => 'video',  rmvb => 'video', 
+		                      ogm => 'video',     vob  => 'video',   divx => 'video',  ogg => 'video',  mov  => 'video', 
+		                      flv  => 'video',    m4v  => 'video',   rm   => 'video',  '3gp' => 'video',  m2ts => 'video', 
+	         zip  => 'archive',   rar  => 'archive',  gz   => 'archive', iso  => 'archive', '7z' => 'archive', tgz  => 'archive', 
+	         dmg  => 'binary',    exe  => 'binary',   pkg  => 'binary',  '!qb'=> 'binary', torrent => 'binary', msi => 'binary', 
+	         QPH  => 'binary',    QDF  => 'binary',   NPC  => 'binary',  QEL => 'binary',  QTX => 'binary',   hci => 'binary');
+
+
+sub media_type {
+    my $ext = shift(@_);
+    
+    $ext =~ s/^\.//;   		# delete optionl . on ext
+    
+    my $media = $media_ext{lc($ext)} // $media_ext{$ext} // 'unknown';
+
+    return ($media);
+}
+
 # End of Module
 1;
+

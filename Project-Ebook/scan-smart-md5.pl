@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -CA
 #
 
 # ToDo
@@ -22,6 +22,10 @@
 use Modern::Perl; 		         # Implies strict, warnings
 # use autodie;
 # use File::Find;
+use open ':encoding(UTF-8)';
+binmode STDOUT, ":utf8";
+use Encode qw(decode_utf8);
+
 use Getopt::Long;
 
 use lib '.';
@@ -109,8 +113,9 @@ if ($verbose >= 2){
 my $collect_dbfile = 0;
 
 # Load Dupes
-our %size_count;
-&load_dupes(dupes => \%size_count);
+# our %size_count;
+# &load_dupes(dupes => \%size_count);
+load_dupes;
 
 my $dir = shift(@ARGV);
 
@@ -175,7 +180,7 @@ do {
 	    $checkpoint_last = time;
 	}
 
-	# File does not exisit, deleed or renamed
+	# File does not exisit, deleted or renamed
 	my @stats_new = lstat($Node->filepath);
 	if (! @stats_new){
 	    say "    Missing Node: ", $Node->filename if ($verbose >= 3);
@@ -238,12 +243,17 @@ if(@Nodes > 0){
 
 
 say("    Changes Total: $files_change_total") if ($verbose >= 2 or ($files_change_total > 0 && $verbose >= 1));
+
+
+say "\nUpdate Unicode: ", $ScanDirMD5::update_unicode;
+
 if ($files_change_total > 0){
     dbfile_save_md5(List => $Files_new, dir => $dir, type => "tree");
     say "Saved File";
 
 }
-&save_dupes(dupes => \%size_count);
+# &save_dupes(dupes => \%size_count);
+save_dupes;
 
 exit;
 

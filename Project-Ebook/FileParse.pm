@@ -15,10 +15,12 @@ use Modern::Perl 2016; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 use utf8;
 use Text::Unidecode;
-
 use Text::Unaccent::PurePerl;
 use File::Basename;
 use List::Util qw(min max);	        # Import min()
+
+use lib '.';
+use FileUtility qw(media_type);
 
 # sub check_file_name {
 #     my $filename_old = pop @_;
@@ -236,12 +238,12 @@ sub check_file_name {
 
 	if ($name =~ /fixed$/i){
 	    $name .= ")";
-	    $status = max($status, 2);
+	    $status = max($status, 3);
 	} elsif ($name =~ /converted\), Fixed\)/i) {
 	    $name =~ s/converted\),/Converted,/i;
-	    $status = max($status, 2);
-	} else {
 	    $status = max($status, 3);
+	} else {
+	    $status = max($status, 4);
 	}
 
 	$message .= "Unbalanced parens\n";
@@ -249,12 +251,20 @@ sub check_file_name {
     
     # Some unicode checks
     if ($name =~ /([^[:ascii:]])/){
-    	if ($name ne Unicode::Normalize::NFC($name)){
-    	    $message .= "Normalized unicode in name\n";
-    	    $status = max($status, 1);
-    	    $name = Unicode::Normalize::NFC($name);
-	}
-  }
+
+	my ($status_new, $message_new, $name_new) = check_file_unicode($name);
+	$status = max($status, $status_new);
+	$message .= $message_new;
+	$name   = $name_new;
+
+    }
+
+    # if ($name =~ /_v1\d/){
+    # 	say "Debug: _v1* $name";
+    # # 	$name =~ s/$1//;
+    # # 	$status = max($status, 2);
+    # # 	$message .= "Dropped _v1* "."\n";
+    # }
 
 
     # Series of regular expression fixes
@@ -265,9 +275,11 @@ sub check_file_name {
 \s+$;;Trailing Whitespace removed
 \s{2,}; ;Multuple whitespace reduced 
  copy$;;Trailing copy removed
-_v1\d*$;;Trailing _v removed
 \s+,;,;Space before comma
 END_DATA
+
+# _v1\d*$;;Trailing _v removed
+
 
     # Read Regular expression into arrays
     my $i= 0;
@@ -279,15 +291,93 @@ END_DATA
 
     for ($i = 0; $i <= $#match; $i++){
 	while ($name =~ /$match[$i]/){
-	    $status = max($status, 1);
+	    $status = max($status, 2);
 	    $message .= $message[$i]."\n";
 	    $name =~ s/$match[$i]/$sub[$i]/;
 	}
     }
     
+
     chomp($message);
     return($status, $message, $name);
 }
+
+my %unicode_convert = (
+    'é'     => 'e',
+    'ø'     => 'o',
+    '–'     => '-',
+    '—',    => '-',
+    ' ́'    => '',
+    "’"    => "'",
+    "‐"   => "-",
+    "-"   => "-",
+    "-"   => "-",
+    "æ"   => "ae",
+    "ß"   => "b",
+    " ́"  => "",
+    "\x{0308}" => "", # strip accent over letter
+    "\x{0301}" => "", # strip accent over letter
+    
+);
+
+
+
+sub check_file_unicode {
+    my $name     = shift(@_);
+    my $message  = "";
+    my $status   = 0;
+
+
+    my $fix = 0;
+    while($name =~ /([^[:ascii:]])/g){
+	my $ascii = $unicode_convert{$1};
+
+	if (defined $ascii){
+	    $fix = 2;
+	    $name =~ s/$1/$ascii/;
+	}
+    }
+    if ($fix){
+	$message .= "Name contains unicode fixed\n";
+	$status = max($status, 2);
+    }
+
+    # rework - count unicode - declare foreign name
+    # Count number unicode chars
+    my $chars_unicode = 0;
+    while ($name =~ m/([^[:ascii:]])/g){
+	$chars_unicode++;
+    }
+    if ($chars_unicode >= 4){
+	$message .= "Foriegn Name\n";
+	$status = max($status, 1);
+	return($status, $message, $name);
+    }
+
+
+    if ($name =~ /(\x{2013})/g){
+	my $pos = pos($name);
+	$message .= "Name contains top unicode $1 ".nice_string($1)." at $pos\n";
+	$status = max($status, 3);
+    } elsif ($name =~ /([^[:ascii:]])/g){
+	my $pos = pos($name);
+	$message .= "Name contains unicode $1 ".nice_string($1)." at $pos\n";
+	$status = max($status, 1);
+    }
+
+    
+
+
+    # if ($name ne Unicode::Normalize::NFC($name)){
+    # 	$name = Unicode::Normalize::NFC($name);
+    # 	$message .= "Normalized unicode in name\n";
+    # 	$status = max($status, 1);
+    # }
+
+    return($status, $message, $name);
+}
+
+
 
 
 
@@ -321,29 +411,45 @@ sub check_file_ext {
     my $message = "";
     my $ext_start = $ext;
 
-    my %ebook_ext = (".pdf"  => 1, ".chm"  => 1, ".epub" => 1, 
-		     ".mobi" => 1, ".djvu" => 1, ".azw"  => 1, ".azw3" => 1, ".txt" => 1, ".ps" => 1, ".doc" => 1,
-		     ".rar"  => 2, ".zip"  => 2, ".7z"   => 2, ".tgz" => 2,
-		     ".jpg"  => 3, ".gif"  => 3, ".tif"  => 3);
-
-    # Check if ext not lowercase ext
-    if (lc($ext) ne $ext) {
-	$message = "uppercase extension: $ext converted to lc";
-	$status = 1;
-	$ext = lc($ext);
+    # Check if known ext
+    if (media_type($ext) ne 'unknown') {
+	return($status, $message, $ext);
     }
     
-    # Check if ext has whitepace
-    if ($ext =~ /\s/) {
-	$message = "white space in extension: $ext";
-	$status = 3;
+
+    if ($ext =~ /([^[:ascii:]])/){
+	my ($status_new, $message_new, $ext_new) = check_file_unicode($ext);
+	$status = max($status, $status_new);
+	$message .= $message_new;
+	$ext   = $ext_new;
     }
+
+
+    if (lc($ext) ne $ext) {
+	$message .= "uppercase extension: $ext";
+	$status = max($status, 3);
+	# $ext = lc($ext);
+    }
+
+    if (media_type($ext) ne 'unknown' || media_type(lc($ext)) ne 'unknown'){
+	if (length($ext) >= 10) {
+	    $message .= "unknown long extenion: '$ext'"; # Ext is too long
+	    $status = max($status, 4);
+	} else {
+     	    $message .= "unknown extension: '$ext'";
+     	    $status = max($status, 2);
+	}
+    }
+
+    # Check if know extension
+    # 	if ($ext =~ /\s/) {
+    # 	    $message = "white space in extension: $ext"; # Ext has white space?
+    # 	    $status = max($status, 2);
+    # 	} else {
+    # 	}
+    # }
     
     # Check if know extension
-    if (! defined $ebook_ext{$ext} ) {
-	$message = "unknown extension: '$ext'";
-	$status = 3;
-    }
     
     return($status, $message, $ext);
 }
@@ -364,12 +470,23 @@ sub balanced {
 	    # return 0 if $#d == -1;                         # no openning
 	    my $open = pop(@d);
 	    # say "match closing: \$2 $2 vs $open";
-	    return 0 if !$open || $open ne $2;                      # wrong openning
+	    return 0 if !$open || $open ne $2;               # wrong openning
         }
     }
     return $#d != 0;
     # return 1;
 }
+
+sub nice_string {
+    join("",
+	 map { $_ > 255                        # if wide character...
+		   ? sprintf("\\x{%04X}", $_)  # \x{...}
+		   : chr($_) =~ /[[:cntrl:]]/  # else if control character...
+		   ? sprintf("\\x%02X", $_)    # \x..
+		   : quotemeta(chr($_))        # else quoted or as themselves
+	       } unpack("W*", $_[0]));         # unpack Unicode characters
+}
+
 
 
 1; # End Module

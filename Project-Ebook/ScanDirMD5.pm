@@ -18,6 +18,8 @@ use Modern::Perl; 		        # Implies strict, warnings
 use List::Util qw(min max);	        # Import min()
 use Digest::MD5::File;
 use autodie;
+use Encode qw(decode_utf8);
+
 use File::Basename;                     # Manipulate file paths
 use Carp;
 use Scalar::Util qw(blessed);
@@ -29,7 +31,9 @@ use NodeTree;
 use NodeHeap;
 
 use constant MD5_BAD => "x" x 32;
+our %size_count;
 
+our $update_unicode = 0;
 
 #
 # Routeen to track file changes across whole module
@@ -112,25 +116,37 @@ sub update_file_md5 {
     my $stats_new_r = delete $opt{stats}      // die "Missing parm 'stats'";
     my @stats_new   = @{$stats_new_r};
 
-    my $calc_md5    = delete $opt{calc_md5} // 1;
+    my $calc_md5    = delete $opt{calc_md5}   // 1;
     my $verbose     = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
+
+
+    # Temp Fix Unicode
+    if (! utf8::is_utf8($Node->filepath) ){
+     	$files_change{change}++;
+	$update_unicode++;
+     	$Node->filepath(decode_utf8($Node->filepath));
+    }
+
 
     if ($changes || $Node->need_update){
 	$files_change{change}++;
 	my @changes = FileUtility::stats_delta_array($changes);
 	# say "    File: ", $Node->filename if ($verbose == 2);
-	say "    ", $Node->filename, " Delta: ", join(", ", @changes) if ($verbose >= 2);
+	say "    ", $Node->filename, " Unicode:", utf8::is_utf8($Node->filename) ? "Yes" : "No", " Delta: ", 
+	    join(", ", @changes) if ($verbose >= 2);
 	printf "          The binary representation is: %013b\n", $changes if ($verbose >= 3);
+
 
 	$Node->stats(\@stats_new);        # always update stats if some changed
 
 	# Decide what needs to be changed based upon what stats changed
 	# if dev or blksize changes - is error - should not happen
+
 	# if ($changes & ( $stats_names{dev} | $stats_names{ino} | $stats_names{blksize} )) {
-	 if ($changes & ( $stats_names{ino} | $stats_names{blksize} )) {
-	     croak("Stats Delta Illegal stats change: ", join(", ", @changes));
-	 }
+	if ($changes & ( $stats_names{ino} | $stats_names{blksize} )) {
+	    croak("Stats Delta Illegal stats change: ", join(", ", @changes));
+	}
 
 	# If ctime - maybe flags changed
 	if ($changes & ( $stats_names{ctime})) {
@@ -146,8 +162,10 @@ sub update_file_md5 {
     }
 
     # Even if no changs, may need to update md5
-    $main::size_count{$Node->size}++;
-    my $count = $main::size_count{$Node->size};
+    # $main::size_count{$Node->size}++;
+    $size_count{$Node->size}++;
+    my $count = $size_count{$Node->size};
+    say "          Size: ", $Node->size, " Count $count" if ($verbose >= 3);
 
     if ($Node->can('md5') && ! defined $Node->md5 && $Node->isreadable) {
     	if ( ($calc_md5 >= 2) or  ($calc_md5 >= 1 && $count >= 2)){
@@ -246,6 +264,16 @@ sub update_dir_md5 {
 	#
 	my $volume_id = volume_id($filepath);
 	#my $hash      = $stats[0].'-'.$stats[1];
+	
+	if (! defined $volume_id) {
+	    die "volume_id undefined $filepath";
+	}
+
+	if (! defined $stats[1]) {
+	    die "stats undefined $filepath";
+	}
+
+
 	my $hash      = $volume_id.'-'.$stats[1];
 	# If is already in new list, we know is unchanged, we can skip checking
 	if ($Files_new->Exist(hash => $hash)) {
@@ -324,7 +352,7 @@ sub update_dir_md5 {
 # 
 sub save_dupes {
     my %opt = @_;
-    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    # my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
     my $dir       =  delete $opt{dir}   // $data_dir;
     my $name      =  delete $opt{name}  // "dupes.db";
 
@@ -332,10 +360,10 @@ sub save_dupes {
     die "Unknown params:", join ", ", keys %opt if %opt;
     
 
-    my @dupes = keys %{$dupes_ref};
-    @dupes = grep ( {$$dupes_ref{$_} >= 2} @dupes);
+    my @dupes = keys %size_count;
+    @dupes = grep ( { $size_count{$_} >= 2} @dupes);
 
-    say "    Dupes Saving ", scalar(@dupes), " records" if ($verbose >= 1);
+    say "    Dupes Saving ", scalar(@dupes), " records" if ($verbose >= 2);
 
 
     # save
@@ -354,9 +382,9 @@ sub save_dupes {
 # 
 sub load_dupes {
     my %opt = @_;
-    my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
+    # my $dupes_ref =  delete $opt{dupes} or die "Required paramater 'dupes' missing";
 
-    my $dir       =  delete $opt{dir} // $data_dir;
+    my $dir       =  delete $opt{dir}  // $data_dir;
     my $name      =  delete $opt{name} // "dupes.db";
 
     my $verbose   =  delete $opt{verbose} // $main::verbose;
@@ -371,18 +399,19 @@ sub load_dupes {
     while(my $value = <$fd>){
 	chomp($value);
 	$value = $value + 0;
-	$$dupes_ref{$value} = 100;
+	# $$dupes_ref{$value} = 100;
+	$size_count{$value} = 100;
     }
     close($fd);
 
 
     say " ";
-    say "Loaded Dupe Values: ", scalar(keys %{$dupes_ref}) if ($verbose >= 2);
+    say "Loaded Dupe Values: ", scalar(keys %size_count) if ($verbose >= 2);
 
-    if ($verbose >= 3){
+    if ($verbose >= 4){
 	say "Values:";
-	foreach my $size (keys %{$dupes_ref} ){
-	    say "\t$size $$dupes_ref{$size}";
+	foreach my $size (keys %size_count ){
+	    say "\t$size $size_count{$size}";
 	}
     }
 
@@ -449,8 +478,8 @@ sub dbfile_load_md5  {
     eval { $List = NodeHeap->load(dir => $dir, name => $db_name)};
 
     if ($@) {
-	warn "    INFO: Error on load dbfile as heap - trying older tree";
-	eval { $List = NodeTree->load(dir => $dir, name => $db_name)};
+	# warn "    INFO: Error on load dbfile as heap - trying older tree";
+	# eval { $List = NodeTree->load(dir => $dir, name => $db_name)};
 
 	# Force Update
 	$files_change{change}++;

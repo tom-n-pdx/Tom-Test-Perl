@@ -8,19 +8,34 @@ use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 use utf8;                          # Allow utf8 in source text
 binmode STDOUT, ":utf8";
+# use utf8;
 
-my $test = "Vous avez aimé l'épée offerte par les elfes à Frodon";
-my $decomposed;
-say "Test Before: $test";
+my $unicode_string;
+# $unicode_string = "\N{WHITE SMILING FACE}";
+# $unicode_string = "\N{U+263a}";
+$unicode_string = "Vous avez aimé l'épée offerte par les elfes à Frodon";
+
+say "Is Unicode: ", utf8::is_utf8($unicode_string) ? "Yes" : "No";
+say "Test Before: $unicode_string";
+
+my %unicode;
+
+# Search - find all unicode
+while ($unicode_string =~ m/([^[:ascii:]])/g){
+    say "Found: $1";
+    $unicode{$1}++;
+}
+
+say "\nUnicode Characters Found";
+foreach my $char (keys %unicode){
+    say "$char:  $unicode{$char}";
+}
 
 
-# No - doesn't work
-use Unicode::Normalize;
-$decomposed = NFKD( $test );
-say "After Decompose: $decomposed";
 
 
-$decomposed =~ s/\p{NonspacingMark}//g;
+
+# my $decomposed =~ s/\p{NonspacingMark}//g;
 # No - doesn't work - get weird characters in output
 
 
@@ -51,7 +66,5 @@ $decomposed =~ s/\p{NonspacingMark}//g;
 # binmode(STDOUT, ":utf8");
 #$decomposed = undiacritic($test);
 
-
-
-say "Test After: $decomposed";
+# say "Test After: $decomposed";
 

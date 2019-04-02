@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -CA
 #
 use Modern::Perl; 		         # Implies strict, warnings
 use autodie;
@@ -21,64 +21,120 @@ use List::Util qw(min max);	        # Import min()
 
 
 our $verbose = 2;
+my $interactive = 1;
 my $data_dir = "/Users/tshott/Downloads/Lists_Disks/.moo";
 
 my %size;
 my $Files; 
 
 my @names;
-my %disk = (Video_4 => 0, Video_6 => 0, Video_7 => 0, Video_8 => 0, Video_10 => 0, 
-	    Video_11 => 0, Video_12 => 0, Video_13 => 0, NewBoot => 0, "/Users/tshott" => 0);
+my %disk = (MyBook => 0, Video_6 => 0, Video_7 => 0, Video_8 => 0, Video_10 => 0, 
+	    Video_11 => 0, Video_12 => 0, Video_13 => 0, NewBoot => 0, "/" => 0);
+# my %disk;
 
 # $Files = dbfile_load_md5(dir => $data_dir, name => "ebook.moo.db");
-$Files = NodeTree->load(dir => $data_dir, name => "files.moo.db");
+$Files = NodeTree->load(dir => $data_dir, name => "dupes.moo.db");
 
 
 say "All Files Total Records Loaded: ", $Files->count;
 
+# First Sum how many and how big non-md5 on each volume
+my (%volume_size, %volume_i);
 
-# Load books to check into new tree
 
-my @size;
-foreach my $size (sort {$b <=> $a} keys %{$Files->size_HoA}){
-    my @Dupes = @{ %{$Files->size_HoA}{$size} }; 
-    next unless (@Dupes >= 2);
-    push(@size, $size);
+foreach my $Node ($Files->List){
+    next if (defined $Node->md5 || ! $Node->isreadable);
+
+    my $volume = $Node->volume;
+    $volume_i{$volume}++;
+    $volume_size{$volume} += $Node->size;
 }
 
-say "Found ", scalar(@size), " dupes";
+say "\nNo MD5 Files";
+foreach my $volume (sort { $volume_i{$b} <=> $volume_i{$a} } keys %volume_i){
+    say "$volume Size: ", format_bytes($volume_size{$volume}), " N: $volume_i{$volume}";
+}
 
-@size = sort( {$b <=> $a} @size);
-@size = grep( {$_ >= (100 * 1e6)} @size); # Filter bigger then 200 Meg
 
-my @filter;
-foreach (@size){
-    my @Dupes = @{ %{$Files->size_HoA}{$_} }; 
-    foreach my $Node (@Dupes){
-	for my $disk (keys %disk){
-	    $disk{$disk} += $_ if $Node->path =~ /$disk/;
-	}
+# my @size;
+# foreach my $size (sort {$b <=> $a} keys %{$Files->size_HoA}){
+#     my @Dupes = @{ %{$Files->size_HoA}{$size} }; 
+#     next unless (@Dupes >= 2);
+#     push(@size, $size);
+# }
 
-	if ($Node->path =~ /Video_13/i){
-	    push(@filter, $_);
-	}
+# say "\nFound ", scalar(@size), " dupes";
+
+# @size = sort( {$b <=> $a} @size);
+# # @size = grep( {$_ >= (50 * 1e6)} @size); # Filter bigger then 200 Meg
+
+# my @filter;
+# foreach (@size){
+#     my @Dupes = @{ %{$Files->size_HoA}{$_} }; 
+#     foreach my $Node (@Dupes){
+# 	for my $disk (keys %disk){
+# 	    $disk{$disk} += $_ if $Node->path =~ /$disk/;
+# 	}
+
+# 	if ($Node->path =~ m!/Users/tshott!i){
+# 	    push(@filter, $_);
+# 	}
 	
+#     }
+# }
+# # @filter = @size;
+
+
+# @filter = @filter[0..min(20, $#filter)];
+
+sub size_md5 {
+    my $md5 = shift(@_);
+    my @Dupes = @{ %{$Files->md5_HoA}{$md5} }; 
+    my $size = $Dupes[0]->size;
+}
+
+
+my @md5s;
+my @filter;
+
+foreach my $md5 (keys %{$Files->md5_HoA}){
+    my @Dupes = @{ %{$Files->md5_HoA}{$md5} }; 
+    next unless (@Dupes >= 2);
+    my $save = 0;
+    
+    push(@md5s, $md5);
+    foreach my $Node (@Dupes){
+	$disk{$Node->volume} += $Node->size;
+
+	# if ($Node->volume eq 'Video_8') {
+	# if ($Node->isexist){
+	    $save = 1;
+	    #    }
+	    # }
+
+	# }
+	push (@filter, $md5) if ($save);
     }
 }
-# @filter = @size;
+say "\nFound ", scalar(@md5s), " md5 dupes";
 
 
-@filter = @filter[0..min(20, $#filter)];
+@filter = sort {size_md5($b) <=> size_md5($a)} @filter;
+@filter = @filter[0..min(30, $#filter)];
 
+
+say "\nmd5 dupes:";
 foreach (@filter){
     say " ";
-    my $str = format_bytes($_);
+    my @Dupes = @{ %{$Files->md5_HoA}{$_} }; 
+    # my $size = $Dupes[0]->size;
+    my $size = size_md5($_);
+    my $str = format_bytes($size);
     say "Size $str";
-    my @Dupes = @{ %{$Files->size_HoA}{$_} }; 
     foreach my $Node (@Dupes){
 	say "    ", $Node->filename;
-	say "      ", $Node->path;
-	say "      ", $Node->size;
+	say "      ", $Node->filepath;
+	say "      ", $Node->volume;
 	say "      ", $Node->md5 // " ";
     }
 }

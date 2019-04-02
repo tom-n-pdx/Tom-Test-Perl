@@ -1,10 +1,17 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -CA
 #
-use Modern::Perl; 		         # Implies strict, warnings
+use Modern::Perl; 		   # Implies strict, warnings
 use autodie;
 use File::Find;
 use Getopt::Long;
 use Carp;
+
+
+use open ':encoding(UTF-8)';
+use feature 'unicode_strings';
+use utf8;                          # Allow utf8 in source text
+binmode STDOUT, ":utf8";
+use Encode qw(decode_utf8);
 
 use lib '.';
 use ScanDirMD5;
@@ -51,8 +58,13 @@ use MooFile;
 #                  4.123u 3.039s 0:09.88 72.3%	0+0k 0+0io 37pf+0w use each in loop process nodes in dir
 #                  4.104u 3.035s 0:10.00 71.3%	0+0k 0+0io 0pf+0w  optimize load on file
 #                  3.554u 2.151s 0:08.36 68.1%	0+0k 253+0io 0pf+0w unoptimized file load, no tree save, no tree merge
+#                  0.877u 0.265s 0:01.32 85.6%	0+0k 0+0io 0pf+0w  don't check dates of db file in dir
 #
 #
+# time ./scan-md5.pl -f -v 2 -t ~
+# 11.321u 7.841s 0:26.15 73.2%	0+0k 0+0io 37pf+0w
+# 
+
 #
 # scan-md5-old     9.729u 7.648s 0:24.81 69.9%	0+0k 0+4io 0pf+0w
 # scan-smart-md5   4.722u 3.266s 0:11.74 67.9%	0+0k 0+0io 0pf+0w
@@ -70,6 +82,7 @@ our $save_tree  = 0;
 
 our $md5_save_limit = 100;
 
+
 GetOptions (
     'verbose=i'   => \$verbose,
     'md5=i'       => \$calc_md5,
@@ -78,21 +91,23 @@ GetOptions (
     'save'        => \$save_tree,
 );
 
+# @ARGV = map { decode_utf8($_, 1) } @ARGV;
 if ($verbose >= 2){
     say "Options";
 
-    say "\tVerbose:   ",  $verbose;
+    say "\tVerbose:   ", $verbose;
     say "\tCalc MD5:  ", $calc_md5;
     say "\tUpdate:    ", $force_save;
-    say "\tTree:      ",     $tree;
+    say "\tTree:      ", $tree;
     say "\tSave Tree: ", $save_tree; 
 
     say " ";
 }
 
 # If existing file of dupe sizes, load
-my %size_count;
-&load_dupes(dupes => \%size_count, verbose => $verbose - 1);
+# my %size_count;
+# load_dupes(dupes => \%size_count, verbose => $verbose - 1);
+load_dupes; 
 
 my $Files_new;
 my $Files_tree;
@@ -122,7 +137,8 @@ foreach my $dir (@ARGV){
 
 say "Total Changes: $total_changes (", &files_change_total_string, ")"; 
 
-&save_dupes(dupes => \%size_count) if ($total_changes > 0);
+# &save_dupes(dupes => \%size_count) if ($total_changes > 0);
+save_dupes if ($total_changes > 0);
 
 exit;
 
@@ -187,7 +203,7 @@ sub scan_dir_md5 {
     my $verbose       = delete $opt{verbose}    // $main::verbose;
     die "Unknown params:", join ", ", keys %opt if %opt;
 
-    say "\tChecking $dir" if ($verbose >= 2);
+    say "\tChecking $dir Unicode: ", utf8::is_utf8($dir) ? "Yes" : "No"  if ($verbose >= 2);
 
     my $Files_old = NodeHeap->new;
     my $Files_new = NodeHeap->new;
@@ -198,7 +214,9 @@ sub scan_dir_md5 {
 	say "\tForcing dbsave" if ($verbose >= 3);
     }
 
-    my $Dir = MooDir->new(filepath => $dir, update_dtime => 0);
+    my $Dir = MooDir->new(filepath
+ => $dir, update_dtime => 0);
+    
 
     # Check if existing dir db file or not
     if ( dbfile_exist_md5(dir => $dir) ){

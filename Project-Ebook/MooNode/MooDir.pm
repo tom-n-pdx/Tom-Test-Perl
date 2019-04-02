@@ -52,7 +52,7 @@ sub BUILDARGS {
 sub BUILD {
     my $self=shift( @_);
     my $args_ref = shift(@_);
-    my $opt_update_dtime = $$args_ref{'opt_update_dtime'}  // 1;
+    my $update_dtime     = $$args_ref{'update_dtime'}      // 0;
     my $update_stats     = $$args_ref{'update_stats'}      // 1; # default is do stat on file on creation
 
     if ($update_stats){
@@ -61,7 +61,7 @@ sub BUILD {
 	}
     }
 
-    if ($opt_update_dtime){
+    if ($update_dtime){
 	$self->update_dtime;
     }
 

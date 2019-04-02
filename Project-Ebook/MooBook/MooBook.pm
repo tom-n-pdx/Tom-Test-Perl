@@ -14,8 +14,8 @@ use Modern::Perl; 		# Implies strict, warnings
 use autodie;			# Easier write open  /close code
 
 
-#use File::Basename;         # Manipulate file paths
-#use Time::localtime;        # Printing stat values in human readable time
+#use File::Basename;                     # Manipulate file paths
+#use Time::localtime;                    # Printing stat values in human readable time
 # use Data::Dumper qw(Dumper);           # Debug print
 
 package MooBook v0.1.0;
@@ -57,7 +57,7 @@ has 'series',
     default => "",
     required => 0;
 
-has 'year',			         # optional year  published - validate makes sense
+has 'year',			                 # optional year  published - validate makes sense
     is => 'rw', 
     isa => 'Int',
     default => 0,
@@ -68,6 +68,15 @@ has 'isbn_list',			         # optional list of ISBN strings
     isa => 'ArrayRef[Str]',
     default => sub { [] },
     required => 0;
+
+
+has 'source',                                    # where did the book information come from
+    is => 'rw', 
+    isa => 'Str',
+    default => "",
+    required => 0;
+
+
 
 #
 # Helper Function Last name
