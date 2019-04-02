@@ -1,0 +1,207 @@
+Notes Book Spidering hacks
+
+Spidering Hacks (ebook, Hemenway, O'Reilly, 2003, Orginal)
++ http://shop.oreilly.com/product/9780596005771.do
+
+* ToDo
+  1. Try isbn lookup now that installed https stuff
+  2. Try extending mechanize tuff to lookup by title, etc
+  3. Use mechanize as template for my own code
+     
+* Logging Time
+  #+BEGIN: clocktable :scope file :maxlevel 2
+  #+CAPTION: Clock summary at [2019-03-29 Fri 09:17]
+  | Headline                         |    Time |
+  |----------------------------------+---------|
+  | *Total time*                     | *10:21* |
+  |----------------------------------+---------|
+  | Chapter 1 - Walk Softly          |    1:59 |
+  | Chapter 2 - Assembling a Toolbox |    8:22 |
+  #+END:
+
+
+
+* Chapter 1 - Walk Softly
+  :LOGBOOK:
+  CLOCK: [2019-03-27 Wed 11:38]--[2019-03-27 Wed 11:47] =>  0:09
+  CLOCK: [2019-03-25 Mon 13:05]--[2019-03-25 Mon 14:55] =>  1:50
+  :END:
+  * Link: http://www.robotstxt.org/
+  * Rules of the Road
+    + Be liberal i what you accept
+    + Consider more then html- pdf, images, sounds 
+    + Don't reinvent the wheel- CPAN
+    + Do last amount of work - look for XHTML, XML - less impact then HTML, RSS 
+    + Use HTML paraling - look for text only or print this page.
+    + Don't go where not wanted - robots.txt, site bandwidth
+    + Choose a good identifier for spider
+    + Respect robots.txt
+    + List of places to register your spider.
+      * Also give your spider a clear name so web site admins know what it's doing.
+      * Introduce yourself to web site owner.
+** Hack 7 - Finding the Patterns of Identifiers
+   + Often times you can find ID's at website for data, can use to correlate data with other web sites.
+   + Classification systems
+     1. Arbitrary classification systems within a collection.
+        + Uniquely identify pages within a site
+     2. Classification Systems that Use an Established Universal Taxonomy Within a Collection
+        + Map to established taxonomy 
+     3. Classification Systems that Identify Documents Across a Wide Number of Collections
+	+ ISBN, Zip Code, 
+   + Places to lookup data
+     * Amazon
+     * United States Post Office 
+      
+
+* Chapter 2 - Assembling a Toolbox
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 16:30]--[2019-04-01 Mon 16:49] =>  0:19
+  CLOCK: [2019-03-31 Sun 19:30]--[2019-03-31 Sun 20:22] =>  0:52
+  CLOCK: [2019-03-29 Fri 07:56]--[2019-03-29 Fri 09:17] =>  1:21
+  CLOCK: [2019-03-28 Thu 11:41]--[2019-03-28 Thu 16:48] =>  5:07
+  CLOCK: [2019-03-27 Wed 11:47]--[2019-03-27 Wed 13:41] =>  1:54
+  :END:
+  Chapter full of simple Perl hack to help scape sites.
+  * Perl Modules
+    + LWP - web access
+    + LWP::Simple - get web docs
+    + LWP::UserAgent - implement spider that looks like web browser
+    + HTTP::Response - Parse hTTP response
+    + URI - operate on web address - parse, modify, get parts
+    + URI::Escape - convert string to uRI suitable escaped string
+    + HTML::Entities - escape & UNESCAPE URL strings
+    + WWW::Mechanize - automate interaction with site
+** Hack  9 - Simply Fetching with LWP::Simple
+   * Simple use to get a web page.
+   * had to install the HTTPS module LWP::Protocol::https to get to work.
+** Hack 10 - More Involved Requests with LWP::UserAgent
+   * Simple doesn't support cookies or authorization, doesn't support setting header lines in the HTTP
+     request; and, generally, doesn't support reading header lines in the HTTP response (most notably, the
+     full HTTP error message, in case of problems)
+** Hack 11 - Adding HTTP Headers to Your Request
+   * If need to define what type content you prefer
+   * One method fake user agent
+   * Web site to get browsers user agent: http://getright.com/useragent.html
+** Hack 12 - Posting Form Data with LWP
+   * When submitting a query, need to encode all the stuff in the header
+   * When see stuff in the address represents a GET request
+   * Need to look in web source for how form is processed - POST or GET
+     * <form action> with  method="GET"
+   * Didn't get POST example working
+   
+** Hack 13 - Authentication, Cookies, and Proxies
+   * Section on setting user password - didn't do
+   * section on using proxy - didn't use
+   * Can enable cookies.
+     + Start with empty memory cookie jar
+     + Write / read from disk
+     + Even module to read chrome cookies - installed
+** Hack 14 - Handling Relative and Absolute URLs     
+   + need to resolve absolue vs relative URL's
+   + URI class to do this
+** Hack 15 - Secured Access and Browser Attributes
+   * Need to have SSL support installed to access htpps URL
+   * Other browser attributes
+     * timeout - $browser->timeout(15)
+       
+** Hack 16 - Respecting Your Scrapee's Bandwidth
+   * Ways to limit how much site bandwidth you consome
+   * Use last modified time and save it - $response->last_modified 
+     * Can add hader - only get newer version - If-Modified-Since
+     * But if dynamically generated page (PHP, Etc.) - no good 
+     * If no header, value undefined
+     * Need to use HTML date for GMT encoding date string in headers
+   * URL may return signature - Header Etag - for page - can see if changed
+     * If supported, works on dynamic data
+   * Can compress docs
+     * Set header to say can accept compressed headers
+     * But must also request it
+** Hack 17 - Respecting robots.txt
+   * Robot user agent does two things
+     + Respects robots.txt do not scrape code
+     + Bandwidth limits reads
+   * Rate Limit standard LWP
+     + HTTP::Tiny::Bandwidth
+** Hack 18 - Adding Progress Bars to Your Scripts
+   * Show whats going on
+   * Uses LWP callback to update what's going on
+   * Progress Bar not bad for a version
+
+** Hack 19 - Scraping with HTML::TreeBuilder
+   * Take HTML content and parse as a tree
+     
+** Hack 20 - Parsing with HTML::TokeParser
+   + Parse HTML as a stream of element - not s a tree.
+   + So don't have to decode whole thing at once.
+   + Works well walking through each element in page and processing each one.
+** Hack 21 - WWW::Mechanize 101
+   * Builds on LWP with easy interface.
+   * Can find forms, submit info, keep history
+** Hack 22 - Scraping with WWW::Mechanize
+   * No Magic, just use Mechanize to grab the html
+   * Then parse with tree or Toke
+** Hack 23 - In Praise of Regular Expressions
+   * Sometimes a regular expression is good enough to grab data
+   * Use  LWP::Parallel::UserAgent for parallel web access
+** Hack 24 - Painless RSS with Template::Extract
+   * Use Template::Extract to grab data
+   * Template::Extract Perl module extracst a data structure from its template and output.
+** Hack 25 - A Quick Introduction to XPath
+   * XPath is designed to locate and process items within properly formatted XML or HTML documents
+   * Check out the book XPath and XPointer
+   * use XML::LibXML
+** Hack 26 - Downloading with curl and wget
+   * CURL
+     * Standard command
+     * curl --manual
+     * brew has version, using standard
+     * Download lots of files
+   * wget
+     * other get commend
+** Hack 27 - More Advanced wget Techniques
+   * Can set user agent
+   * Grab site, up to crawl depth
+** Hack 28 - Using Pipes to Chain Commands
+   * Use lynx text web browser - not installed OS x
+   * Can use from command line to grab code.
+** Hack 29 - Running Multiple Utilities at Once
+   * Combine multuple jobs in a shell script.
+   * Or combine all into perl script.
+** Hack 30 - Utilizing the Web Scraping Proxy
+   * Dead link for web scapng proxy wsp.pl - that records all web activity for playback
+   * maybe use WWW::Scripter
+** Hack 31 - Being Warned When Things Go Wrong
+   * Build in checks and warn when breaks
+   * Make sure content did download
+   * Check content is what expected
+   * Check number of records found vs what expcted
+** Hack 32 - Being Adaptive to Site Redesigns
+   * Web sites changes
+   * Use vars for paramaters where you can
+   * Put regular expressions into variables
+
+* Chapter 3 - Collecting Media Files
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 16:49]--[2019-04-01 Mon 16:57] =>  0:08
+  :END:
+** Hack 33 - Detective Case Study: Newgrounds
+   * Explore how site organized, what different URL's do, change ID etc.
+   * Also check out source code to figure how how URL's are encodded
+** Hack 34 - Detective Case Study: iFilm
+   * Can often drop part of URL - not required to get to data we want
+
+* Chapter 4 - Gleaning Data from Databases
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 16:57]--[2019-04-01 Mon 17:05] =>  0:08
+  :END:
+** Hack 51 - Spidering, Google, and Multiple Domains
+   * Use google site: search to help search across multuple sites
+   * Use Google SOAP key
+   * use SOAP::Lite
+** Hack 52 - Scraping Amazon.com Product Reviews
+   * use amazon api key
+
+
+Most of rest book outdated, hacks but code is all too old
+
+
