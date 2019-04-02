@@ -1,0 +1,364 @@
+
+Perl & LWP
+by Sean M. Burke
+ISBN 0-596-00178-9
+First Edition, published June 2002
+
+#+BEGIN: clocktable :scope file :maxlevel 2
+#+CAPTION: Clock summary at [2019-04-02 Tue 12:26]
+| Headline                                 |   Time |
+|------------------------------------------+--------|
+| *Total time*                             | *3:47* |
+|------------------------------------------+--------|
+| Chapter 1 - Introduction to Web...       |   0:30 |
+| Chapter 2-  Web Basics                   |   0:32 |
+| Chapter 3 - The LWP Class Model          |   0:31 |
+| Chapter 4 - URLs                         |   0:09 |
+| Chapter 5 - Forms                        |   0:34 |
+| Chapter 6 - Simple HTML Processing...    |   0:20 |
+| Chapter 7 - HTML Processing with Tokens  |   0:16 |
+| Chapter 8 Tokenizing Walkthrough         |   0:06 |
+| Chapter 9 - HTML Processing with Trees   |   0:12 |
+| Chapter 10 - Modifying HTML with Trees   |   0:16 |
+| Chapter 11 - Cookies, Authentication,... |   0:03 |
+| Chapter 12 - Spiders                     |   0:18 |
+#+END:
+
+
+
+* Chapter 1 - Introduction to Web Automation
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 17:09]--[2019-04-01 Mon 17:39] =>  0:30
+  :END:
+  * Book covers using LWP & Screen scraping.
+  * Example code long dead.
+
+* Chapter 2-  Web Basics
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 17:39]--[2019-04-01 Mon 18:11] =>  0:32
+  :END:
+  * URLs have a structure, given in RFC 2396
+  * URI::Escape to encode URL's - only A-Z, a-z, 0-9 allowed un URL
+  * LWP::Simple
+    * Basic doc request
+    * Can't check out results / headers
+    * No way to set sent headers
+    * Only get success or failure - not why
+    * Also exports getprint(url) - print to current stdout
+    * includes head() to see what would be returned
+      * in list retruns context, head( ) returns a list of (content_type, document_length, modified_time, expires, server)
+      * $type undefined if get failed.
+    * Example wrapping standard LWP get
+
+* Chapter 3 - The LWP Class Model
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 18:11]--[2019-04-01 Mon 18:42] =>  0:31
+  :END:
+  * Clone a agent object to get copy so can then modify
+  * Use connection cache object to improve effciency
+    * use LWP::ConnCache;
+    * $cache = $browser->conn_cache(LWP::ConnCache->new( ));
+    * $browser->conn_cache->total_capacity(10); - set to more then one connection
+  * Cookies
+    * Temp Cookie Jar: $browser->cookie_jar(HTTP::Cookies->new);
+    * Persistent
+      my $some_file = '/home/mojojojo/cookies.lwp';
+        $browser->cookie_jar(HTTP::Cookies->new( 'file' => $some_file, 'autosave' => 1
+      ));	
+  * Protocols
+    Can set what allowed or forbidden
+    $aref_maybe = $browser->protocols_allowed([\@protocols]);
+    $aref_maybe = $browser->protocols_forbidden([\@protocols]);
+
+    Check if supported: is_protocol_supported( )
+
+  * Redirection
+    Allowed for some things
+
+  * Requests
+    3 basic request types
+
+    $resp = $browser->get(url);
+    $resp = $browser->head(url);
+    $resp = $browser->post(url, \@form_data);
+
+  * Callback
+    $resp = $browser->get(url, ':content_cb' => \&mysub, ...);
+
+    Also for head, post. call whenever some data is collected.
+    Unpredictable how much data, but can give hint.
+
+  * Mirror
+    Get a URL and stor to a file.
+
+    $response = $browser->mirror(url_to_get, filename)
+
+    But also checks If-Modified-Since hedaer and only downloads if new.
+
+  * Can print all the respons headers
+
+   $response->headers_as_string
+
+  * More efficient to use response content ref instead of copying around.
+
+    $data_ref = $response->content_ref( );
+
+  * Expiration and age
+    $age = $response->current_age( );                 # in seconds
+    $lifetime = $response->freshness_lifetime( );     # seconds until expires
+    $boolean = $response->is_fresh( );                # boolean has expired
+    $expires = $response->fresh_until( );             # time when expires
+
+  * Many links relative
+    Will need to know base of current page
+
+    $url = $response->base( );
+
+  * On error - maybe chain of redirect, other responses.
+    
+    Print error in HTML
+    $error_page = $response->error_as_HTML( );
+    print "The server said:\n<blockquote>$error_page</blockquote>\n";
+
+    But may need to work backward through redirect
+    
+    $previous_response = $response->previous( );     # undef if no more
+    
+    To print use $request->as_string
+
+
+
+    
+
+* Chapter 4 - URLs
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 18:42]--[2019-04-01 Mon 18:51] =>  0:09
+  :END:
+  * URI class - deconstruct URL's
+
+    use URI;
+    my $url = URI->new('http://user:pass@example.int:4345/hello.php?user=12');
+    print "Scheme: ", $url->scheme( ), "\n";
+    print "Userinfo: ", $url->userinfo( ), "\n";
+    print "Hostname: ", $url->host( ), "\n";
+    print "Port: ", $url->port( ), "\n";
+    print "Path: ", $url->path( ), "\n";
+    print "Query: ", $url->query( ), "\n";
+
+
+    Can also modify, e.g. 
+    $uri->host('testing.perl.com');
+
+    Use new if 100% sure not relative
+    $url = URI->new('<http://www.oreilly.com/>')
+
+    If not sure or know is relative
+    $url->new_abs
+
+    eq() method to compare
+
+  * Query
+    query_form( )  to build a URL query
+
+  * Relative URL
+    rel( ) - method create relative from absolute
+    URI->new_abs(relative, base); - convert rel to base
+
+
+* Chapter 5 - Forms
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 18:51]--[2019-04-01 Mon 19:25] =>  0:34
+  :END:
+  * Form tag will say if GET or POST.
+    GET requests encode the pairs in the URL being requested, each pair separated by an ampersand (&) character
+    POST requests encode them in the body of the request, one pair per line.
+
+    In both cases URI encoded.
+
+  * GET
+    Easiest way to $url->query_form(name => value, name => value, ...);
+
+    build URL, then add values.
+    
+  * Form data is value, hidden value, text, for checkbox button - on or off, for radio button - on selected, submit buttons, with image, 
+    also sends where mouse was.
+
+  * POST
+    $browser->post(url, pairs_arrayref)  # array-ref, not array
+    
+    my $response = $browser->post('http://plates.ca.gov/search/search.php3',
+      [	
+        'plate'  => $plate,
+        'search' => 'Check Plate Availability'
+      ],
+    );
+
+    * Uploading a file is special
+
+    * More complex forms
+      HTML::Form - LWP class for objects representing HTML forms. That is, it parses HTML source that you give it and builds an object for the form
+      HTML::Request::Form is quite similar, except it takes as input an HTML::TreeBuilder tree
+
+
+* Chapter 6 - Simple HTML Processing with Regular Expressions
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 19:25]--[2019-04-01 Mon 19:45] =>  0:20
+  :END:
+  * Example - search ISBN amazon https://www.amazon.com/s?k=ISBN+978-1-884777-79-0&i=stripbooks&ref=nb_sb_noss
+
+  * Build Regular expressions up from sub-expression. compile with qr// operator
+
+    $string = '<a href="jumbo.html"><img src="big.gif"></a>';
+    $ATTRIBUTE = qr/href|src/;
+    $INSIDE_QUOTES = qr/.*?/;
+    @files = $string =~ m{(?:$ATTRIBUTE)="($INSIDE_QUOTES)"}g;
+    print "Found @files\n";
+
+  * Don't think need to match all in one rgexp - can use a sequence.
+
+  * Debugging regular expression
+    1. Print the string just before the regexp to make sure it is what you think it is.
+    2. Put capturing parentheses around every chunk of the regular expression to see what's matching
+    3. If the regular expression you've created isn't matching at all, repeatedly take the last chunk off the regular 
+       expression until it does
+
+  * regexp tend to not work well on more complex html. Bad on lists within lists, comments.
+    For more complex consider HTML::Parser, HTML::TokeParser, and HTML::TreeBuilder.
+
+
+* Chapter 7 - HTML Processing with Tokens
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 19:45]--[2019-04-01 Mon 20:01] =>  0:16
+  :END:
+  * Using HTML::TokeParser
+    my $stream = HTML::TokeParser->new( \$html );    # create new stream
+
+    Use while to get next token: while(my $token = $stream->get_token)
+
+    Returns what type token (start, end, comment), and what token is.
+
+    Sometimes need to see a sequence of tokens. Look at a few, $stream->unget_token(@next); to put back.
+
+    Other methods to get:
+    * get_text( )  - if text return text, else undef
+    * $text_string = $stream->get_text('/bar'); - get all the text up to the next tag or EOF
+    * $text_string = $stream->get_text('foo');  - get all text up to string
+    * get_trimmed_text( )  variants trims leading and trailing space
+
+    * $tag_reference = $stream->get_tag( ); - returns the next start-tag or end-tag token
+    * $tag_reference = $stream->get_tag('foo', '/bar', 'baz');   skip to next time one of these tags occurs
+      This returns the next start-tag or end-tag that matches any of the strings 
+
+
+* Chapter 8 Tokenizing Walkthrough
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 20:01]--[2019-04-01 Mon 20:07] =>  0:06
+  :END:
+  Steps to developing a tokenizer
+  1. Find page you care about & decode URL
+  2. Save a local copy
+  3. Check out source
+  4. Incrementally develop cod
+  5. Figure out what you do want, or how to exclude things - narrow match.
+  6. Include debug code to help figure out what is doing
+
+  Good example chapter on how to build a code parser.
+
+
+* Chapter 9 - HTML Processing with Trees
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 20:07]--[2019-04-01 Mon 20:19] =>  0:12
+  :END:
+
+  Use HTML::TreeBuilder
+  * new tree
+    $root = HTML::TreeBuilder->new( );
+    $root = HTML::TreeBuilder->new_from_file(filename);
+    $root = HTML::TreeBuilder->new_from_file(filehandle);
+
+  * Parse content
+    $success = $root->parse_file(filename);
+    $success = $root->parse_file(filehandle);
+
+  * Methods for searching the tree
+    @headings = $root->find_by_tag_name('h1', 'h2');                all h1 or h2 nodes
+    @blinkers = $root->find_by_attribute("class","blinking");       all nodes with attribute value
+    @blinkers = $root->look_down(_tag => 'h2', class => 'blinking');  look down and find node all tree
+    + or a subroutine to check
+  
+  * Attributes of a node
+    $node->tag( );
+    $node->parent( );
+    $node->content_list( )   - list of nodes
+    $node->attr(attributename)
+    
+  * Display
+    $node->as_HTML
+    $node->as_text( )
+    $node->starttag([entities])
+    $node->endtag( )
+
+  * Walk tree
+    traverse( ) - either post or pre
+    
+* Chapter 10 - Modifying HTML with Trees
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 20:34]--[2019-04-01 Mon 20:50] =>  0:16
+  :END:
+  * Alter HTML element
+    $element->attr(attrname, newval)
+    $element->attr(attrname, undef)        delete an element
+
+  * When rewrite - by default mangles whitespace - no valu outside strings
+    $root->ignore_ignorable_whitespace(0);      # Don't try to delete whitespace between block-level elements.
+    $root->no_space_compacting(1);              # Don't smash every whitespace sequences into a single space.
+
+  * can delete images - or ads
+    can delete node from tree $d->delete  
+
+  * Example detaching, reattaching nodes
+    $good_td->detach;
+    $big_table->replace_with($good_td);
+    detach_content( );                          # detach and return content
+
+  * Also covers building new HTML
+    $li->push_content
+    
+    my $li = HTML::Element->new( '~literal', 'text', '<li>See <b><a href="page.html">here.</a></b>!</li>');
+    new_from_lol( ) constructor
+
+
+* Chapter 11 - Cookies, Authentication, and Advanced Requests
+  :LOGBOOK:
+  CLOCK: [2019-04-01 Mon 20:50]--[2019-04-01 Mon 20:53] =>  0:03
+  :END:
+  * If need passwords, consider LWP::AuthenAgent - but not secure
+
+
+* Chapter 12 - Spiders
+  :LOGBOOK:
+  CLOCK: [2019-04-02 Tue 12:08]--[2019-04-02 Tue 12:26] =>  0:18
+  CLOCK: [2019-04-01 Mon 20:53]
+  :END:
+  * Classification Spiders
+    + Type One Requester - program requests a couple items from a server, knowing ahead of time the URL of each
+    + Type Two Requester - program requests a few items from a server, then requests the pages to which those link
+    + Type Three Requester - single-site spider requests what's at a given URL, finds links on that page that are on 
+      the same host, and requests those
+    + Type Four Requester - host-spanning spider requests what's at a given URL, finds links on that page that
+      are anywhere on the Web
+
+  * Good behavior
+    + If spidering unknown its, do a head on any URL before downloading. Confirm the link is getable and that
+      the content is HTML before downloading.
+    + Keep track links visited, don't repeat.
+    + Log what doing to file so can later figure out if blows up.
+    + Limit time to run, total links downloaded so don't run away.
+    + Redirect - need to decide to follow or not
+    + Advantageous if when crawl site does same thing in ame order
+    + Maybe skip query URL's when spidering site
+
+  * Has some good example code examples
+
+
+
